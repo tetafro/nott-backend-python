@@ -1,3 +1,6 @@
 from django.contrib import admin
+from main.models import User, Notepad, Note
 
-# Register your models here.
+admin.site.register(User)
+admin.site.register(Notepad)
+admin.site.register(Note)
