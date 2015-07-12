@@ -1,0 +1,40 @@
+{% extends "main/base.html" %}
+{% block content %}
+
+
+<div class="sidebar-first">
+    <ul class="nav nav-sidebar">
+        <li class="active">
+            <a href="#">Раз</a>
+        </li>
+        <li>
+            <a href="#">Два</a>
+        </li>
+    </ul>
+</div>
+<div class="sidebar-second">
+    <ul class="nav nav-sidebar">
+        <li class="active">
+            <a href="#">Раз</a>
+        </li>
+        <li>
+            <a href="#">Два</a>
+        </li>
+    </ul>
+</div>
+
+
+<div class="main">
+    Content
+</div>
+
+<!--
+<div id="summernote">Hello Summernote</div>
+<h2>New notepad</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{form.title}}
+    <input type="submit" value="OK">
+</form> -->
+
+{% endblock %}

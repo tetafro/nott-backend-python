@@ -1,0 +1,69 @@
+/* Верхняя панель навигации */
+.navbar-inverse {
+    border-radius: 0;
+}
+
+
+/* Левая панель */
+.sidebar-first {
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-right: 1px solid #eee;
+
+    position: fixed;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    top: 52px;
+    left: 0px;
+    bottom: 0;
+    width: 250px;
+    height: auto;
+}
+
+.sidebar-second {
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-right: 1px solid #eee;
+
+    position: fixed;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    top: 52px;
+    left: 250px;
+    bottom: 0;
+    width: 250px;
+    height: auto;
+}
+
+.nav-sidebar {
+    margin-right: -21px;
+    margin-bottom: 20px;
+    margin-left: -20px;
+}
+
+.nav-sidebar > li > a {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.nav-sidebar > li > a:hover {
+    background-color: #eee;
+}
+
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+    background-color: #e9e9e9;
+}
+
+.main {
+    position: fixed;
+    top: 52px;
+    left: 500px;
+    bottom: 0;
+    right: 0;
+    overflow-y: scroll;
+    /*margin-left: 500px;*/
+    height: auto;
+    width: auto;
+}

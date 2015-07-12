@@ -1,0 +1,18 @@
+{% extends "main/base.html" %}
+{% block content %}
+
+<h1>{{notepad.title}}</h1>
+
+{% for note in notepad.notes.all %}
+<p>{{note.title}}:{{note.text}}</p>
+{% endfor %}
+
+<h3>New note</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{form.title}}
+    {{form.text}}
+    <input type="submit" value="OK">
+</form>
+
+{% endblock %}
