@@ -4,37 +4,34 @@
 
 <div class="sidebar-first">
     <ul class="nav nav-sidebar">
-        <li class="active">
-            <a href="#">Раз</a>
+        {% for notepad in user.notepads.all %}
+        <li {% if notepad == current_notepad %}class="active"{% endif %}>
+            <a href="{% url 'notepad' notepad_id=notepad.id %}">{{notepad.title}}</a>
         </li>
-        <li>
-            <a href="#">Два</a>
-        </li>
+        {% endfor %}
     </ul>
 </div>
 <div class="sidebar-second">
     <ul class="nav nav-sidebar">
-        <li class="active">
-            <a href="#">Раз</a>
-        </li>
+        {% for note in current_notepad.notes.all %}
         <li>
-            <a href="#">Два</a>
+            <a href="{% url 'note' note_id=note.id %}">{{note.title}}</a>
         </li>
+        {% endfor %}
     </ul>
 </div>
 
 
 <div class="main">
-    Content
+    <form method="POST">
+        {% csrf_token %}
+        {% block form %}{% endblock %}
+        <input type="submit" value="OK">
+    </form>
 </div>
 
 <!--
 <div id="summernote">Hello Summernote</div>
-<h2>New notepad</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{form.title}}
-    <input type="submit" value="OK">
-</form> -->
+ -->
 
 {% endblock %}
