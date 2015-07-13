@@ -29,13 +29,14 @@ def notepad(request, notepad_id):
     notepad = Notepad.objects.get(id=notepad_id)
 
     if request.method == 'POST':
-        form = NotepadForm(request.POST)
+        form = NoteForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.user = user
+            post.notepad = notepad
             post.save()
 
-    form = NotepadForm()
+    form = NoteForm()
 
     context = {'user': user,
         'form': form,
@@ -57,7 +58,8 @@ def note(request, note_id):
             post.user = user
             post.save()
 
-    form = NoteForm()
+    form = NoteForm(initial={'title': note.title,
+        'text': note.text})
 
     context = {'user': user,
         'form': form,
