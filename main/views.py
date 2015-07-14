@@ -3,6 +3,9 @@ from django.shortcuts import render
 from .models import User, Notepad, Note
 from .forms import NotepadForm, NoteForm
 
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 def index(request):
     user = User.objects.get(id=1)
@@ -45,27 +48,31 @@ def notepad(request, notepad_id):
     }
     return render(request, 'main/notepad.html', context)
 
-
+@csrf_exempt
 def note(request, note_id):
-    user = User.objects.get(id=1)
-    note = Note.objects.get(id=note_id)
-    notepad = note.notepad
+    print('-------------')
+    # user = User.objects.get(id=1)
+    # note = Note.objects.get(id=note_id)
+    # notepad = note.notepad
 
     if request.method == 'POST':
-        form = NoteForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = user
-            post.save()
+        print(request.POST)
 
-    form = NoteForm(initial={'title': note.title,
-        'text': note.text})
+    return True
+    # #     form = NoteForm(request.POST)
+    # #     if form.is_valid():
+    # #         post = form.save(commit=False)
+    # #         post.user = user
+    # #         post.save()
 
-    context = {'user': user,
-        'form': form,
-        'current_notepad': notepad,
-        'current_note': note,
-        'notepads': user.notepads.all,
-        'notes': note
-    }
-    return render(request, 'main/note.html', context)
+    # form = NoteForm(initial={'title': note.title,
+    #     'text': note.text})
+
+    # context = {'user': user,
+    #     'form': form,
+    #     'current_notepad': notepad,
+    #     'current_note': note,
+    #     'notepads': user.notepads.all,
+    #     'notes': note
+    # }
+    # return render(request, 'main/note.html', context)

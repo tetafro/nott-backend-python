@@ -1,4 +1,4 @@
-/* Верхняя панель навигации */
+ Верхняя панель навигации */
 .navbar-inverse {
     border-radius: 0;
 }
@@ -56,6 +56,8 @@
     background-color: #e9e9e9;
 }
 
+
+/* Рабочая область */
 .main {
     position: fixed;
     top: 52px;
@@ -63,7 +65,23 @@
     bottom: 0;
     right: 0;
     overflow-y: scroll;
-    /*margin-left: 500px;*/
     height: auto;
     width: auto;
+}
+
+/* Настройки для Summernote */
+.note-editor {
+    /*height: -moz-calc(100% - 5px);
+    height: -webkit-calc(100% - 5px);
+    height: calc(100% - 10px);*/
+}
+
+.note-editable {
+    font-family: 'Ubuntu Mono';
+    font-size: 16px;
+    /*height: 100%;*/
+}
+
+.main .row {
+    padding: 15px;
 }
