@@ -6,3 +6,4 @@
 ==========
 * Python (3.4.2)
 * Django (1.8.3)
+* django-widget-tweaks (1.4.1)

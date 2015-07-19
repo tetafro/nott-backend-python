@@ -1,7 +1,9 @@
 {% extends "main/base.html" %}
 {% block content %}
+{% load widget_tweaks %}
 
 
+<!-- Список блокнотов -->
 <div class="sidebar-first">
     <ul class="nav nav-sidebar">
         {% for notepad in user.notepads.all %}
@@ -9,30 +11,59 @@
             <a href="{% url 'notepad' notepad_id=notepad.id %}">{{notepad.title}}</a>
         </li>
         {% endfor %}
+        <!-- Новый блокнот -->
+        <li>
+            <form class="form-inline" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% render_field form_notepad.title class="form-control input-sm" placeholder="New notepad" %}
+                </div>
+                <div class="form-group">
+                    <button type="submit" name="new-notepad" class="btn btn-sm btn-primary">
+                        <i class="glyphicon glyphicon-plus"></i>
+                    </button>
+                </div>
+            </form>
+        </li>
     </ul>
 </div>
+<!-- Список заметок -->
 <div class="sidebar-second">
     <ul class="nav nav-sidebar">
+        {% if current_notepad %}
         {% for note in current_notepad.notes.all %}
-        <li>
+        <li {% if note == current_note %}class="active"{% endif %}>
             <a href="{% url 'note' note_id=note.id %}">{{note.title}}</a>
         </li>
         {% endfor %}
+        <!-- Новая заметка -->
+        <li>
+            <form class="form-inline" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% render_field form_note.title class="form-control input-sm" placeholder="New note" %}
+                </div>
+                <div class="form-group">
+                    <button type="submit" name="new-note" class="btn btn-sm btn-primary">
+                        <i class="glyphicon glyphicon-plus"></i>
+                    </button>
+                </div>
+            </form>
+        </li>
+        {% endif %}
     </ul>
 </div>
 
 
 <div class="main">
-    <div id="summernote">Hello Summernote</div>
+    {% if current_note %}
+    <div id="summernote">{{current_note.text}}</div>
     <div class="row text-center">
         <div class="col-md-2 col-md-offset-5">
             <input id="btn-save" class="btn btn-primary form-control" type="submit" value="Save">
         </div>
     </div>
-    <!-- <form method="POST">
-        {% csrf_token %}
-        <input type="submit" value="OK">
-    </form> -->
+    {% endif %}
 </div>
 
 

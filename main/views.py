@@ -11,16 +11,19 @@ def index(request):
     user = User.objects.get(id=1)
     
     if request.method == 'POST':
-        form = NotepadForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = user
-            post.save()
+        if 'new-notepad' in request.POST:
+            form = NotepadForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.user = user
+                post.save()
 
-    form = NotepadForm()
+    form_notepad = NotepadForm()
+    form_note = NoteForm()
 
     context = {'user': user,
-        'form': form,
+        'form_notepad': form_notepad,
+        'form_note': form_note,
         'current_notepad': '',
         'current_note': ''
     }
@@ -32,47 +35,58 @@ def notepad(request, notepad_id):
     notepad = Notepad.objects.get(id=notepad_id)
 
     if request.method == 'POST':
-        form = NoteForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = user
-            post.notepad = notepad
-            post.save()
+        if 'new-notepad' in request.POST:
+            form = NotepadForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.user = user
+                post.save()
+            else:
+                print('not valid pad')
+        elif 'new-note' in request.POST:
+            form = NoteForm(request.POST)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.user = user
+                post.notepad = notepad
+                post.save()
+            else:
+                print('not valid note')
 
-    form = NoteForm()
+    form_notepad = NotepadForm()
+    form_note = NoteForm()
 
     context = {'user': user,
-        'form': form,
+        'form_notepad': form_notepad,
+        'form_note': form_note,
         'current_notepad': notepad,
         'current_note': ''
     }
     return render(request, 'main/notepad.html', context)
 
+
 @csrf_exempt
 def note(request, note_id):
-    print('-------------')
-    # user = User.objects.get(id=1)
-    # note = Note.objects.get(id=note_id)
-    # notepad = note.notepad
+    user = User.objects.get(id=1)
+    note = Note.objects.get(id=note_id)
+    notepad = note.notepad
 
-    if request.method == 'POST':
-        print(request.POST)
-
-    return True
-    # #     form = NoteForm(request.POST)
-    # #     if form.is_valid():
-    # #         post = form.save(commit=False)
-    # #         post.user = user
-    # #         post.save()
+    # form = NoteForm(request.POST)
+    # if form.is_valid():
+    #     post = form.save(commit=False)
+    #     post.user = user
+    #     post.save()
 
     # form = NoteForm(initial={'title': note.title,
     #     'text': note.text})
 
-    # context = {'user': user,
-    #     'form': form,
-    #     'current_notepad': notepad,
-    #     'current_note': note,
-    #     'notepads': user.notepads.all,
-    #     'notes': note
-    # }
-    # return render(request, 'main/note.html', context)
+    form_notepad = NotepadForm()
+    form_note = NoteForm()
+
+    context = {'user': user,
+        'form_notepad': form_notepad,
+        'form_note': form_note,
+        'current_notepad': notepad,
+        'current_note': note
+    }
+    return render(request, 'main/note.html', context)

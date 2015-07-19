@@ -9,7 +9,6 @@
     padding: 20px;
     background-color: #f7f7f7;
     border-right: 1px solid #eee;
-
     position: fixed;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -24,7 +23,6 @@
     padding: 20px;
     background-color: #f7f7f7;
     border-right: 1px solid #eee;
-
     position: fixed;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -41,9 +39,14 @@
     margin-left: -20px;
 }
 
-.nav-sidebar > li > a {
+.nav-sidebar > li > a, 
+.nav-sidebar > li > .form-inline {
     padding-right: 20px;
     padding-left: 20px;
+}
+
+.nav-sidebar > li > .form-inline input {
+    width: 150px;
 }
 
 .nav-sidebar > li > a:hover {
