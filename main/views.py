@@ -1,10 +1,11 @@
 from django.shortcuts import render
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Notepad, Note
 from .forms import NotepadForm, NoteForm
 
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 def index(request):
@@ -71,6 +72,18 @@ def note(request, note_id):
     note = Note.objects.get(id=note_id)
     notepad = note.notepad
 
+    if request.method == 'POST':
+        post = request.POST
+        print('---')
+        print(post)
+        note.text = post['text']
+        note.save()
+        return HttpResponse(json.dumps({'status': 'Success'}))
+
+
+
+    #HttpResponse(json.dumps({'Hi': 'Bye'}),
+    #        content_type="application/json")
     # form = NoteForm(request.POST)
     # if form.is_valid():
     #     post = form.save(commit=False)

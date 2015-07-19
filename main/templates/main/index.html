@@ -6,6 +6,9 @@
 <!-- Список блокнотов -->
 <div class="sidebar-first">
     <ul class="nav nav-sidebar">
+        <li>
+            <h4>Блокноты</h4>
+        </li>
         {% for notepad in user.notepads.all %}
         <li {% if notepad == current_notepad %}class="active"{% endif %}>
             <a href="{% url 'notepad' notepad_id=notepad.id %}">{{notepad.title}}</a>
@@ -30,6 +33,9 @@
 <!-- Список заметок -->
 <div class="sidebar-second">
     <ul class="nav nav-sidebar">
+        <li>
+            <h4>Заметки</h4>
+        </li>
         {% if current_notepad %}
         {% for note in current_notepad.notes.all %}
         <li {% if note == current_note %}class="active"{% endif %}>
