@@ -1,4 +1,5 @@
-$(document).ready(function() {
+// Показать flash-сообщение, вывести Summernote
+function onLoad(object) {
     $('#summernote').summernote({
         height: '100%',
         toolbar: [
@@ -7,11 +8,15 @@ $(document).ready(function() {
             ['codeview', ['codeview']]
         ]
     });
-});
+};
+// Действие при загрузке страницы
+$(document).ready(onLoad);
 
 
 function saveNote(object) {
     var text = $('.note-editable').first().html();
+    var $block = $("#flash-block");
+    var $msg = $("#flash-msg");
     // $.post('/note/1/', {text: text});
     $.ajax({
         // contentType: "application/json",
@@ -21,7 +26,7 @@ function saveNote(object) {
         type: "POST",
         data: {text: text},
         success: function(response) {
-            alert("Done");
+            $block.hide().fadeIn(300).delay(500).fadeOut(300);
         },
         error: function(response) {
             alert("Fail");

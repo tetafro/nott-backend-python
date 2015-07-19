@@ -1,4 +1,4 @@
- Верхняя панель навигации */
+/* Верхняя панель навигации */
 .navbar-inverse {
     border-radius: 0;
 }
@@ -73,7 +73,8 @@
     width: auto;
 }
 
-/* Настройки для Summernote */
+
+/* Summernote */
 .note-editor {
     /*height: -moz-calc(100% - 5px);
     height: -webkit-calc(100% - 5px);
@@ -88,4 +89,18 @@
 
 .main .row {
     padding: 15px;
+}
+
+
+/* Всплывающее flash-сообщение */
+.flash-overlay {
+    display: none;
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    z-index: 10;
+}
+
+.label-success, .label-danger {
+    padding: 10px;
 }
