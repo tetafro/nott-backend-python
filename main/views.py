@@ -73,17 +73,11 @@ def note(request, note_id):
     notepad = note.notepad
 
     if request.method == 'POST':
-        post = request.POST
-        print('---')
-        print(post)
-        note.text = post['text']
+        text = request.POST.dict()['text']
+        note.text = text
         note.save()
         return HttpResponse(json.dumps({'status': 'Success'}))
 
-
-
-    #HttpResponse(json.dumps({'Hi': 'Bye'}),
-    #        content_type="application/json")
     # form = NoteForm(request.POST)
     # if form.is_valid():
     #     post = form.save(commit=False)
@@ -94,11 +88,13 @@ def note(request, note_id):
     #     'text': note.text})
 
     form_notepad = NotepadForm()
-    form_note = NoteForm()
+    form_note_add = NoteForm()
+    form_note_update = NoteForm(initial={'title': note.title})
 
     context = {'user': user,
         'form_notepad': form_notepad,
-        'form_note': form_note,
+        'form_note_add': form_note_add,
+        'form_note_update': form_note_update,
         'current_notepad': notepad,
         'current_note': note
     }

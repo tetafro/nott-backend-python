@@ -12,19 +12,18 @@
         {% for notepad in user.notepads.all %}
         <li {% if notepad == current_notepad %}class="active"{% endif %}>
             <a href="{% url 'notepad' notepad_id=notepad.id %}">{{notepad.title}}</a>
+            <a class="link-del" href="#">
+                <i class="glyphicon glyphicon-remove text-danger"></i>
+            </a>
         </li>
         {% endfor %}
         <!-- Новый блокнот -->
         <li>
-            <form class="form-inline" method="POST">
+            <form method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                     {% render_field form_notepad.title class="form-control input-sm" placeholder="New notepad" %}
-                </div>
-                <div class="form-group">
-                    <button type="submit" name="new-notepad" class="btn btn-sm btn-primary">
-                        <i class="glyphicon glyphicon-plus"></i>
-                    </button>
+                    <a class="link-add" href="#"><i class="glyphicon glyphicon-plus"></i></a>
                 </div>
             </form>
         </li>
@@ -40,19 +39,18 @@
         {% for note in current_notepad.notes.all %}
         <li {% if note == current_note %}class="active"{% endif %}>
             <a href="{% url 'note' note_id=note.id %}">{{note.title}}</a>
+            <a class="link-del" href="#">
+                <i class="glyphicon glyphicon-remove text-danger"></i>
+            </a>
         </li>
         {% endfor %}
         <!-- Новая заметка -->
         <li>
-            <form class="form-inline" method="POST">
+            <form method="POST">
                 {% csrf_token %}
                 <div class="form-group">
-                    {% render_field form_note.title class="form-control input-sm" placeholder="New note" %}
-                </div>
-                <div class="form-group">
-                    <button type="submit" name="new-note" class="btn btn-sm btn-primary">
-                        <i class="glyphicon glyphicon-plus"></i>
-                    </button>
+                    {% render_field form_note_add.title class="form-control input-sm" placeholder="New note" %}
+                    <a class="link-add" href="#"><i class="glyphicon glyphicon-plus"></i></a>
                 </div>
             </form>
         </li>
@@ -63,7 +61,14 @@
 
 <div class="main">
     {% if current_note %}
-    <div id="summernote">{{current_note.text}}</div>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            {% render_field form_note_update.title class="form-control" %}
+            <a class="link-update" href="#"><i class="glyphicon glyphicon-ok text-success"></i></a>
+        </div>
+    </form>
+    <div id="summernote">{{current_note.text|safe}}</div>
     <div class="row text-center">
         <div class="col-md-2 col-md-offset-5">
             <input id="btn-save" class="btn btn-primary form-control" type="submit" value="Save">
@@ -71,8 +76,11 @@
     </div>
     {% endif %}
 
-    <div id="flash-block" class="flash-overlay">
-        <h3><span id="flash-msg" class="label label-primary">Saved successfully</span></h3>
+    <div id="flash-block-success" class="flash-overlay">
+        <h3><span class="label label-primary">Saved successfully</span></h3>
+    </div>
+    <div id="flash-block-fail" class="flash-overlay">
+        <h3><span class="label label-danger">Error</span></h3>
     </div>
 </div>
 

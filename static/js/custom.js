@@ -15,21 +15,21 @@ $(document).ready(onLoad);
 
 function saveNote(object) {
     var text = $('.note-editable').first().html();
-    var $block = $("#flash-block");
-    var $msg = $("#flash-msg");
-    // $.post('/note/1/', {text: text});
+    var $block_success = $("#flash-block-success");
+    var $block_fail = $("#flash-block-fail");
+
     $.ajax({
         // contentType: "application/json",
         // traditional: true,
         // dataType: "json",
-        url: "/note/1/",
+        url: window.location,
         type: "POST",
         data: {text: text},
         success: function(response) {
-            $block.hide().fadeIn(300).delay(500).fadeOut(300);
+            $block_success.hide().fadeIn(300).delay(500).fadeOut(300);
         },
         error: function(response) {
-            alert("Fail");
+            $block_fail.hide().fadeIn(300).delay(500).fadeOut(300);
         }
     });
 };

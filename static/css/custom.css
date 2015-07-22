@@ -39,15 +39,11 @@
     margin-left: -20px;
 }
 
-.nav-sidebar > li > a, 
-.nav-sidebar > li > .form-inline,
+.nav-sidebar > li > a,
+.nav-sidebar > li > form,
 .nav-sidebar > li > h4 {
-    padding-right: 20px;
     padding-left: 20px;
-}
-
-.nav-sidebar > li > .form-inline input {
-    width: 150px;
+    padding-right: 10px;
 }
 
 .nav-sidebar > li > a:hover {
@@ -60,6 +56,19 @@
     background-color: #e9e9e9;
 }
 
+.nav-sidebar > li > a.link-del {
+    float: right;
+    position: absolute;
+    right: 8px;
+    top: 0px;
+}
+
+.form-group > a.link-add {
+    float: right;
+    position: absolute;
+    right: 18px;
+    top: 5px;
+}
 
 /* Рабочая область */
 .main {
@@ -71,6 +80,13 @@
     overflow-y: scroll;
     height: auto;
     width: auto;
+}
+
+.main .link-update {
+    float: right;
+    position: absolute;
+    right: 17px;
+    top: 7px;
 }
 
 
@@ -99,8 +115,4 @@
     bottom: 50%;
     left: 50%;
     z-index: 10;
-}
-
-.label-success, .label-danger {
-    padding: 10px;
 }
