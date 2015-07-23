@@ -7,13 +7,18 @@
 <div class="sidebar-first">
     <ul class="nav nav-sidebar">
         <li>
-            <h4>Блокноты</h4>
+            <h4>Notepads</h4>
         </li>
         {% for notepad in user.notepads.all %}
         <li {% if notepad == current_notepad %}class="active"{% endif %}>
-            <a href="{% url 'notepad' notepad_id=notepad.id %}">{{notepad.title}}</a>
-            <a class="link-del" href="#">
-                <i class="glyphicon glyphicon-remove text-danger"></i>
+            <a href="{% url 'notepad' notepad_id=notepad.id %}">
+                {{notepad.title}}
+                <span class="link-edit">
+                    <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit"></i>
+                </span>
+                <span class="link-del">
+                    <i class="glyphicon glyphicon-remove text-danger"></i>
+                </span>
             </a>
         </li>
         {% endfor %}
@@ -23,7 +28,9 @@
                 {% csrf_token %}
                 <div class="form-group">
                     {% render_field form_notepad.title class="form-control input-sm" placeholder="New notepad" %}
-                    <a class="link-add" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                    <span class="link-add">
+                        <i class="glyphicon glyphicon-plus text-primary" data-toggle="modal" data-target="#modal-del"></i>
+                    </span>
                 </div>
             </form>
         </li>
@@ -33,14 +40,19 @@
 <div class="sidebar-second">
     <ul class="nav nav-sidebar">
         <li>
-            <h4>Заметки</h4>
+            <h4>Notes</h4>
         </li>
         {% if current_notepad %}
         {% for note in current_notepad.notes.all %}
         <li {% if note == current_note %}class="active"{% endif %}>
-            <a href="{% url 'note' note_id=note.id %}">{{note.title}}</a>
-            <a class="link-del" href="#">
-                <i class="glyphicon glyphicon-remove text-danger"></i>
+            <a href="{% url 'note' note_id=note.id %}">
+                {{note.title}}
+                <span class="link-edit">
+                    <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit"></i>
+                </span>
+                <span class="link-del">
+                    <i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del"></i>
+                </span>
             </a>
         </li>
         {% endfor %}
@@ -50,7 +62,9 @@
                 {% csrf_token %}
                 <div class="form-group">
                     {% render_field form_note_add.title class="form-control input-sm" placeholder="New note" %}
-                    <a class="link-add" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                    <span class="link-add" href="#">
+                        <i class="glyphicon glyphicon-plus text-primary"></i>
+                    </span>
                 </div>
             </form>
         </li>
@@ -61,13 +75,6 @@
 
 <div class="main">
     {% if current_note %}
-    <form method="POST">
-        {% csrf_token %}
-        <div class="form-group">
-            {% render_field form_note_update.title class="form-control" %}
-            <a class="link-update" href="#"><i class="glyphicon glyphicon-ok text-success"></i></a>
-        </div>
-    </form>
     <div id="summernote">{{current_note.text|safe}}</div>
     <div class="row text-center">
         <div class="col-md-2 col-md-offset-5">
@@ -75,16 +82,55 @@
         </div>
     </div>
     {% endif %}
+</div>
 
-    <div id="flash-block-success" class="flash-overlay">
-        <h3><span class="label label-primary">Saved successfully</span></h3>
-    </div>
-    <div id="flash-block-fail" class="flash-overlay">
-        <h3><span class="label label-danger">Error</span></h3>
-    </div>
+<div id="flash-block-success" class="flash-overlay">
+    <h3><span class="label label-primary">Saved successfully</span></h3>
+</div>
+<div id="flash-block-fail" class="flash-overlay">
+    <h3><span class="label label-danger">Error</span></h3>
 </div>
 
 
- 
+<!-- Окно изменения заметки -->
+<div class="modal fade" id="modal-edit" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Enter new title</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Окно с подтверждением удаления -->
+<div class="modal fade" id="modal-del" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Delete this?</h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger">Delete</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
