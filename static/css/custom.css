@@ -49,12 +49,13 @@
     padding-right: 10px;
 }
 
-.nav-sidebar > li > a:hover {
+.nav-sidebar > li:hover > a {
     background-color: #eee;
+    color: #23527c;
 }
 
 .nav-sidebar > .active > a,
-.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active:hover > a,
 .nav-sidebar > .active > a:focus {
     background-color: #e9e9e9;
 }
@@ -64,8 +65,8 @@
 /* Кнопки-иконки на боковой панели        */
 /* ---------------------------------------*/
 .form-group > span.link-add,
-li > a > span.link-edit,
-li > a > span.link-del {
+li > span.link-edit,
+li > span.link-del {
     float: right;
     position: absolute;
     padding: 0px;
@@ -77,24 +78,24 @@ li > a > span.link-del {
     top: 5px;
 }
 
-li > a > span.link-edit {
+li > span.link-edit {
     right: 44px;
     top: 10px;
 }
 
-li > a > span.link-del {
+li > span.link-del {
     right: 19px;
     top: 10px;
 }
 
 /* Показывать кнопки при наведении на строку */
 .form-group:hover > span.link-add,
-.nav-sidebar > li > a:hover > span.link-edit,
-.nav-sidebar > li > a:hover > span.link-del,
+.nav-sidebar > li:hover > span.link-edit,
+.nav-sidebar > li:hover > span.link-del,
 /* Не скрывать кнопки активных элментов */
 .form-group > input:focus + span.link-add,
-.nav-sidebar > .active > a > span.link-edit,
-.nav-sidebar > .active > a > span.link-del
+.nav-sidebar > .active > span.link-edit,
+.nav-sidebar > .active > span.link-del
  {
     display: inline;
     cursor: pointer;
@@ -145,4 +146,12 @@ li > a > span.link-del {
     bottom: 50%;
     left: 50%;
     z-index: 10;
+}
+
+
+/* ---------------------------------------*/
+/* Всплывающие окна                       */
+/* ---------------------------------------*/
+.modal-dialog {
+    width: 350px;
 }

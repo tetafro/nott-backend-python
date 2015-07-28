@@ -1,3 +1,4 @@
+from django.core.serializers import serialize
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,7 +13,7 @@ def index(request):
     user = User.objects.get(id=1)
     
     if request.method == 'POST':
-        if 'new-notepad' in request.POST:
+        if 'notepad' in request.POST:
             form = NotepadForm(request.POST)
             if form.is_valid():
                 post = form.save(commit=False)
@@ -36,7 +37,7 @@ def notepad(request, notepad_id):
     notepad = Notepad.objects.get(id=notepad_id)
 
     if request.method == 'POST':
-        if 'new-notepad' in request.POST:
+        if 'notepad' in request.POST:
             form = NotepadForm(request.POST)
             if form.is_valid():
                 post = form.save(commit=False)
@@ -44,7 +45,7 @@ def notepad(request, notepad_id):
                 post.save()
             else:
                 print('not valid pad')
-        elif 'new-note' in request.POST:
+        elif 'note' in request.POST:
             form = NoteForm(request.POST)
             if form.is_valid():
                 post = form.save(commit=False)
@@ -66,7 +67,6 @@ def notepad(request, notepad_id):
     return render(request, 'main/notepad.html', context)
 
 
-@csrf_exempt
 def note(request, note_id):
     user = User.objects.get(id=1)
     note = Note.objects.get(id=note_id)
@@ -76,16 +76,7 @@ def note(request, note_id):
         text = request.POST.dict()['text']
         note.text = text
         note.save()
-        return HttpResponse(json.dumps({'status': 'Success'}))
-
-    # form = NoteForm(request.POST)
-    # if form.is_valid():
-    #     post = form.save(commit=False)
-    #     post.user = user
-    #     post.save()
-
-    # form = NoteForm(initial={'title': note.title,
-    #     'text': note.text})
+        return HttpResponse(json.dumps({'status': 'success'}))
 
     form_notepad = NotepadForm()
     form_note_add = NoteForm()
@@ -99,3 +90,43 @@ def note(request, note_id):
         'current_note': note
     }
     return render(request, 'main/note.html', context)
+
+
+@csrf_exempt
+def ajax_notepad(request, notepad_id=None):
+    user = User.objects.get(id=1)
+    if notepad_id is not None:
+        notepad = Notepad.objects.get(id=notepad_id)
+
+    # Создать блокнот
+    if request.method == 'POST':
+        post_data = request.POST.dict()
+        notepad = Notepad(title=post_data['title'], user=user)
+        notepad.save()
+
+        respone = {'status': 'success'}
+        return HttpResponse(json.dumps(respone), content_type="application/json")
+
+    # Получить JSON со всеми блокнотами
+    if request.method == 'GET':
+        notepads = user.notepads.all()
+
+        respone = {'status': 'success',
+            'notepads': serialize('json', notepads)}
+        return HttpResponse(json.dumps(respone), content_type="application/json")
+
+    # Удалить блокнот
+    if request.method == 'DELETE':
+        notepad.delete()
+
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+
+@csrf_exempt
+def ajax_note(request, note_id):
+    note = Note.objects.get(id=note_id)
+
+    if request.method == 'DELETE':
+        note.delete()
+        return HttpResponse(json.dumps({'status': 'success'}))
