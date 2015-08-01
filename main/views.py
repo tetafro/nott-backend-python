@@ -1,4 +1,5 @@
 from django.core.serializers import serialize
+from django.http import QueryDict
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -98,16 +99,20 @@ def ajax_notepad(request, notepad_id=None):
     if notepad_id is not None:
         notepad = Notepad.objects.get(id=notepad_id)
 
-    # Создать блокнот
+    # Create notepad
     if request.method == 'POST':
         post_data = request.POST.dict()
         notepad = Notepad(title=post_data['title'], user=user)
         notepad.save()
 
-        respone = {'status': 'success'}
+        respone = {'status': 'success',
+            'id': notepad.id,
+            'type': 'notepad',
+            'title': notepad.title
+        }
         return HttpResponse(json.dumps(respone), content_type="application/json")
 
-    # Получить JSON со всеми блокнотами
+    # Get JSON with all notepads
     if request.method == 'GET':
         notepads = user.notepads.all()
 
@@ -115,7 +120,16 @@ def ajax_notepad(request, notepad_id=None):
             'notepads': serialize('json', notepads)}
         return HttpResponse(json.dumps(respone), content_type="application/json")
 
-    # Удалить блокнот
+    # Rename notepad
+    if request.method == 'PUT':
+        data = QueryDict(request.body).dict()
+        notepad.title = data['title']
+        notepad.save()
+
+        respone = {'status': 'success'}
+        return HttpResponse(json.dumps(respone), content_type="application/json")
+
+    # Delete notepad
     if request.method == 'DELETE':
         notepad.delete()
 

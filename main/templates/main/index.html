@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 
-<!-- Список блокнотов -->
+<!-- List of notepads -->
 <div class="sidebar-first">
     <ul class="nav nav-sidebar">
         <li>
@@ -11,7 +11,9 @@
         </li>
         {% for notepad in user.notepads.all %}
         <li {% if notepad == current_notepad %}class="active"{% endif %}>
-            <a href="#" class="link-get" data-id="{{notepad.id}}" data-type="notepad" >{{notepad.title}}</a>
+            <a href="#" class="link-get" data-id="{{notepad.id}}" data-type="notepad">
+                {{notepad.title}}
+            </a>
             <span class="link-edit">
                 <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit" data-type="notepad" data-id="{{notepad.id}}"></i>
             </span>
@@ -20,7 +22,7 @@
             </span>
         </li>
         {% endfor %}
-        <!-- Новый блокнот -->
+        <!-- New notepad -->
         <li>
             <form method="POST">
                 {% csrf_token %}
@@ -35,7 +37,7 @@
         </li>
     </ul>
 </div>
-<!-- Список заметок -->
+<!-- List of notes -->
 <div class="sidebar-second">
     <ul class="nav nav-sidebar">
         <li>
@@ -56,7 +58,7 @@
         </li>
         {% endfor %}
         {% endif %}
-        <!-- Новая заметка -->
+        <!-- New note -->
         <li>
             <form method="POST">
                 {% csrf_token %}
@@ -73,7 +75,7 @@
 </div>
 
 
-<!-- Основной блок -->
+<!-- Main block -->
 <div class="main">
     {% if current_note %}
     <div id="summernote">{{current_note.text|safe}}</div>
@@ -85,7 +87,8 @@
     {% endif %}
 </div>
 
-<!-- Уведомления -->
+
+<!-- Notes -->
 <div id="flash-block-success" class="flash-overlay">
     <h3><span class="label label-primary">Saved successfully</span></h3>
 </div>
@@ -94,7 +97,7 @@
 </div>
 
 
-<!-- Окно изменения заметки -->
+<!-- Modal windows for renaming -->
 <div class="modal fade" id="modal-edit" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -105,22 +108,19 @@
                 <h4 class="modal-title">Enter new title</h4>
             </div>
             <div class="modal-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <input type="text" class="form-control">
-                    </div>
-                </form>
+                <input id="modal-edit-title" name="title" type="text" class="form-control">
+                <input id="modal-edit-id" name="id" type="text" value="0" hidden>
+                <input id="modal-edit-type" name="type" type="text" value="0" hidden>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-modal-submit">Save</button>
+                <button id="modal-edit-submit" type="button" class="btn btn-primary btn-modal-submit">Save</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Окно с подтверждением удаления -->
+<!-- Modal window for delete confirmation -->
 <div class="modal fade" id="modal-del" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -132,8 +132,8 @@
             </div>
             <div class="modal-body">
                 Are you shure you want to delete this?
-                <input name="id" type="text" value="0" hidden>
-                <input name="type" type="text" value="0" hidden>
+                <input id="modal-del-id" name="id" type="text" value="0" hidden>
+                <input id="modal-del-type" name="type" type="text" value="0" hidden>
             </div>
             <div class="modal-footer">
                 <button id="modal-del-submit" type="button" class="btn btn-danger">Delete</button>
