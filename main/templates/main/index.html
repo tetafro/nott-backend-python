@@ -5,12 +5,10 @@
 
 <!-- List of notepads -->
 <div class="sidebar-first">
+    <h4>Notepads</h4>
     <ul class="nav nav-sidebar">
-        <li>
-            <h4>Notepads</h4>
-        </li>
         {% for notepad in user.notepads.all %}
-        <li {% if notepad == current_notepad %}class="active"{% endif %}>
+        <li>
             <a href="#" class="link-get" data-id="{{notepad.id}}" data-type="notepad">
                 {{notepad.title}}
             </a>
@@ -22,69 +20,48 @@
             </span>
         </li>
         {% endfor %}
-        <!-- New notepad -->
-        <li>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="form-group">
-                    <input type="text" hidden value="notepad">
-                    {% render_field form_notepad.title class="form-control input-sm" placeholder="New notepad" %}
-                    <span class="link-add">
-                        <i class="glyphicon glyphicon-plus text-primary"></i>
-                    </span>
-                </div>
-            </form>
-        </li>
     </ul>
+    <!-- New notepad -->
+    <form>
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="text" hidden value="notepad">
+            <input type="text" id="test" name="title" class="form-control input-sm" placeholder="New notepad">
+            <span class="link-add" data-type="notepad">
+                <i class="glyphicon glyphicon-plus text-primary"></i>
+            </span>
+        </div>
+    </form>
 </div>
 <!-- List of notes -->
 <div class="sidebar-second">
+    <h4>Notes</h4>
     <ul class="nav nav-sidebar">
-        <li>
-            <h4>Notes</h4>
-        </li>
-        {% if current_notepad %}
-        {% for note in current_notepad.notes.all %}
-        <li {% if note == current_note %}class="active"{% endif %}>
-            <a href="{% url 'note' note_id=note.id %}">
-                {{note.title}}
-            </a>
-            <span class="link-edit">
-                <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit" data-type="note" data-id="{{note.id}}"></i>
-            </span>
-            <span class="link-del">
-                <i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del" data-type="note" data-id="{{note.id}}"></i>
-            </span>
-        </li>
-        {% endfor %}
-        {% endif %}
-        <!-- New note -->
-        <li>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="form-group">
-                    <input type="text" hidden value="note">
-                    {% render_field form_note.title class="form-control input-sm" placeholder="New note" %}
-                    <span class="link-add" href="#">
-                        <i class="glyphicon glyphicon-plus text-primary"></i>
-                    </span>
-                </div>
-            </form>
-        </li>
     </ul>
+    <!-- New note -->
+    <form>
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="text" hidden value="note">
+            <input type="text" name="title" class="form-control input-sm" placeholder="New note" disabled>
+            <span class="link-add" data-type="note">
+                <i class="glyphicon glyphicon-plus text-primary" data-type="note"></i>
+            </span>
+        </div>
+    </form>
 </div>
 
 
 <!-- Main block -->
 <div class="main">
-    {% if current_note %}
-    <div id="summernote">{{current_note.text|safe}}</div>
-    <div class="row text-center">
-        <div class="col-md-2 col-md-offset-5">
-            <input id="btn-save" class="btn btn-primary form-control" type="submit" value="Save">
+    <div id="editor-block" style="display:none;">
+        <div id="summernote" style="display:none;"></div>
+        <div class="row text-center">
+            <div class="col-md-2 col-md-offset-5">
+                <input id="btn-save" class="btn btn-primary form-control" type="submit" value="Save">
+            </div>
         </div>
     </div>
-    {% endif %}
 </div>
 
 

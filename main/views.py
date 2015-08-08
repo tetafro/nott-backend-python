@@ -1,4 +1,3 @@
-from django.core.serializers import serialize
 from django.http import QueryDict
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -12,85 +11,9 @@ import json
 
 def index(request):
     user = User.objects.get(id=1)
-    
-    if request.method == 'POST':
-        if 'notepad' in request.POST:
-            form = NotepadForm(request.POST)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = user
-                post.save()
 
-    form_notepad = NotepadForm()
-    form_note = NoteForm()
-
-    context = {'user': user,
-        'form_notepad': form_notepad,
-        'form_note': form_note,
-        'current_notepad': '',
-        'current_note': ''
-    }
-    return render(request, 'main/root.html', context)
-
-
-def notepad(request, notepad_id):
-    user = User.objects.get(id=1)
-    notepad = Notepad.objects.get(id=notepad_id)
-
-    if request.method == 'POST':
-        if 'notepad' in request.POST:
-            form = NotepadForm(request.POST)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = user
-                post.save()
-            else:
-                print('not valid pad')
-        elif 'note' in request.POST:
-            form = NoteForm(request.POST)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = user
-                post.notepad = notepad
-                post.save()
-            else:
-                print('not valid note')
-
-    form_notepad = NotepadForm()
-    form_note = NoteForm()
-
-    context = {'user': user,
-        'form_notepad': form_notepad,
-        'form_note': form_note,
-        'current_notepad': notepad,
-        'current_note': ''
-    }
-    return render(request, 'main/notepad.html', context)
-
-
-def note(request, note_id):
-    user = User.objects.get(id=1)
-    note = Note.objects.get(id=note_id)
-    notepad = note.notepad
-
-    if request.method == 'POST':
-        text = request.POST.dict()['text']
-        note.text = text
-        note.save()
-        return HttpResponse(json.dumps({'status': 'success'}))
-
-    form_notepad = NotepadForm()
-    form_note_add = NoteForm()
-    form_note_update = NoteForm(initial={'title': note.title})
-
-    context = {'user': user,
-        'form_notepad': form_notepad,
-        'form_note_add': form_note_add,
-        'form_note_update': form_note_update,
-        'current_notepad': notepad,
-        'current_note': note
-    }
-    return render(request, 'main/note.html', context)
+    context = {'user': user}
+    return render(request, 'main/index.html', context)
 
 
 @csrf_exempt
@@ -101,24 +24,27 @@ def ajax_notepad(request, notepad_id=None):
 
     # Create notepad
     if request.method == 'POST':
-        post_data = request.POST.dict()
-        notepad = Notepad(title=post_data['title'], user=user)
+        data = QueryDict(request.body).dict()
+        notepad = Notepad(title=data['title'], user=user)
         notepad.save()
 
-        respone = {'status': 'success',
-            'id': notepad.id,
-            'type': 'notepad',
-            'title': notepad.title
+        response = {'status': 'success',
+            'id': notepad.id
         }
-        return HttpResponse(json.dumps(respone), content_type="application/json")
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
-    # Get JSON with all notepads
+    # Get JSON with all notes of active notepad
     if request.method == 'GET':
-        notepads = user.notepads.all()
+        notes = notepad.notes.all()
 
-        respone = {'status': 'success',
-            'notepads': serialize('json', notepads)}
-        return HttpResponse(json.dumps(respone), content_type="application/json")
+        notes_dict = {}
+        for note in notes:
+            notes_dict[note.id] = note.title
+
+        response = {'status': 'success',
+            'notes': notes_dict
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
     # Rename notepad
     if request.method == 'PUT':
@@ -126,8 +52,8 @@ def ajax_notepad(request, notepad_id=None):
         notepad.title = data['title']
         notepad.save()
 
-        respone = {'status': 'success'}
-        return HttpResponse(json.dumps(respone), content_type="application/json")
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
 
     # Delete notepad
     if request.method == 'DELETE':
@@ -138,9 +64,47 @@ def ajax_notepad(request, notepad_id=None):
 
 
 @csrf_exempt
-def ajax_note(request, note_id):
-    note = Note.objects.get(id=note_id)
+def ajax_note(request, note_id=None):
+    user = User.objects.get(id=1)
+    if note_id is not None:
+        note = Note.objects.get(id=note_id)
 
+    # Create note
+    if request.method == 'POST':
+        data = QueryDict(request.body).dict()
+        notepad = Notepad.objects.get(id=data['id'])
+        note = Note(title=data['title'], notepad=notepad)
+        note.save()
+
+        response = {'status': 'success',
+            'id': note.id
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json")
+    
+    # Get note's content
+    if request.method == 'GET':
+        text = note.text
+
+        response = {'status': 'success',
+            'text': text
+        }
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+    # Rename note or save new text
+    if request.method == 'PUT':
+        data = QueryDict(request.body).dict()
+        if 'title' in data:
+            note.title = data['title']
+        elif 'text' in data:
+            note.text = data['text']
+        note.save()
+
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response), content_type="application/json")
+
+    # Delete note
     if request.method == 'DELETE':
         note.delete()
-        return HttpResponse(json.dumps({'status': 'success'}))
+
+        response = {'status': 'success'}
+        return HttpResponse(json.dumps(response))

@@ -40,11 +40,11 @@
     margin-right: -21px;
     margin-bottom: 20px;
     margin-left: -20px;
+    border-top: 1px #ddd solid;
+    border-bottom: 1px #ddd solid;
 }
 
-.nav-sidebar > li > a,
-.nav-sidebar > li > form,
-.nav-sidebar > li > h4 {
+.nav-sidebar > li > a {
     padding-left: 20px;
     padding-right: 10px;
 }
@@ -64,26 +64,30 @@
 /* ---------------------------------------*/
 /* Кнопки-иконки на боковой панели        */
 /* ---------------------------------------*/
-.form-group > span.link-add,
-li > span.link-edit,
-li > span.link-del {
+.form-group {
+    position: relative;
+}
+
+span.link-add,
+span.link-edit,
+span.link-del {
     float: right;
     position: absolute;
     padding: 0px;
     display: none;
 }
 
-.form-group > span.link-add {
-    right: 18px;
+span.link-add {
+    right: 12px;
     top: 5px;
 }
 
-li > span.link-edit {
+span.link-edit {
     right: 44px;
     top: 10px;
 }
 
-li > span.link-del {
+span.link-del {
     right: 19px;
     top: 10px;
 }
