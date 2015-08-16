@@ -16,7 +16,6 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 
-@csrf_exempt
 def ajax_notepad(request, notepad_id=None):
     user = User.objects.get(id=1)
     if notepad_id is not None:
@@ -40,7 +39,7 @@ def ajax_notepad(request, notepad_id=None):
             notes_dict[note.id] = note.title
 
         response = {'notes': notes_dict}
-        return HttpResponse(json.dumps(response), status=404, content_type="application/json")
+        return HttpResponse(json.dumps(response), status=200, content_type="application/json")
 
     # Rename notepad
     if request.method == 'PUT':
@@ -57,7 +56,6 @@ def ajax_notepad(request, notepad_id=None):
         return HttpResponse('', status=204)
 
 
-@csrf_exempt
 def ajax_note(request, note_id=None):
     user = User.objects.get(id=1)
     if note_id is not None:

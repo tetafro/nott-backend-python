@@ -9,11 +9,11 @@ baseUrl = 'http://notes.lily.local:8080';
 // Display error in fadein/fadeout box in the center of the screen
 function displayFlash(status, text) {
     var $block = $('#flash-message');
-    if(status == 'error') {
+    if (status == 'error') {
         $block.find('span').removeClass('label-primary').addClass('label-danger');
         text = text || 'Error';
     }
-    else if(status == 'info') {
+    else if (status == 'info') {
         $block.find('span').removeClass('label-danger').addClass('label-primary');
         text = text || 'Success';
     }
@@ -21,7 +21,6 @@ function displayFlash(status, text) {
 
     $block.fadeIn(300).delay(500).fadeOut(300);
 }
-
 
 // Template for list item in side panel
 function makeListItem(id, type, title) {
@@ -41,6 +40,22 @@ function makeListItem(id, type, title) {
     return li;
 }
 
+// Get cookie value by name
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 // ----------------------------------------------
 // CRUD                                         -
@@ -48,27 +63,33 @@ function makeListItem(id, type, title) {
 
 // Create notepad/note
 function createItem(elementType) {
-    if(elementType == 'notepad')
+    if (elementType == 'notepad') {
         var sideBar = '.sidebar-first';
-    else if(elementType == 'note')
+    }
+    else if (elementType == 'note') {
         var sideBar = '.sidebar-second';
+    }
 
     var elementTitle = $(sideBar+' input[name="title"]').val();
-    if(elementTitle == '') {
+    if (elementTitle == '') {
         console.log('Error: title cannot be empty');
         return;
     }
 
     var url = baseUrl + '/ajax/' + elementType + '/';
-    if(elementType == 'notepad') {
+    if (elementType == 'notepad') {
         var data = {title: elementTitle};
     }
-    else if(elementType == 'note') {
+    else if (elementType == 'note') {
         var notepadId = $('.sidebar-first li.active a').data('id');
         var data = {title: elementTitle, id: notepadId};
     }
 
     $.ajax({
+        beforeSend: function(response, settings) {
+            csrftoken = getCookie('csrftoken');
+            response.setRequestHeader("X-CSRFToken", csrftoken);
+        },
         url: url,
         type: 'POST',
         dataType: 'json',
@@ -94,12 +115,14 @@ $(document).on('click', '.sidebar-second .link-add', function(event) {
     createItem('note');
 });
 $(document).on('keypress', '.sidebar-first input[name="title"]', function(event) {
-    if(event.keyCode == 13)
+    if (event.keyCode == 13) {
         createItem('notepad');
+    }
 });
 $(document).on('keypress', '.sidebar-second input[name="title"]', function(event) {
-    if(event.keyCode == 13)
+    if (event.keyCode == 13) {
         createItem('note');
+    }
 });
 
 
@@ -119,6 +142,8 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
         type: 'GET',
         dataType: 'json',
         success: function(response) {
+            var csrftoken = getCookie('csrftoken');
+
             console.log(response);
             $listItem.siblings().removeClass('active');
             $listItem.addClass('active');
@@ -183,7 +208,7 @@ function populateModal(event) {
     $(event.currentTarget).find('input[name="type"]').val(elementType);
 
     // Only for edit
-    if($(event.currentTarget).find('input[name="title"]').length) {
+    if ($(event.currentTarget).find('input[name="title"]').length) {
         var elementTitle = $('.nav-sidebar a[data-id="'+elementId+'"][data-type="'+elementType+'"]').html().trim();
         $(event.currentTarget).find('input[name="title"]').val(elementTitle);
     }
@@ -198,15 +223,20 @@ $(document).on('click', '#modal-edit-submit', function(event) {
     var elementType = $('#modal-edit-type').val();
     var elementTitle = $('#modal-edit-title').val();
 
-    if(elementType == 'notepad')
+    if (elementType == 'notepad') {
         var url = baseUrl + '/ajax/notepad/' + elementId;
-    else if(elementType == 'note')
+    }
+    else if (elementType == 'note') {
         var url = baseUrl + '/ajax/note/' + elementId;
+    }
 
     $.ajax({
+        beforeSend: function(response, settings) {
+            csrftoken = getCookie('csrftoken');
+            response.setRequestHeader("X-CSRFToken", csrftoken);
+        },
         url: url,
         type: 'PUT',
-        dataType: 'json',
         data: {title: elementTitle},
         success: function(response) {
             console.log(response);
@@ -228,12 +258,16 @@ $(document).on('click', '#btn-save', function(event) {
     var text = $('.note-editable').first().html();
 
     $.ajax({
+        beforeSend: function(response, settings) {
+            csrftoken = getCookie('csrftoken');
+            response.setRequestHeader("X-CSRFToken", csrftoken);
+        },
         url: baseUrl + '/ajax/note/' + noteId,
         type: 'PUT',
         data: {text: text},
-        dataType: 'json',
         success: function(response) {
             console.log(response);
+            displayFlash('info', 'Saved successfully');
         },
         error: function(response) {
             console.log(response);
@@ -249,23 +283,29 @@ $(document).on('click', '#modal-del-submit', function(event) {
     var elementId = $('#modal-del-id').val();
     var elementType = $('#modal-del-type').val();
 
-    if(elementType == 'notepad')
+    if (elementType == 'notepad') {
         var url = baseUrl + '/ajax/notepad/' + elementId;
-    else if(elementType == 'note')
+    }
+    else if (elementType == 'note') {
         var url = baseUrl + '/ajax/note/' + elementId;
+    }
 
     $.ajax({
+        beforeSend: function(response, settings) {
+            csrftoken = getCookie('csrftoken');
+            response.setRequestHeader("X-CSRFToken", csrftoken);
+        },
         url: url,
         type: 'DELETE',
-        dataType: 'json',
         success: function(response) {
             console.log(response);
             $('#modal-del').modal('hide');
             // If it was active notepad - hide right panel
             // Notes deleted automaticaly by Django (cascade delete)
             $listItem = $('a[data-type="'+elementType+'"][data-id="'+elementId+'"]').parent();
-            if($listItem.hasClass('active'))
+            if ($listItem.hasClass('active')) {
                 $('.sidebar-second ul').html('');
+            }
             $listItem.remove();
         },
         error: function(response) {
