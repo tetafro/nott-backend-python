@@ -125,15 +125,15 @@ span.link-del {
 /* Summernote                             */
 /* ---------------------------------------*/
 .note-editor {
-    /*height: -moz-calc(100% - 5px);
-    height: -webkit-calc(100% - 5px);
-    height: calc(100% - 10px);*/
+    /*height: -moz-calc(100% - 50px);
+    height: -webkit-calc(100% - 50px);
+    height: calc(100% - 50px);*/
 }
 
 .note-editable {
     font-family: 'Ubuntu Mono';
     font-size: 16px;
-    /*height: 100%;*/
+    height: 100%;
 }
 
 .main .row {

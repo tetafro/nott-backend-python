@@ -28,10 +28,8 @@ def ajax_notepad(request, notepad_id=None):
         notepad = Notepad(title=data['title'], user=user)
         notepad.save()
 
-        response = {'status': 'success',
-            'id': notepad.id
-        }
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        response = {'id': notepad.id}
+        return HttpResponse(json.dumps(response), status=201, content_type="application/json")
 
     # Get JSON with all notes of active notepad
     if request.method == 'GET':
@@ -41,10 +39,8 @@ def ajax_notepad(request, notepad_id=None):
         for note in notes:
             notes_dict[note.id] = note.title
 
-        response = {'status': 'success',
-            'notes': notes_dict
-        }
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        response = {'notes': notes_dict}
+        return HttpResponse(json.dumps(response), status=404, content_type="application/json")
 
     # Rename notepad
     if request.method == 'PUT':
@@ -52,15 +48,13 @@ def ajax_notepad(request, notepad_id=None):
         notepad.title = data['title']
         notepad.save()
 
-        response = {'status': 'success'}
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        return HttpResponse('', status=204)
 
     # Delete notepad
     if request.method == 'DELETE':
         notepad.delete()
 
-        response = {'status': 'success'}
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        return HttpResponse('', status=204)
 
 
 @csrf_exempt
@@ -76,19 +70,15 @@ def ajax_note(request, note_id=None):
         note = Note(title=data['title'], notepad=notepad)
         note.save()
 
-        response = {'status': 'success',
-            'id': note.id
-        }
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        response = {'id': note.id}
+        return HttpResponse(json.dumps(response), status=201, content_type="application/json")
     
     # Get note's content
     if request.method == 'GET':
         text = note.text
 
-        response = {'status': 'success',
-            'text': text
-        }
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        response = {'text': text}
+        return HttpResponse(json.dumps(response), status=200, content_type="application/json")
 
     # Rename note or save new text
     if request.method == 'PUT':
@@ -99,12 +89,10 @@ def ajax_note(request, note_id=None):
             note.text = data['text']
         note.save()
 
-        response = {'status': 'success'}
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        return HttpResponse('', status=204)
 
     # Delete note
     if request.method == 'DELETE':
         note.delete()
 
-        response = {'status': 'success'}
-        return HttpResponse(json.dumps(response))
+        return HttpResponse('', status=204)

@@ -16,6 +16,7 @@
 </head>
 <body>
 
+<!-- Top bar -->
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -31,10 +32,16 @@
     </div>
 </nav>
 
+<!-- Window content -->
 <div class="container-fluid">
     <div class="row">
-            {% block content %}{% endblock %}
+        {% block content %}{% endblock %}
     </div>
+</div>
+
+<!-- Error/info message -->
+<div id="flash-message" class="flash-overlay">
+    <h3><span class="label"></span></h3>
 </div>
 
 </body>

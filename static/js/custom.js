@@ -1,12 +1,27 @@
-baseUrl = 'http://127.0.0.1:8000';
-// var $blockSuccess = $('#flash-block-success');
-// var $blockFail = $('#flash-block-fail');
-// $blockSuccess.hide().fadeIn(300).delay(500).fadeOut(300);
-// $blockFail.hide().fadeIn(300).delay(500).fadeOut(300);
+// baseUrl = 'http://127.0.0.1:8000';
+// baseUrl = 'http://notes.lily.local:80';
+baseUrl = 'http://notes.lily.local:8080';
 
 // ----------------------------------------------
 // HELPERS                                      -
 // ----------------------------------------------
+
+// Display error in fadein/fadeout box in the center of the screen
+function displayFlash(status, text) {
+    var $block = $('#flash-message');
+    if(status == 'error') {
+        $block.find('span').removeClass('label-primary').addClass('label-danger');
+        text = text || 'Error';
+    }
+    else if(status == 'info') {
+        $block.find('span').removeClass('label-danger').addClass('label-primary');
+        text = text || 'Success';
+    }
+    $block.find('span').html(text);
+
+    $block.fadeIn(300).delay(500).fadeOut(300);
+}
+
 
 // Template for list item in side panel
 function makeListItem(id, type, title) {
@@ -66,6 +81,8 @@ function createItem(elementType) {
         },
         error: function(response) {
             console.log(response);
+            var errorMessage = $.parseJSON(response.responseText)['error'];
+            displayFlash('error', errorMessage);
         }
     });
 };
@@ -103,7 +120,6 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
         dataType: 'json',
         success: function(response) {
             console.log(response);
-
             $listItem.siblings().removeClass('active');
             $listItem.addClass('active');
             $('.sidebar-second input[name="title"]').removeAttr('disabled');
@@ -115,6 +131,8 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
         },
         error: function(response) {
             console.log(response);
+            var errorMessage = $.parseJSON(response.responseText)['error'];
+            displayFlash('error', errorMessage);
         }
     });
 });
@@ -126,7 +144,7 @@ $(document).on('click', '.sidebar-second .link-get', function(event) {
     $('#summernote').summernote({
         height: '100%',
         toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['style', ['bold', 'italic', 'underline']],
             ['color', ['color']],
             ['codeview', ['codeview']]
         ]
@@ -145,11 +163,12 @@ $(document).on('click', '.sidebar-second .link-get', function(event) {
         dataType: 'json',
         success: function(response) {
             console.log(response);
-
             $('.note-editable').first().html(response['text']);
         },
         error: function(response) {
             console.log(response);
+            var errorMessage = $.parseJSON(response.responseText)['error'];
+            displayFlash('error', errorMessage);
         }
     });
 });
@@ -196,6 +215,8 @@ $(document).on('click', '#modal-edit-submit', function(event) {
         },
         error: function(response) {
             console.log(response);
+            var errorMessage = $.parseJSON(response.responseText)['error'];
+            displayFlash('error', errorMessage);
         }
     });
 });
@@ -216,6 +237,8 @@ $(document).on('click', '#btn-save', function(event) {
         },
         error: function(response) {
             console.log(response);
+            var errorMessage = $.parseJSON(response.responseText)['error'];
+            displayFlash('error', errorMessage);
         }
     });
 });
@@ -238,10 +261,17 @@ $(document).on('click', '#modal-del-submit', function(event) {
         success: function(response) {
             console.log(response);
             $('#modal-del').modal('hide');
-            $('a[data-type="'+elementType+'"][data-id="'+elementId+'"]').parent().remove();
+            // If it was active notepad - hide right panel
+            // Notes deleted automaticaly by Django (cascade delete)
+            $listItem = $('a[data-type="'+elementType+'"][data-id="'+elementId+'"]').parent();
+            if($listItem.hasClass('active'))
+                $('.sidebar-second ul').html('');
+            $listItem.remove();
         },
         error: function(response) {
             console.log(response);
+            var errorMessage = $.parseJSON(response.responseText)['error'];
+            displayFlash('error', errorMessage);
         }
     });
 });
