@@ -1,23 +1,57 @@
-from django.http import QueryDict
-from django.shortcuts import render
+# Main
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Notepad, Note
+# Auth
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
+# Django helpers
+from django.http import QueryDict
+
+# Models
+from django.contrib.auth.models import User
+from .models import Notepad, Note
 from .forms import NotepadForm, NoteForm
 
+# Other helpers
 import json
 
 
-def index(request):
-    user = User.objects.get(id=1)
+def user_auth(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return redirect('index')
+            else:
+                # TODO: display error: account blocked
+                return redirect('login')
+        else:
+            # TODO: display error: wrong username or password
+            return redirect('login')
 
-    context = {'user': user}
+    context = {}
+    return render(request, 'main/auth.html', context)
+
+
+@login_required
+def index(request):
+    context = {}
     return render(request, 'main/index.html', context)
 
 
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+@login_required
 def ajax_notepad(request, notepad_id=None):
-    user = User.objects.get(id=1)
     if notepad_id is not None:
         notepad = Notepad.objects.get(id=notepad_id)
 
@@ -56,8 +90,8 @@ def ajax_notepad(request, notepad_id=None):
         return HttpResponse('', status=204)
 
 
+@login_required
 def ajax_note(request, note_id=None):
-    user = User.objects.get(id=1)
     if note_id is not None:
         note = Note.objects.get(id=note_id)
 

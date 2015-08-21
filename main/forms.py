@@ -1,11 +1,12 @@
 from django import forms
-from .models import User, Notepad, Note
+from django.contrib.auth.models import User
+from .models import Notepad, Note
 
 
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['name', 'password', 'avatar']
+        fields = ['username', 'email', 'password']
 
 
 class NotepadForm(forms.ModelForm):

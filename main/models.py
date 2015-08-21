@@ -1,15 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
-class User(models.Model):
-    name = models.CharField(max_length=32)
-    password = models.CharField(max_length=128)
-    avatar = models.CharField(max_length=128, blank = True)
-    reg_date = models.DateTimeField(auto_now_add=True)
-    last_seen = models.DateTimeField(auto_now=True)
+# class UserProfile(models.Model):
+#     user = models.OneToOneField(User)
 
-    def __repr__(self):
-        return('User ID%d' % self.id)
+#     avatar = models.CharField(max_length=128, blank = True)
+
+#     def __repr__(self):
+#         return('User ID%d' % self.id)
 
 
 class Notepad(models.Model):

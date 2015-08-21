@@ -1,12 +1,12 @@
 /* -------------------------------------- */
-/* Верхняя панель навигации               */
+/* Top navbar                             */
 /* ---------------------------------------*/
 .navbar-inverse {
     border-radius: 0;
 }
 
 /* ---------------------------------------*/
-/* Левая панель                           */
+/* Left sidebar                           */
 /* ---------------------------------------*/
 .sidebar-first {
     padding: 20px;
@@ -62,7 +62,7 @@
 
 
 /* ---------------------------------------*/
-/* Кнопки-иконки на боковой панели        */
+/* Action buttons on siderbar             */
 /* ---------------------------------------*/
 .form-group {
     position: relative;
@@ -92,11 +92,11 @@ span.link-del {
     top: 10px;
 }
 
-/* Показывать кнопки при наведении на строку */
+/* Show buttons on row hover */
 .form-group:hover > span.link-add,
 .nav-sidebar > li:hover > span.link-edit,
 .nav-sidebar > li:hover > span.link-del,
-/* Не скрывать кнопки активных элментов */
+/* Don't hide buttons of active elements */
 .form-group > input:focus + span.link-add,
 .nav-sidebar > .active > span.link-edit,
 .nav-sidebar > .active > span.link-del
@@ -107,7 +107,7 @@ span.link-del {
 
 
 /* ---------------------------------------*/
-/* Рабочая область                        */
+/* Working space                          */
 /* ---------------------------------------*/
 .main {
     position: fixed;
@@ -142,7 +142,7 @@ span.link-del {
 
 
 /* ---------------------------------------*/
-/* Всплывающее flash-сообщение            */
+/* Flash messages                         */
 /* ---------------------------------------*/
 .flash-overlay {
     display: none;
@@ -154,8 +154,17 @@ span.link-del {
 
 
 /* ---------------------------------------*/
-/* Всплывающие окна                       */
+/* Modal dialogs                          */
 /* ---------------------------------------*/
 .modal-dialog {
     width: 350px;
+}
+
+
+/* ---------------------------------------*/
+/* Login/register page                    */
+/* ---------------------------------------*/
+.page {
+    padding: 100px;
+    
 }
