@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Note',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(primary_key=True, serialize=False, auto_created=True, verbose_name='ID')),
                 ('title', models.CharField(max_length=32)),
                 ('text', models.TextField(blank=True)),
             ],
@@ -23,24 +23,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Notepad',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(primary_key=True, serialize=False, auto_created=True, verbose_name='ID')),
                 ('title', models.CharField(max_length=32)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='notepads')),
             ],
-        ),
-        migrations.CreateModel(
-            name='UserProfile',
-            fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
-                ('avatar', models.CharField(max_length=128, blank=True)),
-                ('reg_date', models.DateTimeField(auto_now_add=True)),
-                ('last_seen', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
-        migrations.AddField(
-            model_name='notepad',
-            name='user',
-            field=models.ForeignKey(to='main.UserProfile', related_name='notepads'),
         ),
         migrations.AddField(
             model_name='note',

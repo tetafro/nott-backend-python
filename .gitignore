@@ -1,6 +1,5 @@
 /venv*/
 __pycache__/
-migrations/
-!migrations/__init__.py
 *.pyc
 *.db
+/pass.ini

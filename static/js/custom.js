@@ -1,5 +1,4 @@
-// baseUrl = 'http://127.0.0.1:8000';
-// baseUrl = 'http://notes.lily.local:80';
+// baseUrl = 'http://nott.tk';
 baseUrl = 'http://notes.lily.local:8080';
 
 // ----------------------------------------------

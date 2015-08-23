@@ -1,7 +1,7 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = 'b$ad!4lxxln*i+o(hf%wpr+b8#iqyhph3qyksx)h@hoa(qa*&6'
+SECRET_KEY = ',cgi6&g]({g&9$4>g=nj:s2n3!]xh6rk{$oz#r$f|el(m|@6@n'
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -52,8 +52,6 @@ WSGI_APPLICATION = 'notes.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'base.db'),
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'db_notes',
         'USER': 'pguser',
