@@ -14,7 +14,7 @@ django_settings='./notes/settings.py'
 pass_ini='./pass.ini'
 
 # Check if all files are on their places
-settings=( $js_custom $django_settings )
+settings=( $js_custom $django_settings $pass_ini )
 for file in "${settings[@]}"
 do
     if [ ! -f $file ]
@@ -65,6 +65,9 @@ else
             sed -i 's/^        '\''USER'\'': '\''.*'\'',/        '\''USER'\'': '\'$pro_db_user\'',/' $django_settings
             # DB password
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$pro_db_pass\'',/' $django_settings
+            # Allowed Django hosts
+            sed -i 's/^ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \['\''.nott.tk'\'', '\''.nott.tk.'\''\]/' $django_settings
+
 
             
             echo 'The app is now in production mode' ;;
@@ -81,6 +84,8 @@ else
             sed -i 's/^        '\''USER'\'': '\''.*'\'',/        '\''USER'\'': '\'$dev_db_user\'',/' $django_settings
             # DB password
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$dev_db_pass\'',/' $django_settings
+            # Allowed Django hosts
+            sed -i 's/^ALLOWED_HOSTS = \[.*\]/ALLOWED_HOSTS = \[\]/' $django_settings
 
             echo 'The app is now in development mode' ;;
     esac
