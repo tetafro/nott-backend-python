@@ -256,7 +256,7 @@ $(document).on('click', '#modal-edit-submit', function(event) {
 // Save note's content
 $(document).on('click', '#btn-save', function(event) {
     var noteId = $('.sidebar-second li.active a').data('id');
-    var text = $('.note-editable').first().html();
+    var text = $('#editor').trumbowyg('html');
 
     $.ajax({
         beforeSend: function(response, settings) {
