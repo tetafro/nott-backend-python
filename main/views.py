@@ -58,7 +58,7 @@ def ajax_notepad(request, notepad_id=None):
     # Create notepad
     if request.method == 'POST':
         data = QueryDict(request.body).dict()
-        notepad = Notepad(title=data['title'], user=user)
+        notepad = Notepad(title=data['title'], user=request.user)
         notepad.save()
 
         response = {'id': notepad.id}

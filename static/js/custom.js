@@ -162,16 +162,18 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
 });
 
 
-// Read note's content (load Summernote with text in it)
+// Read note's content (load Trumbowyg with text in it)
 $(document).on('click', '.sidebar-second .link-get', function(event) {
     $('#editor-block').show();
-    $('#summernote').summernote({
-        height: '100%',
-        toolbar: [
-            ['style', ['bold', 'italic', 'underline']],
-            ['color', ['color']],
-            ['codeview', ['codeview']]
-        ]
+    $('#editor').trumbowyg({
+        btns: [
+          'viewHTML',
+          '|', 'formatting',
+          '|', 'btnGrp-design',
+          '|', 'insertImage'
+        ],
+        removeformatPasted: true,
+        fullscreenable: false
     });
 
     var elementId = $(this).data('id');
@@ -187,7 +189,7 @@ $(document).on('click', '.sidebar-second .link-get', function(event) {
         dataType: 'json',
         success: function(response) {
             console.log(response);
-            $('.note-editable').first().html(response['text']);
+            $('#editor').trumbowyg('html', response['text']);
         },
         error: function(response) {
             console.log(response);
