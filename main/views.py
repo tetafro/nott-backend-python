@@ -98,12 +98,19 @@ def ajax_note(request, note_id=None):
     # Create note
     if request.method == 'POST':
         data = QueryDict(request.body).dict()
-        notepad = Notepad.objects.get(id=data['id'])
-        note = Note(title=data['title'], notepad=notepad)
-        note.save()
+        try:
+            notepad = Notepad.objects.get(id=data['id'])
+        #except ObjectDoesNotExist:
+        except Notepad.DoesNotExist:
+            response = {'error': 'Notepad not found on server.'}
+            status_code = 400
+        else:
+            note = Note(title=data['title'], notepad=notepad)
+            note.save()
+            response = {'id': note.id}
+            status_code = 201
 
-        response = {'id': note.id}
-        return HttpResponse(json.dumps(response), status=201, content_type="application/json")
+        return HttpResponse(json.dumps(response), status=status_code, content_type="application/json")
     
     # Get note's content
     if request.method == 'GET':

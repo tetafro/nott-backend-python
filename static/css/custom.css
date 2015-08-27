@@ -115,7 +115,8 @@ span.link-del {
     left: 500px;
     bottom: 0;
     right: 0;
-    overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-y: hidden;
     height: auto;
     width: auto;
 }
@@ -124,20 +125,21 @@ span.link-del {
 /* ---------------------------------------*/
 /* WYSIWYG editor                         */
 /* ---------------------------------------*/
-.note-editor {
-    /*height: -moz-calc(100% - 50px);
-    height: -webkit-calc(100% - 50px);
-    height: calc(100% - 50px);*/
-}
-
-.note-editable {
-    font-family: 'Ubuntu Mono';
-    font-size: 14px;
+#editor-block {
     height: 100%;
 }
 
-.main .row {
-    padding: 15px;
+#editor {
+    height: -moz-calc(100% - 80px);
+    height: -webkit-calc(100% - 80px);
+    height: calc(100% - 80px);
+    font-family: 'Ubuntu Mono';
+    font-size: 14px;
+}   
+
+.trumbowyg-box {
+    width: 100%;
+    margin: 0px;
 }
 
 
