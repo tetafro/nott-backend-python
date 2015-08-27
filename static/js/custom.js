@@ -1,6 +1,26 @@
 // baseUrl = 'http://nott.tk';
 baseUrl = 'http://notes.lily.local:8080';
 
+
+// ----------------------------------------------
+// MAIN                                         -
+// ----------------------------------------------
+$(document).ready(function() {
+    // Load WYSIWYG editor
+    $('#editor').trumbowyg({
+        btns: [
+          'viewHTML',
+          '|', 'formatting',
+          '|', 'btnGrp-design',
+          '|', 'insertImage'
+        ],
+        btnsAdd: ['foreColor'],
+        removeformatPasted: true,
+        fullscreenable: false
+    });
+});
+
+
 // ----------------------------------------------
 // HELPERS                                      -
 // ----------------------------------------------
@@ -55,6 +75,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
 
 // ----------------------------------------------
 // CRUD                                         -
@@ -162,20 +183,9 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
 });
 
 
-// Read note's content (load Trumbowyg with text in it)
+// Read note's content
 $(document).on('click', '.sidebar-second .link-get', function(event) {
     $('#editor-block').show();
-    $('#editor').trumbowyg({
-        btns: [
-          'viewHTML',
-          '|', 'formatting',
-          '|', 'btnGrp-design',
-          '|', 'insertImage'
-        ],
-        btnsAdd: ['foreColor'],
-        removeformatPasted: true,
-        fullscreenable: false
-    });
 
     var elementId = $(this).data('id');
     var elementType = 'note';
@@ -190,6 +200,8 @@ $(document).on('click', '.sidebar-second .link-get', function(event) {
         dataType: 'json',
         success: function(response) {
             console.log(response);
+            // Need to clear editor explicitly if response text is empty string
+            $('#editor').trumbowyg('empty');
             $('#editor').trumbowyg('html', response['text']);
         },
         error: function(response) {

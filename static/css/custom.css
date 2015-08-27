@@ -14,7 +14,7 @@
     border-right: 1px solid #eee;
     position: fixed;
     overflow-x: hidden;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
     top: 52px;
     left: 0px;
     bottom: 0;
@@ -28,7 +28,7 @@
     border-right: 1px solid #eee;
     position: fixed;
     overflow-x: hidden;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
     top: 52px;
     left: 250px;
     bottom: 0;

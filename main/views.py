@@ -50,10 +50,24 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
+@csrf_exempt
+def test(request):
+    try:
+        notepad = Notepad(user=request.user, title='')
+        notepad.save()
+        return HttpResponse('Clear', status=200)
+    except Exception:
+        return HttpResponse('Error', status=200)
+
+
 @login_required
 def ajax_notepad(request, notepad_id=None):
     if notepad_id is not None:
-        notepad = Notepad.objects.get(id=notepad_id)
+        try:
+            notepad = Notepad.objects.get(id=notepad_id)
+        except Notepad.DoesNotExist:
+            response = {'error': 'Notepad not found on server'}
+            return HttpResponse(json.dumps(response), status=400)
 
     # Create notepad
     if request.method == 'POST':
@@ -100,9 +114,8 @@ def ajax_note(request, note_id=None):
         data = QueryDict(request.body).dict()
         try:
             notepad = Notepad.objects.get(id=data['id'])
-        #except ObjectDoesNotExist:
         except Notepad.DoesNotExist:
-            response = {'error': 'Notepad not found on server.'}
+            response = {'error': 'Notepad not found on server'}
             status_code = 400
         else:
             note = Note(title=data['title'], notepad=notepad)
