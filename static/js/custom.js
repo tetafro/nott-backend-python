@@ -172,6 +172,7 @@ $(document).on('click', '.sidebar-second .link-get', function(event) {
           '|', 'btnGrp-design',
           '|', 'insertImage'
         ],
+        btnsAdd: ['foreColor'],
         removeformatPasted: true,
         fullscreenable: false
     });
