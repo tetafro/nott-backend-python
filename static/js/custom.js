@@ -92,7 +92,7 @@ function createItem(elementType) {
 
     var elementTitle = $(sideBar+' input[name="title"]').val();
     if (elementTitle == '') {
-        console.log('Error: title cannot be empty');
+        displayFlash('error', 'Error: title cannot be empty');
         return;
     }
 
