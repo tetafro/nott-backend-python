@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
     <title>Notes</title>
     {% load staticfiles %}
-    <link rel="shortcut icon" href="{% static 'icon.png' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/trumbowyg.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/trumbowyg-colors.min.css' %}">
@@ -36,8 +36,13 @@
 </div>
 
 <!-- Error/info message -->
-<div id="flash-message" class="flash-overlay">
+<div id="flash-message" class="overlay">
     <h3><span class="label"></span></h3>
+</div>
+
+<!-- AJAX load icon -->
+<div id="ajax-load-icon" class="overlay">
+    <img src="{% static 'images/ajax-loader.gif' %}">
 </div>
 
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>

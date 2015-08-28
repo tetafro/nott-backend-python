@@ -45,7 +45,9 @@ def user_auth(request):
 
 @login_required
 def index(request):
-    context = {}
+    notepads = request.user.notepads.all().order_by('title')
+    
+    context = {'notepads': notepads}
     return render(request, 'main/index.html', context)
 
 
@@ -87,7 +89,7 @@ def ajax_notepad(request, notepad_id=None):
 
         # Get JSON with all notes of active notepad
         if request.method == 'GET':
-            notes = notepad.notes.all()
+            notes = notepad.notes.all().order_by('title')
 
             notes_dict = {}
             for note in notes:

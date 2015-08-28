@@ -10,15 +10,23 @@ $(document).ready(function() {
     $('#editor').trumbowyg({
         btns: [
           'viewHTML',
-          '|', 'formatting',
-          '|', 'btnGrp-design',
-          '|', 'insertImage'
+          '|', 'btnGrp-design'
         ],
         btnsAdd: ['foreColor'],
         removeformatPasted: true,
         fullscreenable: false
     });
 });
+
+// Show loading icon on each AJAX query
+var $loaderIcon = $('#ajax-load-icon').hide();
+$(document)
+  .ajaxStart(function () {
+    $loaderIcon.show();
+  })
+  .ajaxStop(function () {
+    $loaderIcon.hide();
+  });
 
 
 // ----------------------------------------------
@@ -148,7 +156,7 @@ $(document).on('keypress', '.sidebar-second input[name="title"]', function(event
 
 // Read notepad's content (list of notes)
 $(document).on('click', '.sidebar-first .link-get', function(event) {
-    $('#btn-save').disabled = true;
+    $('#btn-save').prop('disabled', true);
 
     var elementId = $(this).data('id');
     var elementType = 'notepad';
@@ -183,8 +191,8 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
 
 // Read note's content
 $(document).on('click', '.sidebar-second .link-get', function(event) {
-    $('#editor-block').css({"visibility":"visibile"});
-    $('#btn-save').disabled = false;
+    $('#editor-block').css({"visibility":"visible"});
+    $('#btn-save').prop('disabled', true);
 
     var elementId = $(this).data('id');
     var elementType = 'note';
@@ -236,6 +244,12 @@ $(document).on('click', '#modal-edit-submit', function(event) {
     var elementType = $('#modal-edit-type').val();
     var elementTitle = $('#modal-edit-title').val();
 
+    if (elementTitle == '') {
+        $('#modal-edit').modal('hide');
+        displayFlash('error', 'Error: title cannot be empty');
+        return;
+    }
+
     if (elementType == 'notepad') {
         var url = baseUrl + '/ajax/notepad/' + elementId;
     }
@@ -247,6 +261,7 @@ $(document).on('click', '#modal-edit-submit', function(event) {
         beforeSend: function(response, settings) {
             csrftoken = getCookie('csrftoken');
             response.setRequestHeader("X-CSRFToken", csrftoken);
+
         },
         url: url,
         type: 'PUT',
@@ -258,6 +273,7 @@ $(document).on('click', '#modal-edit-submit', function(event) {
         },
         error: function(response) {
             console.log(response);
+            $('#modal-edit').modal('hide');
             var errorMessage = $.parseJSON(response.responseText)['error'];
             displayFlash('error', errorMessage);
         }

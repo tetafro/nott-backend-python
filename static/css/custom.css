@@ -144,9 +144,9 @@ span.link-del {
 
 
 /* ---------------------------------------*/
-/* Flash messages                         */
+/* Overlay objects                        */
 /* ---------------------------------------*/
-.flash-overlay {
+.overlay {
     display: none;
     position: fixed;
     bottom: 50%;
@@ -168,5 +168,4 @@ span.link-del {
 /* ---------------------------------------*/
 .page {
     padding: 100px;
-    
 }

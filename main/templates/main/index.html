@@ -7,7 +7,7 @@
 <div class="sidebar-first">
     <h4>Notepads</h4>
     <ul class="nav nav-sidebar">
-        {% for notepad in user.notepads.all %}
+        {% for notepad in notepads %}
         <li>
             <a href="#" class="link-get" data-id="{{notepad.id}}" data-type="notepad">
                 {{notepad.title}}
