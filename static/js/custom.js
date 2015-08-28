@@ -33,6 +33,23 @@ $(document)
 // HELPERS                                      -
 // ----------------------------------------------
 
+// Get cookie value by name
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 // Display error in fadein/fadeout box in the center of the screen
 function displayFlash(status, text) {
     var $block = $('#flash-message');
@@ -52,36 +69,34 @@ function displayFlash(status, text) {
 // Template for list item in side panel
 function makeListItem(id, type, title) {
     var li =
-    '<li>' +
-        '<a href="#" class="link-get" data-id="' + id + '" data-type="' + type + '">' +
-            title +
-        '</a>' +
-        '<span class="link-edit">' +
-            '<i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit" data-type="' + type + '" data-id="' + id + '"></i>' +
-        '</span>' +
-        '<span class="link-del">' +
-            '<i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del" data-type="' + type + '" data-id="' + id + '"></i>' +
-        '</span>' +
-    '</li>';
+        '<li>' +
+            '<a href="#" class="link-get" data-id="' + id + '" data-type="' + type + '">' +
+                title +
+            '</a>' +
+            '<span class="link-edit">' +
+                '<i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit" data-type="' + type + '" data-id="' + id + '"></i>' +
+            '</span>' +
+            '<span class="link-del">' +
+                '<i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del" data-type="' + type + '" data-id="' + id + '"></i>' +
+            '</span>' +
+        '</li>';
 
     return li;
 }
 
-// Get cookie value by name
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
+// Template for input form for child notepad creation
+function makeForm(id) {
+    var form =
+        '<form>' +
+            '<div class="form-group">' +
+                '<input type="text" name="title" class="form-control input-sm" placeholder="New notepad">' +
+                '<span class="link-add" data-type="notepad" data-parent-id="' + id + '">' +
+                    '<i class="glyphicon glyphicon-plus text-primary"></i>' +
+                '</span>' +
+            '</div>' +
+        '</form>';
+
+    return form;
 }
 
 
@@ -192,7 +207,7 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
 // Read note's content
 $(document).on('click', '.sidebar-second .link-get', function(event) {
     $('#editor-block').css({"visibility":"visible"});
-    $('#btn-save').prop('disabled', true);
+    $('#btn-save').prop('disabled', false);
 
     var elementId = $(this).data('id');
     var elementType = 'note';
@@ -343,4 +358,20 @@ $(document).on('click', '#modal-del-submit', function(event) {
             displayFlash('error', errorMessage);
         }
     });
+});
+
+
+// ----------------------------------------------
+// INTERFACE                                    -
+// ----------------------------------------------
+
+// Make new input form for creating child notepad
+$(document).on('click', '.link-add-child' function {
+    var parentId = $(this).data('id');
+    var newForm = makeForm(parentId);
+    var $listItem = $(this).closest('li');
+
+    $(sideBar+' ul').append(newElement);
+    $(sideBar+' form').find('input').val('');
+
 });

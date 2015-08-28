@@ -49,6 +49,10 @@
     padding-right: 10px;
 }
 
+.nav-sidebar > li.child > a {
+    padding-left: 40;
+}
+
 .nav-sidebar > li:hover > a {
     background-color: #eee;
     color: #23527c;
@@ -69,6 +73,7 @@
 }
 
 span.link-add,
+span.link-add-child,
 span.link-edit,
 span.link-del {
     float: right;
@@ -80,6 +85,11 @@ span.link-del {
 span.link-add {
     right: 12px;
     top: 5px;
+}
+
+span.link-add-child {
+    right: 69px;
+    top: 10px;
 }
 
 span.link-edit {

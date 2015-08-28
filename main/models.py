@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 class Notepad(models.Model):
     title = models.CharField(max_length=32)
     user = models.ForeignKey(User, related_name='notepads')
+    parent = models.ForeignKey('self', related_name='children')
     
     def clean(self):
         if self.title == '':

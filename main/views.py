@@ -45,8 +45,11 @@ def user_auth(request):
 
 @login_required
 def index(request):
-    notepads = request.user.notepads.all().order_by('title')
-    
+    notepads = list(request.user.notepads.filter(parent=None).order_by('title'))
+    for i, notepad in enumerate(notepads):
+        if notepad.children:
+            notepads = notepads[:i] + list(notepad.children.order_by('title')) + notepads[i:]
+
     context = {'notepads': notepads}
     return render(request, 'main/index.html', context)
 
