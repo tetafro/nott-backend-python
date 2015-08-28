@@ -148,9 +148,7 @@ $(document).on('keypress', '.sidebar-second input[name="title"]', function(event
 
 // Read notepad's content (list of notes)
 $(document).on('click', '.sidebar-first .link-get', function(event) {
-    // Hide and clean textarea if no note selected
-    $('#editor-block').hide();
-    $('.note-editable').first().html('');
+    $('#btn-save').disabled = true;
 
     var elementId = $(this).data('id');
     var elementType = 'notepad';
@@ -185,7 +183,8 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
 
 // Read note's content
 $(document).on('click', '.sidebar-second .link-get', function(event) {
-    $('#editor-block').show();
+    $('#editor-block').css({"visibility":"visibile"});
+    $('#btn-save').disabled = false;
 
     var elementId = $(this).data('id');
     var elementType = 'note';
