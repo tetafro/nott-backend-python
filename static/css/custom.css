@@ -49,8 +49,14 @@
     padding-right: 10px;
 }
 
+.nav-sidebar > form {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+
 .nav-sidebar > li.child > a {
-    padding-left: 40;
+    padding-left: 40px;
 }
 
 .nav-sidebar > li:hover > a {
@@ -104,13 +110,14 @@ span.link-del {
 
 /* Show buttons on row hover */
 .form-group:hover > span.link-add,
+.nav-sidebar > li:hover > span.link-add-child,
 .nav-sidebar > li:hover > span.link-edit,
 .nav-sidebar > li:hover > span.link-del,
 /* Don't hide buttons of active elements */
 .form-group > input:focus + span.link-add,
+.nav-sidebar > .active > span.link-add-child,
 .nav-sidebar > .active > span.link-edit,
-.nav-sidebar > .active > span.link-del
- {
+.nav-sidebar > .active > span.link-del {
     display: inline;
     cursor: pointer;
 }

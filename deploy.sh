@@ -57,6 +57,8 @@ else
             # baseUrl in JS script
             sed -i 's/^baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
             sed -i 's/^\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
+            # JS debug
+            sed -i 's/console\.log/\/\/ console\.log/' $js_custom
             # Debug mode in Django setting
             sed -i 's/^DEBUG = True/DEBUG = False/' $django_settings
             # Django CSRF key
@@ -76,6 +78,8 @@ else
             # baseUrl in JS script
             sed -i 's/^\/\/ baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
             sed -i 's/^baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
+            # JS debug
+            sed -i 's/\/\/ console\.log/console\.log/' $js_custom
             # Debug mode in Django setting
             sed -i 's/^DEBUG = False/DEBUG = True/' $django_settings
             # Django CSRF key

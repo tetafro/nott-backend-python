@@ -8,29 +8,29 @@
     <h4>Notepads</h4>
     <ul class="nav nav-sidebar">
         {% for notepad in notepads %}
-        <li{% if notepad.parent is not None %} class="child"{% endif %}>
-            <a href="#" class="link-get" data-id="{{notepad.id}}" data-type="notepad">
+        <li{% if notepad.parent_id != 1 %} class="child"{% endif %} data-type="notepad" data-id="{{notepad.id}}">
+            <a href="#" class="link-get">
                 {{notepad.title}}
             </a>
-            {% if notepad.parent is None %}
-            <span class="link-add-child" data-id="{{notepad.id}}">
+            {% if notepad.parent_id == 1 %}
+            <span class="link-add-child">
                 <i class="glyphicon glyphicon-plus text-primary"></i>
             </span>
             {% endif %}
             <span class="link-edit">
-                <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit" data-type="notepad" data-id="{{notepad.id}}"></i>
+                <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit"></i>
             </span>
             <span class="link-del">
-                <i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del" data-type="notepad" data-id="{{notepad.id}}"></i>
+                <i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del"></i>
             </span>
         </li>
         {% endfor %}
     </ul>
     <!-- New notepad -->
     <form>
-        <div class="form-group">
-            <input type="text" name="title" class="form-control input-sm" placeholder="New notepad">
-            <span class="link-add" data-type="notepad">
+        <div class="form-group" data-type="notepad">
+            <input type="text" name="title" class="form-control input-sm" placeholder="New notepad" autocomplete="off">
+            <span class="link-add">
                 <i class="glyphicon glyphicon-plus text-primary"></i>
             </span>
         </div>
@@ -44,10 +44,10 @@
     </ul>
     <!-- New note -->
     <form>
-        <div class="form-group">
-            <input type="text" name="title" class="form-control input-sm" placeholder="New note" disabled>
+        <div class="form-group" data-type="note">
+            <input type="text" name="title" class="form-control input-sm" placeholder="New note" disabled autocomplete="off">
             <span class="link-add" data-type="note">
-                <i class="glyphicon glyphicon-plus text-primary" data-type="note"></i>
+                <i class="glyphicon glyphicon-plus text-primary"></i>
             </span>
         </div>
     </form>
@@ -78,7 +78,7 @@
                 <h4 class="modal-title">Enter new title</h4>
             </div>
             <div class="modal-body">
-                <input id="modal-edit-title" name="title" type="text" class="form-control">
+                <input id="modal-edit-title" name="title" type="text" class="form-control" autocomplete="off">
                 <input id="modal-edit-id" name="id" type="hidden" value="0">
                 <input id="modal-edit-type" name="type" type="hidden" value="0">
             </div>

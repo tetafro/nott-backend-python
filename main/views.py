@@ -45,10 +45,15 @@ def user_auth(request):
 
 @login_required
 def index(request):
-    notepads = list(request.user.notepads.filter(parent=None).order_by('title'))
-    for i, notepad in enumerate(notepads):
+    root_notepads = list(request.user.notepads.filter(parent_id=1).exclude(id=1).order_by('title'))
+    notepads = []
+
+    for i, notepad in enumerate(root_notepads):
+        notepads += [notepad]
         if notepad.children:
-            notepads = notepads[:i] + list(notepad.children.order_by('title')) + notepads[i:]
+            notepads += list(notepad.children.order_by('title'))
+
+    print([notepad.title for notepad in notepads])
 
     context = {'notepads': notepads}
     return render(request, 'main/index.html', context)
@@ -66,6 +71,8 @@ def ajax_notepad(request, notepad_id=None):
     if request.method == 'POST':
         data = QueryDict(request.body).dict()
         notepad = Notepad(title=data['title'], user=request.user)
+        if 'parent' in data.keys():
+            notepad.parent_id = data['parent']
 
         try:
             notepad.full_clean()

@@ -18,16 +18,6 @@ $(document).ready(function() {
     });
 });
 
-// Show loading icon on each AJAX query
-var $loaderIcon = $('#ajax-load-icon').hide();
-$(document)
-  .ajaxStart(function () {
-    $loaderIcon.show();
-  })
-  .ajaxStop(function () {
-    $loaderIcon.hide();
-  });
-
 
 // ----------------------------------------------
 // HELPERS                                      -
@@ -67,17 +57,30 @@ function displayFlash(status, text) {
 }
 
 // Template for list item in side panel
-function makeListItem(id, type, title) {
+function makeListItem(id, type, title, isChild) {
+    if (type == 'notepad' && !isChild) {
+        var addChild =
+            '<span class="link-add-child">' +
+                '<i class="glyphicon glyphicon-plus text-primary"></i>' +
+            '</span>';
+        var childClass = 'class="child" ';
+    }
+    else {
+        addChild = '';
+        childClass = '';
+    }
+
     var li =
-        '<li>' +
-            '<a href="#" class="link-get" data-id="' + id + '" data-type="' + type + '">' +
+        '<li ' + childClass + 'data-type="' + type + '" data-id="' + id + '">' +
+            '<a href="#" class="link-get">' +
                 title +
             '</a>' +
+            addChild +
             '<span class="link-edit">' +
-                '<i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit" data-type="' + type + '" data-id="' + id + '"></i>' +
+                '<i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit"></i>' +
             '</span>' +
             '<span class="link-del">' +
-                '<i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del" data-type="' + type + '" data-id="' + id + '"></i>' +
+                '<i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del"></i>' +
             '</span>' +
         '</li>';
 
@@ -88,9 +91,9 @@ function makeListItem(id, type, title) {
 function makeForm(id) {
     var form =
         '<form>' +
-            '<div class="form-group">' +
+            '<div class="form-group" data-type="notepad" data-parent-id="' + id + '">' +
                 '<input type="text" name="title" class="form-control input-sm" placeholder="New notepad">' +
-                '<span class="link-add" data-type="notepad" data-parent-id="' + id + '">' +
+                '<span class="link-add">' +
                     '<i class="glyphicon glyphicon-plus text-primary"></i>' +
                 '</span>' +
             '</div>' +
@@ -105,7 +108,7 @@ function makeForm(id) {
 // ----------------------------------------------
 
 // Create notepad/note
-function createItem(elementType) {
+function createItem($form, elementType) {
     if (elementType == 'notepad') {
         var sideBar = '.sidebar-first';
     }
@@ -113,18 +116,24 @@ function createItem(elementType) {
         var sideBar = '.sidebar-second';
     }
 
-    var elementTitle = $(sideBar+' input[name="title"]').val();
+    var elementTitle = $form.find('input').val();
     if (elementTitle == '') {
-        displayFlash('error', 'Error: title cannot be empty');
+        displayFlash('error', 'Title cannot be empty');
         return;
     }
 
     var url = baseUrl + '/ajax/' + elementType + '/';
     if (elementType == 'notepad') {
         var data = {title: elementTitle};
+        var parentId = $form.find('.form-group').data('parent-id');
+
+        // Creating child notepad
+        if (parentId) {
+            data['parent'] = parentId;
+        }
     }
     else if (elementType == 'note') {
-        var notepadId = $('.sidebar-first li.active a').data('id');
+        var notepadId = $('.sidebar-first li.active').data('id');
         var data = {title: elementTitle, id: notepadId};
     }
 
@@ -140,8 +149,15 @@ function createItem(elementType) {
         success: function(response) {
             console.log(response);
             var newElement = makeListItem(response['id'], elementType, elementTitle);
-            $(sideBar+' ul').append(newElement);
-            $(sideBar+' form').find('input').val('');
+            if (parentId) {
+                $('.nav-sidebar > form').remove();
+                $(newElement).insertAfter($(sideBar+' ul li[data-id="'+parentId+'"]'));
+
+            }
+            else {
+                $(sideBar+' ul').append(newElement);
+            }
+            $form.find('input').val('');
         },
         error: function(response) {
             console.log(response);
@@ -152,19 +168,21 @@ function createItem(elementType) {
 };
 // Create item on clicking plus icon or on pressing enter key
 $(document).on('click', '.sidebar-first .link-add', function(event) {
-    createItem('notepad');
+    createItem($(this).closest('form'), 'notepad');
 });
 $(document).on('click', '.sidebar-second .link-add', function(event) {
-    createItem('note');
+    createItem($(this).closest('form'), 'note');
 });
 $(document).on('keypress', '.sidebar-first input[name="title"]', function(event) {
     if (event.keyCode == 13) {
-        createItem('notepad');
+        event.preventDefault();
+        createItem($(this).closest('form'), 'notepad');
     }
 });
 $(document).on('keypress', '.sidebar-second input[name="title"]', function(event) {
     if (event.keyCode == 13) {
-        createItem('note');
+        event.preventDefault();
+        createItem($(this).closest('form'), 'note');
     }
 });
 
@@ -173,7 +191,7 @@ $(document).on('keypress', '.sidebar-second input[name="title"]', function(event
 $(document).on('click', '.sidebar-first .link-get', function(event) {
     $('#btn-save').prop('disabled', true);
 
-    var elementId = $(this).data('id');
+    var elementId = $(this).closest('li').data('id');
     var elementType = 'notepad';
     var $listItem = $(this).parent();
     var url = baseUrl + '/ajax/notepad/' + elementId;
@@ -209,9 +227,9 @@ $(document).on('click', '.sidebar-second .link-get', function(event) {
     $('#editor-block').css({"visibility":"visible"});
     $('#btn-save').prop('disabled', false);
 
-    var elementId = $(this).data('id');
+    var elementId = $(this).closest('li').data('id');
     var elementType = 'note';
-    var url = baseUrl + '/ajax/note/' + elementId;
+    var url = baseUrl + '/ajax/note/' + elementId;1
     var $listItem = $(this).parent();
     $listItem.siblings().removeClass('active');
     $listItem.addClass('active');
@@ -237,15 +255,16 @@ $(document).on('click', '.sidebar-second .link-get', function(event) {
 
 // Put notepad/note info into hidden inputs on modal show
 function populateModal(event) {
-    var elementId = $(event.relatedTarget).data('id');
-    var elementType = $(event.relatedTarget).data('type');
+    var $listItem = $(event.relatedTarget).closest('li');
+    var elementId = $listItem.data('id');
+    var elementType = $listItem.data('type');
 
     $(event.currentTarget).find('input[name="id"]').val(elementId);
     $(event.currentTarget).find('input[name="type"]').val(elementType);
 
     // Only for edit
     if ($(event.currentTarget).find('input[name="title"]').length) {
-        var elementTitle = $('.nav-sidebar a[data-id="'+elementId+'"][data-type="'+elementType+'"]').html().trim();
+        var elementTitle = $listItem.find('a').html().trim();
         $(event.currentTarget).find('input[name="title"]').val(elementTitle);
     }
 };
@@ -298,7 +317,7 @@ $(document).on('click', '#modal-edit-submit', function(event) {
 
 // Save note's content
 $(document).on('click', '#btn-save', function(event) {
-    var noteId = $('.sidebar-second li.active a').data('id');
+    var noteId = $('.sidebar-second li.active').data('id');
     var text = $('#editor').trumbowyg('html');
 
     $.ajax({
@@ -329,6 +348,8 @@ $(document).on('click', '#modal-del-submit', function(event) {
 
     if (elementType == 'notepad') {
         var url = baseUrl + '/ajax/notepad/' + elementId;
+        // If there were opened form for deleted notepad
+        var $childFormButton = $('span[data-parent-id="'+elementId+'"]');
     }
     else if (elementType == 'note') {
         var url = baseUrl + '/ajax/note/' + elementId;
@@ -351,6 +372,11 @@ $(document).on('click', '#modal-del-submit', function(event) {
                 $('.sidebar-second ul').html('');
             }
             $listItem.remove();
+
+            // If there were opened form for deleted notepad
+            if ($childFormButton) {
+                $childFormButton.closest('form').remove();
+            }
         },
         error: function(response) {
             console.log(response);
@@ -365,13 +391,38 @@ $(document).on('click', '#modal-del-submit', function(event) {
 // INTERFACE                                    -
 // ----------------------------------------------
 
+
+// Show loading icon on each AJAX query
+var $loaderIcon = $('#ajax-load-icon').hide();
+$(document)
+  .ajaxStart(function () {
+    $loaderIcon.show();
+  })
+  .ajaxStop(function () {
+    $loaderIcon.hide();
+  });
+
+
 // Make new input form for creating child notepad
-$(document).on('click', '.link-add-child' function {
-    var parentId = $(this).data('id');
-    var newForm = makeForm(parentId);
+$(document).on('click', '.link-add-child', function() {
     var $listItem = $(this).closest('li');
+    var parentId = $listItem.data('id');
 
-    $(sideBar+' ul').append(newElement);
-    $(sideBar+' form').find('input').val('');
+    // Check if there already is an additional form
+    var $prevForm = $('.sidebar-first > .nav-sidebar > form');
+    if ($prevForm.length) {
+        var prevId = $prevForm.find('.form-group').data('parent-id');
+    }
+    else {
+        prevId = null;
+    }
 
+    // If it is second click on same element
+    // then only hide previous form
+    $('.nav-sidebar > form').remove();
+    if (parentId != prevId || !prevId) {
+        console.log('ding!');
+        var newForm = makeForm(parentId);
+        $(newForm).insertAfter($listItem);
+    }
 });
