@@ -21,7 +21,7 @@ from .forms import NotepadForm, NoteForm
 
 # Other helpers
 import json
-from html.parser import HTMLParser
+from html import escape
 
 
 def user_auth(request):
@@ -77,7 +77,7 @@ def ajax_notepad(request, notepad_id=None):
     # Create notepad
     if request.method == 'POST':
         data = QueryDict(request.body).dict()
-        notepad = Notepad(title=HTMLParser(data['title']), user=request.user)
+        notepad = Notepad(title=escape(data['title']), user=request.user)
         if 'parent' in data.keys():
             notepad.parent_id = data['parent']
 
@@ -118,7 +118,7 @@ def ajax_notepad(request, notepad_id=None):
         # Rename notepad
         if request.method == 'PUT':
             data = QueryDict(request.body).dict()
-            notepad.title = HTMLParser(data['title'])
+            notepad.title = escape(data['title'])
 
             try:
                 notepad.full_clean()
@@ -162,7 +162,7 @@ def ajax_note(request, note_id=None):
             response = {'error': 'Notepad not found on server'}
             return HttpResponse(json.dumps(response), status=400)
 
-        note = Note(title=HTMLParser(data['title']), notepad=notepad)
+        note = Note(title=escape(data['title']), notepad=notepad)
 
         try:
             note.full_clean()
@@ -194,7 +194,7 @@ def ajax_note(request, note_id=None):
         if request.method == 'PUT':
             data = QueryDict(request.body).dict()
             if 'title' in data:
-                note.title = HTMLParser(data['title'])
+                note.title = escape(data['title'])
             if 'text' in data:
                 note.text = data['text']
 
