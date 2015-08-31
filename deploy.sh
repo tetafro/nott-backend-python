@@ -58,7 +58,7 @@ else
             sed -i 's/^baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
             sed -i 's/^\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
-            sed -i 's/console\.log/\/\/ console\.log/' $js_custom
+            sed -ri 's/^(\s*)console\.log/\1\/\/ console\.log/' $js_custom
             # Debug mode in Django setting
             sed -i 's/^DEBUG = True/DEBUG = False/' $django_settings
             # Django CSRF key
@@ -69,8 +69,6 @@ else
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$pro_db_pass\'',/' $django_settings
             # Allowed Django hosts
             sed -i 's/^ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \['\''.nott.tk'\'', '\''.nott.tk.'\''\]/' $django_settings
-
-
             
             echo 'The app is now in production mode' ;;
         # Go to development mode
@@ -79,7 +77,7 @@ else
             sed -i 's/^\/\/ baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
             sed -i 's/^baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
-            sed -i 's/\/\/ console\.log/console\.log/' $js_custom
+            sed -ri 's/^(\s*)\/\/ console\.log/\1console\.log/' $js_custom
             # Debug mode in Django setting
             sed -i 's/^DEBUG = False/DEBUG = True/' $django_settings
             # Django CSRF key
@@ -95,4 +93,3 @@ else
     esac
     exit 0
 fi
-

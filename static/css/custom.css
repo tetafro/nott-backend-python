@@ -160,9 +160,9 @@ span.link-del {
 }
 
 #editor {
-    height: -moz-calc(100% - 80px);
-    height: -webkit-calc(100% - 80px);
-    height: calc(100% - 80px);
+    height: -moz-calc(100% - 40px);
+    height: -webkit-calc(100% - 40px);
+    height: calc(100% - 40px);
     font-family: 'Ubuntu Mono';
     font-size: 14px;
 }   
@@ -172,10 +172,20 @@ span.link-del {
     margin: 0px;
 }
 
+#btn-save {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+}
+
 
 /* ---------------------------------------*/
 /* Userlist                               */
 /* ---------------------------------------*/
+
+.content {
+    padding: 50px 100px;
+}
 
 .usercard {
     padding: 0px;
@@ -193,10 +203,10 @@ span.link-del {
     position: absolute;
     top: 38px;
     width: 100%;
-    text-align: center;
 }
 
 .usercard > .middle > img {
+    font-size: 26px;
     width: 80px;
     height: 80px;
     border-radius: 40px;

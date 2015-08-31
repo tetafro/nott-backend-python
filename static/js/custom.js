@@ -9,8 +9,8 @@ $(document).ready(function() {
     // Load WYSIWYG editor
     $('#editor').trumbowyg({
         btns: [
-          'viewHTML',
-          '|', 'btnGrp-design'
+            'viewHTML',
+            ['bold', 'italic']
         ],
         btnsAdd: ['foreColor'],
         removeformatPasted: true,
@@ -118,9 +118,11 @@ function makeForm(id) {
 // Template for save button on editor's panel
 function makeSaveButton() {
     var button = 
-        '<li>' +
-            '<button type="button" class="trumbowyg-button-save" title="Save" tabindex="-1" style="background: #337ab7;">Save</button>' +
-        '</li>';
+        '<button id="btn-save" type="button" class="btn btn-sm btn-primary" title="Save">' +
+            '<i class="glyphicon glyphicon-ok"></i>' +
+        '</button>';
+
+    return button;
 }
 
 

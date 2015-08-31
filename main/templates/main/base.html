@@ -18,13 +18,18 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="/"><i class="glyphicon glyphicon-home"></i></a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li class="active">
-                    <a href="{% url 'logout' %}">Logout ({{user.email}})</a>
-                </li>
-            </ul>
-        </div>
+        <!-- Left -->
+        <ul class="nav navbar-nav">
+            <li>
+                <a href="{% url 'userlist' %}">Users</a>
+            </li>
+        </ul>
+        <!-- Right -->
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="{% url 'logout' %}">Logout ({{user.email}})</a>
+            </li>
+        </ul>
     </div>
 </nav>
 

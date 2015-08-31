@@ -2,22 +2,25 @@
 {% block content %}
 {% load static %}
 
-<h1>Users</h1>
+<div class="content">
 
-<hr>
+    <h1>Users</h1>
+    <hr>
 
-<div class="row">
-    {% for user in users %}
-    <div class="col-md-3 usercard">
-        <div class="upper">
-            <img src="">
+    <div class="row">
+        {% for user in users %}
+        <div class="col-md-3 usercard">
+            <div class="upper">
+                <img src="">
+            </div>
+            <div class="middle text-center">
+                <img src="{% get_static_prefix %}images/no_avatar.png">
+            </div>
+            <div class="lower text-center">{{user.username}}</div>
         </div>
-        <div class="middle">
-            <img src="{% get_static_prefix %}images/no_avatar.png">
-        </div>
-        <div class="lower">{{user.name}}</div>
+        {% endfor %}
+
     </div>
-    {% endfor %}
 
 </div>
 
