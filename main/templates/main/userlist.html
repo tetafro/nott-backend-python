@@ -8,12 +8,12 @@
 
 <div class="row">
     {% for user in users %}
-    <div class="col-md-2 usercard">
+    <div class="col-md-3 usercard">
         <div class="upper">
             <img src="">
         </div>
         <div class="middle">
-            <img src="{% get_media_prefix %}avatars/default.png">
+            <img src="{% get_static_prefix %}images/no_avatar.png">
         </div>
         <div class="lower">{{user.name}}</div>
     </div>

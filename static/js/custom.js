@@ -314,7 +314,7 @@ $(document).on('click', '#modal-edit-submit', function(event) {
         success: function(response) {
             console.log(response);
             $('#modal-edit').modal('hide');
-            $('a[data-type="'+elementType+'"][data-id="'+elementId+'"]').html(elementTitle);
+            $('li[data-type="'+elementType+'"][data-id="'+elementId+'"] > a').html(elementTitle);
         },
         error: function(response) {
             console.log(response);
@@ -378,7 +378,7 @@ $(document).on('click', '#modal-del-submit', function(event) {
             $('#modal-del').modal('hide');
             // If it was active notepad - hide right panel
             // Notes deleted automaticaly by Django (cascade delete)
-            $listItem = $('a[data-type="'+elementType+'"][data-id="'+elementId+'"]').parent();
+            $listItem = $('li[data-type="'+elementType+'"][data-id="'+elementId+'"]');
             if ($listItem.hasClass('active')) {
                 $('.sidebar-second ul').html('');
             }
