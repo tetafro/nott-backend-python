@@ -43,6 +43,16 @@ function getCookie(name) {
     return cookieValue;
 }
 
+// Escape/unescape HTML special characters
+function htmlEscape(html) {
+    var text = $('<div/>').text(html).html();
+    return text;
+}
+function htmlUnescape(text) {
+    var html = $('<div/>').html(text).text();
+    return html;
+}
+
 // Display error in fadein/fadeout box in the center of the screen
 function displayFlash(status, text) {
     var $block = $('#flash-message');
@@ -128,8 +138,13 @@ function createItem($form, elementType) {
     }
 
     var elementTitle = $form.find('input').val();
+
     if (elementTitle == '') {
         displayFlash('error', 'Title cannot be empty');
+        return;
+    }
+    if (elementTitle.length > 80) {
+        displayFlash('error', 'Title is too long');
         return;
     }
 
@@ -159,13 +174,13 @@ function createItem($form, elementType) {
         data: data,
         success: function(response) {
             console.log(response);
-            var newElement = makeListItem(response['id'], elementType, elementTitle);
             if (parentId) {
+                var newElement = makeListItem(response['id'], elementType, htmlEscape(elementTitle), true);
                 $('.nav-sidebar > form').remove();
                 $(newElement).insertAfter($(sideBar+' ul li[data-id="'+parentId+'"]'));
-
             }
             else {
+                newElement = makeListItem(response['id'], elementType, htmlEscape(elementTitle), false);
                 $(sideBar+' ul').append(newElement);
             }
             $form.find('input').val('');
@@ -220,7 +235,7 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
             $('.sidebar-second input[name="title"]').removeAttr('disabled');
             var itemsList = '';
             $.each(response['notes'], function(id, title) {
-                itemsList += makeListItem(id, 'note', title);
+                itemsList += makeListItem(id, 'note', title, false);
             });
             $('.sidebar-second ul').html(itemsList);
         },
@@ -275,7 +290,7 @@ function populateModal(event) {
 
     // Only for edit
     if ($(event.currentTarget).find('input[name="title"]').length) {
-        var elementTitle = $listItem.find('a').html().trim();
+        var elementTitle = htmlUnescape($listItem.find('a').html().trim());
         $(event.currentTarget).find('input[name="title"]').val(elementTitle);
     }
 };
@@ -292,6 +307,11 @@ $(document).on('click', '#modal-edit-submit', function(event) {
     if (elementTitle == '') {
         $('#modal-edit').modal('hide');
         displayFlash('error', 'Error: title cannot be empty');
+        return;
+    }
+    if (elementTitle.length > 80) {
+        $('#modal-edit').modal('hide');
+        displayFlash('error', 'Title is too long');
         return;
     }
 
@@ -314,7 +334,7 @@ $(document).on('click', '#modal-edit-submit', function(event) {
         success: function(response) {
             console.log(response);
             $('#modal-edit').modal('hide');
-            $('li[data-type="'+elementType+'"][data-id="'+elementId+'"] > a').html(elementTitle);
+            $('li[data-type="'+elementType+'"][data-id="'+elementId+'"] > a').html(htmlEscape(elementTitle));
         },
         error: function(response) {
             console.log(response);
