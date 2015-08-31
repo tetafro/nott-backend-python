@@ -16,6 +16,9 @@ $(document).ready(function() {
         removeformatPasted: true,
         fullscreenable: false
     });
+
+    var saveButton = makeSaveButton();
+    $('.trumbowyg-button-pane').append(saveButton);
 });
 
 
@@ -100,6 +103,14 @@ function makeForm(id) {
         '</form>';
 
     return form;
+}
+
+// Template for save button on editor's panel
+function makeSaveButton() {
+    var button = 
+        '<li>' +
+            '<button type="button" class="trumbowyg-button-save" title="Save" tabindex="-1" style="background: #337ab7;">Save</button>' +
+        '</li>';
 }
 
 

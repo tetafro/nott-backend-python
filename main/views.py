@@ -44,6 +44,12 @@ def user_auth(request):
 
 
 @login_required
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+
+@login_required
 def index(request):
     root_notepads = list(request.user.notepads.filter(parent_id=1).exclude(id=1).order_by('title'))
     notepads = []
@@ -53,16 +59,16 @@ def index(request):
         if notepad.children:
             notepads += list(notepad.children.order_by('title'))
 
-    print([notepad.title for notepad in notepads])
-
     context = {'notepads': notepads}
     return render(request, 'main/index.html', context)
 
 
 @login_required
-def user_logout(request):
-    logout(request)
-    return redirect('login')
+def userlist(request):
+    users = User.objects.all()
+
+    context = {'users': users}
+    return render(request, 'main/userlist.html', context)
 
 
 @login_required
