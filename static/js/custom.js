@@ -234,8 +234,8 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
             $listItem.addClass('active');
             $('.sidebar-second input[name="title"]').removeAttr('disabled');
             var itemsList = '';
-            $.each(response['notes'], function(id, title) {
-                itemsList += makeListItem(id, 'note', title, false);
+            $.each(response['notes'], function(index, note) {
+                itemsList += makeListItem(note['id'], 'note', note['title'], false);
             });
             $('.sidebar-second ul').html(itemsList);
         },
