@@ -107,13 +107,13 @@ def ajax_notepad(request, notepad_id=None):
         # Get JSON with all notes of active notepad
         if request.method == 'GET':
             notes = notepad.notes.all().order_by('title')
-
-            notes_dict = {}
+            
+            notes_list = []
             for note in notes:
-                notes_dict[note.id] = note.title
+                notes_list += [{'id': note.id, 'title': note.title}]
 
-            response = {'notes': notes_dict}
-            return HttpResponse(json.dumps(response), status=200, content_type="application/json")
+            response = {'notes': notes_list}
+            return HttpResponse(json.dumps(response, sort_keys=False), status=200, content_type="application/json")
 
         # Rename notepad
         if request.method == 'PUT':

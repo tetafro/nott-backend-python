@@ -229,8 +229,6 @@ $(document).on('click', '.sidebar-first .link-get', function(event) {
         type: 'GET',
         dataType: 'json',
         success: function(response) {
-            var csrftoken = getCookie('csrftoken');
-
             console.log(response);
             $listItem.siblings().removeClass('active');
             $listItem.addClass('active');
