@@ -55,8 +55,8 @@ else
         # Go to production mode
         pro)
             # baseUrl in JS script
-            sed -i 's/^baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
-            sed -i 's/^\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
+            sed -i 's/^var baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
+            sed -i 's/^\/\/ var baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
             sed -ri 's/^(\s*)console\.log/\1\/\/ console\.log/' $js_custom
             # Debug mode in Django setting
@@ -74,8 +74,8 @@ else
         # Go to development mode
         dev)
             # baseUrl in JS script
-            sed -i 's/^\/\/ baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
-            sed -i 's/^baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
+            sed -i 's/^\/\/ var baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
+            sed -i 's/^var baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
             sed -ri 's/^(\s*)\/\/ console\.log/\1console\.log/' $js_custom
             # Debug mode in Django setting
