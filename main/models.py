@@ -15,7 +15,7 @@ class Notepad(models.Model):
     title = models.CharField(max_length=80)
     user = models.ForeignKey(User, related_name='notepads')
     parent = models.ForeignKey('self', related_name='children', default=1)
-    
+
     def clean(self):
         if self.title == '':
             raise ValidationError('Title cannot be empty')
@@ -28,7 +28,7 @@ class Notepad(models.Model):
 
 class Note(models.Model):
     title = models.CharField(max_length=80)
-    text = models.TextField(blank = True)
+    text = models.TextField(blank=True)
     notepad = models.ForeignKey(Notepad, related_name='notes')
 
     def clean(self):

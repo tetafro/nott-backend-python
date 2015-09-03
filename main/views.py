@@ -17,28 +17,48 @@ from django.http import QueryDict
 # Models
 from django.contrib.auth.models import User
 from .models import Notepad, Note
-from .forms import NotepadForm, NoteForm
+# from .forms import UserRegisterForm, UserLoginForm
 
 # Other helpers
 import json
-from html import escape
 
 
 def user_auth(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return redirect('index')
+        email = request.POST.get('email')
+        # Register or login
+        is_reg = request.POST.get('reg')
+
+        error_message = ''
+
+        # Registration
+        if is_reg:
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                else:
+                    error_message = 'Account is blocked'
             else:
-                # TODO: display error: account blocked
-                return redirect('login')
+                error_message = 'Wrong username or password'
+        # Login
         else:
-            # TODO: display error: wrong username or password
+            try
+                User.objects.create_user(username, email, password)
+            except:
+                error_message = 'Registration error'
+            else:
+                user = authenticate(username=username, password=password)
+                login(request, user)
+
+        # Fail
+        if error_message:
             return redirect('login')
+        # Success
+        else:
+            return redirect('index')
 
     context = {}
     return render(request, 'main/auth.html', context)
@@ -52,10 +72,14 @@ def user_logout(request):
 
 @login_required
 def index(request):
-    root_notepads = list(request.user.notepads.filter(parent_id=1).exclude(id=1).order_by('title'))
+    root_notepads = list(request.user.notepads
+        .filter(parent_id=1)
+        .exclude(id=1)
+        .order_by('title')
+    )
     notepads = []
 
-    for i, notepad in enumerate(root_notepads):
+    for notepad in root_notepads:
         notepads += [notepad]
         if notepad.children:
             notepads += list(notepad.children.order_by('title'))
@@ -95,7 +119,11 @@ def ajax_notepad(request, notepad_id=None):
             return HttpResponse(json.dumps(response), status=400)
 
         response = {'id': notepad.id}
-        return HttpResponse(json.dumps(response), status=201, content_type="application/json")
+        return HttpResponse(
+            json.dumps(response),
+            status=201,
+            content_type="application/json"
+        )
 
     if notepad_id is not None:
         try:
@@ -107,13 +135,17 @@ def ajax_notepad(request, notepad_id=None):
         # Get JSON with all notes of active notepad
         if request.method == 'GET':
             notes = notepad.notes.all().order_by('title')
-            
+
             notes_list = []
             for note in notes:
                 notes_list += [{'id': note.id, 'title': note.title}]
 
             response = {'notes': notes_list}
-            return HttpResponse(json.dumps(response, sort_keys=False), status=200, content_type="application/json")
+            return HttpResponse(
+                json.dumps(response, sort_keys=False),
+                status=200,
+                content_type="application/json"
+            )
 
         # Rename notepad
         if request.method == 'PUT':
@@ -147,7 +179,10 @@ def ajax_notepad(request, notepad_id=None):
 
     else:
         response = {'error': 'Bad request'}
-        return HttpResponse(json.dumps(response), status=400)
+        return HttpResponse(
+            json.dumps(response),
+            status=400
+        )
 
 
 @login_required
@@ -178,7 +213,11 @@ def ajax_note(request, note_id=None):
             return HttpResponse(json.dumps(response), status=400)
 
         response = {'id': note.id}
-        return HttpResponse(json.dumps(response), status=201, content_type="application/json")
+        return HttpResponse(
+            json.dumps(response),
+            status=201,
+            content_type="application/json"
+        )
 
     if note_id is not None:
         note = Note.objects.get(id=note_id)
@@ -188,7 +227,11 @@ def ajax_note(request, note_id=None):
             text = note.text
 
             response = {'text': text}
-            return HttpResponse(json.dumps(response), status=200, content_type="application/json")
+            return HttpResponse(
+                json.dumps(response),
+                status=200,
+                content_type="application/json"
+            )
 
         # Rename note or save new text
         if request.method == 'PUT':
@@ -209,7 +252,10 @@ def ajax_note(request, note_id=None):
                 note.save()
             except IntegrityError as e:
                 response = {'error': 'Bad request'}
-                return HttpResponse(json.dumps(response), status=400)
+                return HttpResponse(
+                    json.dumps(response),
+                    status=400
+                )
 
             return HttpResponse('', status=204)
 
@@ -231,4 +277,3 @@ def ajax_note(request, note_id=None):
 @csrf_exempt
 def test(request):
     return HttpResponse('Hello, world :)', status=200)
-    

@@ -16,24 +16,44 @@
                 <input class="form-control" name="username" type="text" placeholder="Username">
             </div>
         </div>
-        <!-- <div class="form-group">
-            <div class="col-md-4 col-md-offset-4">
-                <input class="form-control" type="email" placeholder="E-mail">
-            </div>
-        </div> -->
         <div class="form-group">
             <div class="col-md-4 col-md-offset-4">
                 <input class="form-control" name="password" type="password" placeholder="Password">
             </div>
         </div>
-        <!-- <div class="form-group">
-            <div class="col-md-4 col-md-offset-4">
-                <input class="form-control" type="password" placeholder="Confirm password">
-            </div>
-        </div> -->
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
                 <input class="btn btn-block btn-primary" type="submit" value="Sign in">
+            </div>
+        </div>
+    </form>
+
+    <form class="form-horizontal" role="form" action="" method="POST">
+        {% csrf_token %}
+        <input class="form-control" name="reg" type="hidden" value=1>
+        <div class="form-group">
+            <div class="col-md-4 col-md-offset-4">
+                <input class="form-control" name="username" type="text" placeholder="Username">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4 col-md-offset-4">
+                <input class="form-control" type="email" placeholder="E-mail">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4 col-md-offset-4">
+                <input class="form-control" name="password" type="password" placeholder="Password">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-4 col-md-offset-4">
+                <input class="form-control" type="password" placeholder="Confirm password">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <input class="btn btn-block btn-primary" type="submit" value="Sign up">
             </div>
         </div>
     </form>
