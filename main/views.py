@@ -33,8 +33,20 @@ def user_auth(request):
 
         error_message = ''
 
+        print(username)
+        print(password)
+
         # Registration
         if is_reg:
+            try:
+                User.objects.create_user(username, email, password)
+            except:
+                error_message = 'Registration error'
+            else:
+                user = authenticate(username=username, password=password)
+                login(request, user)
+        # Login
+        else:
             user = authenticate(username=username, password=password)
             if user is not None:
                 if user.is_active:
@@ -43,15 +55,6 @@ def user_auth(request):
                     error_message = 'Account is blocked'
             else:
                 error_message = 'Wrong username or password'
-        # Login
-        else:
-            try:
-                User.objects.create_user(username, email, password)
-            except:
-                error_message = 'Registration error'
-            else:
-                user = authenticate(username=username, password=password)
-                login(request, user)
 
         # Fail
         if error_message:
