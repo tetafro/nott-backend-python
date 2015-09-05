@@ -256,10 +256,12 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
 
     var elementId = $(this).closest('li').data('id');
     var elementType = 'note';
+    var elementTitle = $(this).html();
     var url = baseUrl + '/ajax/note/' + elementId;
     var $listItem = $(this).parent();
     $listItem.siblings().removeClass('active');
     $listItem.addClass('active');
+    $('#editor-block > .nav-tabs > li > a').html(elementTitle);
 
     $.ajax({
         url: url,
@@ -298,12 +300,12 @@ $(document).on('show.bs.modal', '#modal-edit', populateModal);
 $(document).on('show.bs.modal', '#modal-del', populateModal);
 
 // Rename notepad/note (via modal window)
-$(document).on('click', '#modal-edit-submit', function (event) {
+function renameItem(event) {
     var elementId = $('#modal-edit-id').val();
     var elementType = $('#modal-edit-type').val();
     var elementTitle = $('#modal-edit-title').val();
 
-    if (elementTitle) {
+    if (!elementTitle) {
         $('#modal-edit').modal('hide');
         displayFlash('error', 'Error: title cannot be empty');
         return;
@@ -341,6 +343,13 @@ $(document).on('click', '#modal-edit-submit', function (event) {
             displayFlash('error', errorMessage);
         }
     });
+}
+$(document).on('click', '#modal-edit-submit', renameItem);
+$(document).on('keypress', '#modal-edit-title', function (event) {
+    if (event.keyCode == 13) {
+        event.preventDefault();
+        renameItem(event);
+    }
 });
 
 // Save note's content
@@ -392,11 +401,12 @@ $(document).on('click', '#modal-del-submit', function (event) {
         success: function (response) {
             console.log(response);
             $('#modal-del').modal('hide');
-            // If it was active notepad - hide right panel
+            // If it was active notepad - hide right panel and disable input
             // Notes deleted automaticaly by Django (cascade delete)
             var $listItem = $('li[data-type="' + elementType + '"][data-id="' + elementId + '"]');
             if ($listItem.hasClass('active')) {
                 $('.sidebar-second ul').html('');
+                $('.sidebar-second input[name="title"]').prop('disabled', true);
             }
             if (!$listItem.hasClass('child')) {
                 // Remove all children one by one
@@ -453,7 +463,6 @@ $(document).on('click', '.link-add-child', function () {
     // then only hide previous form
     $('.nav-sidebar > form').remove();
     if (parentId != prevId || !prevId) {
-        console.log('ding!');
         var newForm = makeForm(parentId);
         $(newForm).insertAfter($listItem);
     }

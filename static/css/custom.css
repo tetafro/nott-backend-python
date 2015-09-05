@@ -146,6 +146,14 @@ span.link-del {
 }
 
 /* WYSIWYG editor */
+#editor-block > .nav-tabs {
+    border-bottom: none;
+}
+
+#editor-block > .nav-tabs > li > a {
+    padding: 5px 10px;
+}
+
 #editor-block {
     position: fixed;
     top: 52px;

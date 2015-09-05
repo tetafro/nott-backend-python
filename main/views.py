@@ -45,7 +45,7 @@ def user_auth(request):
                 error_message = 'Wrong username or password'
         # Login
         else:
-            try
+            try:
                 User.objects.create_user(username, email, password)
             except:
                 error_message = 'Registration error'
