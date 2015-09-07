@@ -4,3 +4,4 @@ __pycache__/
 *.db
 /pass.ini
 .DS_Store
+/archive/
