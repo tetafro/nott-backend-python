@@ -57,7 +57,7 @@ def user_auth(request):
             return redirect('index')
 
     context = {}
-    return render(request, 'main/auth.html', context)
+    return render(request, 'web/auth.html', context)
 
 
 @login_required
@@ -81,7 +81,7 @@ def index(request):
             notepads += list(notepad.children.order_by('title'))
 
     context = {'notepads': notepads}
-    return render(request, 'main/index.html', context)
+    return render(request, 'web/index.html', context)
 
 
 @login_required
@@ -89,4 +89,4 @@ def userlist(request):
     users = User.objects.all()
 
     context = {'users': users}
-    return render(request, 'main/userlist.html', context)
+    return render(request, 'web/userlist.html', context)
