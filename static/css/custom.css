@@ -157,7 +157,15 @@ span.link-del {
 }
 
 #editor-block > .nav-tabs > li > a {
-    padding: 5px 10px;
+    padding: 5px 18px 5px 10px;
+}
+
+#editor-block > .nav-tabs > li > a > .tab-close {
+    display: inline;
+    position: absolute;
+    top: 0px;
+    right: 5px;
+    cursor: pointer;
 }
 
 #editor-block {

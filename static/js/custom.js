@@ -261,7 +261,6 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
     var $listItem = $(this).parent();
     $listItem.siblings().removeClass('active');
     $listItem.addClass('active');
-    $('#editor-block > .nav-tabs > li > a').html(elementTitle);
 
     $.ajax({
         url: url,
@@ -269,6 +268,8 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
         dataType: 'json',
         success: function (response) {
             console.log(response);
+            $('#editor-block > .nav-tabs > li > a').html(elementTitle +
+                 '<div class="tab-close">&times;</div>');
             // Need to clear editor explicitly if response text is empty string
             $('#editor').trumbowyg('empty');
             $('#editor').trumbowyg('html', response.text);
