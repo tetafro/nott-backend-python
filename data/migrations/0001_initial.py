@@ -15,22 +15,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Note',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, auto_created=True, verbose_name='ID')),
-                ('title', models.CharField(max_length=32)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(max_length=80)),
                 ('text', models.TextField(blank=True)),
             ],
         ),
         migrations.CreateModel(
             name='Notepad',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, auto_created=True, verbose_name='ID')),
-                ('title', models.CharField(max_length=32)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='notepads')),
+                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(max_length=80)),
+                ('parent', models.ForeignKey(to='data.Notepad', related_name='children', default=1)),
+                ('user', models.ForeignKey(related_name='notepads', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(
             model_name='note',
             name='notepad',
-            field=models.ForeignKey(to='main.Notepad', related_name='notes'),
+            field=models.ForeignKey(related_name='notes', to='data.Notepad'),
         ),
     ]
