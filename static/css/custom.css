@@ -188,11 +188,11 @@ span.link-del {
     height: 100%;
 }
 
-#editor {
+.editor {
     height: -moz-calc(100% - 70px);
     height: -webkit-calc(100% - 70px);
     height: calc(100% - 70px);
-    font-family: 'Ubuntu Mono';
+    font-family: 'Hack';
     font-size: 14px;
 }   
 
@@ -201,7 +201,7 @@ span.link-del {
     margin: 0px;
 }
 
-#btn-save {
+.btn-save {
     position: absolute;
     top: 2px;
     right: 2px;

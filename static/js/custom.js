@@ -102,20 +102,39 @@ function makeForm(id) {
 // Template for save button on editor's panel
 function makeSaveButton() {
     var button =
-        '<button id="btn-save" type="button" class="btn btn-sm btn-primary" title="Save">' +
+        '<button type="button" class="btn btn-sm btn-primary btn-save" title="Save">' +
             '<i class="glyphicon glyphicon-ok"></i>' +
         '</button>';
 
     return button;
 }
 
-// ----------------------------------------------
-// MAIN                                         -
-// ----------------------------------------------
+// Template for tab header for editor area
+// (new tab is always active)
+function makeTabHead(tabId) {
+    var tabHead =
+        '<li class="active" data-id=' + tabId + '>' +
+            '<a href="#tab-' + tabId + '" role="tab" data-toggle="tab"></a>' +
+        '</li>';
 
-$(document).ready(function () {
+    return tabHead;
+}
+
+// Template for tab content for editor area
+// (new tab is always active)
+function makeTab(tabId) {
+    var tab =
+        '<div role="tabpanel" class="tab-pane active" id="tab-' + tabId + '">' +
+            '<div id="editor-' + tabId + '" class="editor"></div>' +
+        '</div>';
+
+    return tab;
+}
+
+// Initialize WYSIWYG editor on specified tab
+function newEditor(tabId) {
     // Load WYSIWYG editor
-    $('#editor').trumbowyg({
+    $('#editor-'+tabId).trumbowyg({
         btns: [
             'viewHTML',
             ['bold', 'italic']
@@ -127,7 +146,8 @@ $(document).ready(function () {
 
     var saveButton = makeSaveButton();
     $('.trumbowyg-button-pane').append(saveButton);
-});
+};
+
 
 // ----------------------------------------------
 // CRUD                                         -
@@ -219,7 +239,7 @@ $(document).on('keypress', '.sidebar-second input[name="title"]', function (even
 
 // Read notepad's content (list of notes)
 $(document).on('click', '.sidebar-first .link-get', function (event) {
-    $('#btn-save').prop('disabled', true);
+    $('.btn-save').prop('disabled', true);
 
     var elementId = $(this).closest('li').data('id');
     var elementType = 'notepad';
@@ -252,7 +272,7 @@ $(document).on('click', '.sidebar-first .link-get', function (event) {
 // Read note's content
 $(document).on('click', '.sidebar-second .link-get', function (event) {
     $('#editor-block').css({visibility: 'visible'});
-    $('#btn-save').prop('disabled', false);
+    $('.btn-save').prop('disabled', false);
 
     var elementId = $(this).closest('li').data('id');
     var elementType = 'note';
@@ -262,17 +282,42 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
     $listItem.siblings().removeClass('active');
     $listItem.addClass('active');
 
+    // If tab for selected note is already exist
+    if ($('#tab-'+elementId).length > 0) {
+        // Activate tab
+        $('#editor-block > .nav-tabs > li').removeClass('active');
+        $('#editor-block > .tab-content > .tab-pane').removeClass('active');
+        $('#editor-block > .nav-tabs > li[data-id="'+elementId+'"]').addClass('active');
+        $('#tab-'+elementId).addClass('active');
+
+        return;
+    }
+
     $.ajax({
         url: url,
         type: 'GET',
         dataType: 'json',
         success: function (response) {
             console.log(response);
-            $('#editor-block > .nav-tabs > li > a').html(elementTitle +
+
+            // Make new tab
+            var newTabHead = makeTabHead(elementId);
+            var newTab = makeTab(elementId);
+
+            // Append new tab
+            $('#editor-block > .nav-tabs > li').removeClass('active');
+            $('#editor-block > .tab-content > .tab-pane').removeClass('active');
+            $('#editor-block > .nav-tabs').append(newTabHead);
+            $('#editor-block > .tab-content').append(newTab);
+            $('#editor-block > .nav-tabs > .active > a').html(elementTitle +
                  '<div class="tab-close">&times;</div>');
+
+            // Make editor for the tab
+            newEditor(elementId);
+
             // Need to clear editor explicitly if response text is empty string
-            $('#editor').trumbowyg('empty');
-            $('#editor').trumbowyg('html', response.text);
+            $('#editor-'+elementId).trumbowyg('empty');
+            $('#editor-'+elementId).trumbowyg('html', response.text);
         },
         error: function (response) {
             console.log(response);
@@ -354,7 +399,7 @@ $(document).on('keypress', '#modal-edit-title', function (event) {
 });
 
 // Save note's content
-$(document).on('click', '#btn-save', function (event) {
+$(document).on('click', '.btn-save', function (event) {
     var noteId = $('.sidebar-second li.active').data('id');
     var text = $('#editor').trumbowyg('html');
 
