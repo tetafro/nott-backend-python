@@ -327,6 +327,26 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
     });
 });
 
+// Close note's tab
+$(document).on('click', '.tab-close', function () {
+    var $tabHead = $(this).closest('li');
+    var elementId = $tabHead.data('id');
+    var $tab = $('#tab-'+elementId);
+
+    // Closing active tab
+    if ($tabHead.hasClass('active')) {
+        // Make first tab active
+        if ($tabHead.siblings().length > 0) {
+            $tabHead.siblings().first().addClass('active');
+            $tab.siblings().first().addClass('active');
+        }
+    }
+    // Destroy editor and remove tab
+    // $('#editor-'+elementId).trumbowyg('destroy');
+    $tabHead.remove();
+    $tab.remove();
+})
+
 // Put notepad/note info into hidden inputs on modal show
 function populateModal(event) {
     var $listItem = $(event.relatedTarget).closest('li');
