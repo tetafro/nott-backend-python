@@ -328,7 +328,7 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
 });
 
 // Close note's tab
-$(document).on('click', '.tab-close', function () {
+$(document).on('click', '.tab-close', function (event) {
     var $tabHead = $(this).closest('li');
     var elementId = $tabHead.data('id');
     var $tab = $('#tab-'+elementId);
@@ -342,10 +342,10 @@ $(document).on('click', '.tab-close', function () {
         }
     }
     // Destroy editor and remove tab
-    // $('#editor-'+elementId).trumbowyg('destroy');
+    $('#editor-'+elementId).trumbowyg('destroy');
     $tabHead.remove();
     $tab.remove();
-})
+});
 
 // Put notepad/note info into hidden inputs on modal show
 function populateModal(event) {
@@ -420,8 +420,8 @@ $(document).on('keypress', '#modal-edit-title', function (event) {
 
 // Save note's content
 $(document).on('click', '.btn-save', function (event) {
-    var noteId = $('.sidebar-second li.active').data('id');
-    var text = $('#editor').trumbowyg('html');
+    var noteId = $('#editor-block li.active').data('id');
+    var text = $('#editor-'+noteId).trumbowyg('html');
 
     $.ajax({
         beforeSend: function (response, settings) {
