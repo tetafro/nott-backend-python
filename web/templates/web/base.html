@@ -20,15 +20,21 @@
         </div>
         <!-- Left -->
         <ul class="nav navbar-nav">
-            <li>
-                <a href="{% url 'userlist' %}">Users</a>
-            </li>
+            {% block nav_notes %}
+            <li><a href="{% url 'index' %}">Notes</a></li>
+            {% endblock %}
+            {% block nav_userlist %}
+            <li><a href="{% url 'userlist' %}">Users</a></li>
+            {% endblock %}
         </ul>
         <!-- Right -->
         <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a href="{% url 'logout' %}">Logout ({{user.email}})</a>
-            </li>
+            {% if user.is_authenticated %}
+            {% block nav_profile %}
+            <li><a href="{% url 'profile' user_id=user.id %}">Profile</a></li>
+            {% endblock %}
+            <li><a href="{% url 'logout' %}">Logout ({{user.email}})</a></li>
+            {% endif %}
         </ul>
     </div>
 </nav>

@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^logout/$', views.user_logout, name='logout'),
     url(r'^$', views.index, name='index'),
     url(r'^users/$', views.userlist, name='userlist'),
+    url(r'^users/(?P<user_id>\d+)$', views.profile, name='profile'),
 ]

@@ -3,13 +3,16 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(User)
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, related_name='profile')
+    avatar = models.CharField(max_length=128, blank=True)
 
-#     avatar = models.CharField(max_length=128, blank = True)
-
-#     def __repr__(self):
-#         return('User ID%d' % self.id)
+    @property
+    def avatar_url(self):
+        return('/static/avatars/'+self.avatar)
+    
+    def __repr__(self):
+        return('User ID%d' % self.id)
 
 
 class Notepad(models.Model):

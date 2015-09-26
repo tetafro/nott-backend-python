@@ -1,7 +1,11 @@
 {% extends "web/base.html" %}
-{% block content %}
 {% load widget_tweaks %}
 
+{% block nav_notes %}
+<li class="active"><a href="{% url 'index' %}">Notes</a></li>
+{% endblock %}
+
+{% block content %}
 
 <!-- List of notepads -->
 <div class="sidebar-first">
@@ -12,6 +16,11 @@
             <a href="#" class="link-get">
                 {{notepad.title}}
             </a>
+            {% if notepad.children.all %}
+            <span class="expand">
+                <i class="glyphicon glyphicon-triangle-bottom text-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"></i>
+            </span>
+            {% endif %}
             {% if notepad.parent_id == 1 %}
             <span class="link-add-child">
                 <i class="glyphicon glyphicon-plus text-primary"></i>

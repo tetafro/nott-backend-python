@@ -1,8 +1,13 @@
 {% extends "web/base.html" %}
-{% block content %}
 {% load static %}
 
-<div class="content">
+{% block nav_userlist %}
+<li class="active"><a href="{% url 'userlist' %}">Users</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="content userlist">
 
     <h1>Users</h1>
     <hr>
@@ -14,9 +19,9 @@
                 <img src="">
             </div>
             <div class="middle text-center">
-                <img src="{% get_static_prefix %}images/no_avatar.png">
+                <img src="{{ user.profile.avatar_url }}">
             </div>
-            <div class="lower text-center">{{user.username}}</div>
+            <div class="lower text-center">{{ user.username }}</div>
         </div>
         {% endfor %}
 

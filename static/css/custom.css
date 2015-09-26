@@ -90,7 +90,8 @@
     padding-left: 40px;
 }
 
-.nav-sidebar > li:hover > a {
+.nav-sidebar > li:hover > a,
+.nav-sidebar > li.active > a {
     padding-right: 70px;
     background-color: #eee;
     color: #23527c;
@@ -137,19 +138,32 @@ span.link-del {
     top: 10px;
 }
 
+span.expand {
+    border: 1px solid black;
+    padding: 2px;
+    position: absolute;
+    top: 13px;
+    left: 5px;
+    font-size: 8px;
+}
+
 /* Show buttons on row hover */
 .form-group:hover > span.link-add,
 .nav-sidebar > li:hover > span.link-add-child,
 .nav-sidebar > li:hover > span.link-edit,
 .nav-sidebar > li:hover > span.link-del,
+.nav-sidebar > li:hover > span.expand,
 /* Don't hide buttons of active elements */
 .form-group > input:focus + span.link-add,
 .nav-sidebar > .active > span.link-add-child,
 .nav-sidebar > .active > span.link-edit,
-.nav-sidebar > .active > span.link-del {
+.nav-sidebar > .active > span.link-del,
+.nav-sidebar > .active > span.expand {
     display: inline;
     cursor: pointer;
 }
+
+
 
 /* WYSIWYG editor */
 #editor-block > .nav-tabs {
@@ -246,4 +260,14 @@ span.link-del {
     padding: 70px 10px 0px 10px;
     font-size: 20px;
     background-color: #f7f7f7;
+}
+
+
+/* ---------------------------------------*/
+/* User profile                           */
+/* ---------------------------------------*/
+
+.profile .avatar {
+    width: 180px;
+    height: 180px;
 }

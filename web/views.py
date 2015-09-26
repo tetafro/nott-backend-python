@@ -77,7 +77,7 @@ def index(request):
 
     for notepad in root_notepads:
         notepads += [notepad]
-        if notepad.children:
+        if notepad.children.all():
             notepads += list(notepad.children.order_by('title'))
 
     context = {'notepads': notepads}
@@ -90,3 +90,8 @@ def userlist(request):
 
     context = {'users': users}
     return render(request, 'web/userlist.html', context)
+
+@login_required
+def profile(request, user_id):
+    context = {}
+    return render(request, 'web/profile.html', context)
