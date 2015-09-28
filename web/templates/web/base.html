@@ -30,10 +30,22 @@
         <!-- Right -->
         <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-            {% block nav_profile %}
-            <li><a href="{% url 'profile' user_id=user.id %}">Profile</a></li>
-            {% endblock %}
-            <li><a href="{% url 'logout' %}">Logout ({{user.email}})</a></li>
+            <li id="navbar-profile" data-toggle="tooltip" data-title="">
+                <img class="avatar" src="{{ user.profile.avatar_url }}">
+            </li>
+            <div id="profile-menu-content" style="display:none;">
+                <div class="profile-menu">
+                    <div class="username">
+                        {{ user.username }}
+                    </div>
+                    <div class="profile">
+                        <a href="{% url 'profile' user_id=user.id %}">Profile</a>
+                    </div>
+                    <div class="logout">
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </div>
+            </div>
             {% endif %}
         </ul>
     </div>

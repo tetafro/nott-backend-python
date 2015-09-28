@@ -9,7 +9,11 @@ class UserProfile(models.Model):
 
     @property
     def avatar_url(self):
-        return('/static/avatars/'+self.avatar)
+        if self.avatar:
+            avatar = '/static/avatars/'+self.avatar
+        else:
+            avatar = '/static/images/no_avatar.png'
+        return(avatar)
     
     def __repr__(self):
         return('User ID%d' % self.id)

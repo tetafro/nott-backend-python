@@ -7,6 +7,43 @@
     border-radius: 0;
 }
 
+.navbar-inverse .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    margin: 5px;
+}
+
+.navbar-inverse .avatar:hover {
+    cursor: pointer;
+}
+
+.profile-menu {
+    width: 200px;
+    height: 100px;
+}
+
+.profile-menu .username {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 22px;
+}
+
+.profile-menu .profile {
+    position: absolute;
+    bottom: 20px;
+    right: 70px;
+    font-size: 14px;
+}
+
+.profile-menu .logout {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 14px;
+}
+
 /* Overlay objects */
 .overlay {
     display: none;
@@ -75,7 +112,7 @@
     border-bottom: 1px #ddd solid;
 }
 
-.nav-sidebar > li > a {
+.nav-sidebar li > a {
     padding-left: 20px;
     padding-right: 10px;
 }
@@ -85,21 +122,20 @@
     padding-right: 20px;
 }
 
-
-.nav-sidebar > li.child > a {
+.nav-sidebar .children-block > li > a {
     padding-left: 40px;
 }
 
-.nav-sidebar > li:hover > a,
-.nav-sidebar > li.active > a {
+.nav-sidebar li:hover > a,
+.nav-sidebar li.active > a {
     padding-right: 70px;
     background-color: #eee;
     color: #23527c;
 }
 
-.nav-sidebar > .active > a,
-.nav-sidebar > .active:hover > a,
-.nav-sidebar > .active > a:focus {
+.nav-sidebar .active > a,
+.nav-sidebar .active:hover > a,
+.nav-sidebar .active > a:focus {
     background-color: #e9e9e9;
 }
 
@@ -139,31 +175,28 @@ span.link-del {
 }
 
 span.expand {
-    border: 1px solid black;
-    padding: 2px;
+    padding: 14px 4px;
     position: absolute;
-    top: 13px;
-    left: 5px;
+    top: 0px;
+    left: 0px;
     font-size: 8px;
 }
 
 /* Show buttons on row hover */
 .form-group:hover > span.link-add,
-.nav-sidebar > li:hover > span.link-add-child,
-.nav-sidebar > li:hover > span.link-edit,
-.nav-sidebar > li:hover > span.link-del,
-.nav-sidebar > li:hover > span.expand,
+.nav-sidebar li:hover > span.link-add-child,
+.nav-sidebar li:hover > span.link-edit,
+.nav-sidebar li:hover > span.link-del,
+.nav-sidebar li:hover > span.expand,
 /* Don't hide buttons of active elements */
 .form-group > input:focus + span.link-add,
-.nav-sidebar > .active > span.link-add-child,
-.nav-sidebar > .active > span.link-edit,
-.nav-sidebar > .active > span.link-del,
-.nav-sidebar > .active > span.expand {
+.nav-sidebar .active > span.link-add-child,
+.nav-sidebar .active > span.link-edit,
+.nav-sidebar .active > span.link-del,
+.nav-sidebar .active > span.expand {
     display: inline;
     cursor: pointer;
 }
-
-
 
 /* WYSIWYG editor */
 #editor-block > .nav-tabs {

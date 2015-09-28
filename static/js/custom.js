@@ -252,7 +252,7 @@ $(document).on('click', '.sidebar-first .link-get', function (event) {
         dataType: 'json',
         success: function (response) {
             console.log(response);
-            $listItem.siblings().removeClass('active');
+            $('.sidebar-first li').removeClass('active');
             $listItem.addClass('active');
             $('.sidebar-second input[name="title"]').removeAttr('disabled');
             var itemsList = '';
@@ -532,4 +532,27 @@ $(document).on('click', '.link-add-child', function () {
         var newForm = makeForm(parentId);
         $(newForm).insertAfter($listItem);
     }
+});
+
+// Tooltip in top navbar
+$(document).ready(function () {
+    $content = $('#profile-menu-content');
+    if ($content.length > 0) {
+        $('#navbar-profile').attr('data-title', $content.html());
+        $content.remove(); 
+    }
+
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger: 'click',
+        placement: 'bottom',
+        html: true
+    });
+});
+
+// Change icon for expand/collapse children notepads
+$(document).on('click', '.expand', function () {
+    $icon = $(this).children().first()
+    $icon
+        .toggleClass('glyphicon-triangle-bottom')
+        .toggleClass('glyphicon-triangle-right');
 });

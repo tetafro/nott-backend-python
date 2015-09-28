@@ -77,7 +77,7 @@ def index(request):
 
     for notepad in root_notepads:
         notepads += [notepad]
-        if notepad.children.all():
+        if notepad.children.count():
             notepads += list(notepad.children.order_by('title'))
 
     context = {'notepads': notepads}

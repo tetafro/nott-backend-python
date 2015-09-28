@@ -1,5 +1,6 @@
 {% extends "web/base.html" %}
 {% load widget_tweaks %}
+{% load filters %}
 
 {% block nav_notes %}
 <li class="active"><a href="{% url 'index' %}">Notes</a></li>
@@ -12,13 +13,21 @@
     <h4>Notepads</h4>
     <ul class="nav nav-sidebar">
         {% for notepad in notepads %}
-        <li{% if notepad.parent_id != 1 %} class="child"{% endif %} data-type="notepad" data-id="{{notepad.id}}">
+
+        {% with previous_notepad=notepads|previous:forloop.counter0 %}
+        {% with next_notepad=notepads|next:forloop.counter0 %}
+
+        {% if previous_notepad.parent_id == 1 and notepad.parent_id != 1 %}
+        <ul id="children-{{ previous_notepad.id }}" class="nav children-block collapse">
+        {% endif %}
+
+        <li data-type="notepad" data-id="{{ notepad.id }}">
             <a href="#" class="link-get">
-                {{notepad.title}}
+                {{ notepad.title }}
             </a>
-            {% if notepad.children.all %}
-            <span class="expand">
-                <i class="glyphicon glyphicon-triangle-bottom text-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"></i>
+            {% if notepad.children.count %}
+            <span class="expand" data-toggle="collapse" data-target="#children-{{ notepad.id }}" aria-expanded="false">
+                <i class="glyphicon glyphicon-triangle-right text-primary"></i>
             </span>
             {% endif %}
             {% if notepad.parent_id == 1 %}
@@ -33,6 +42,14 @@
                 <i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del"></i>
             </span>
         </li>
+
+        {% if notepad.parent_id != 1 and next_notepad.parent_id == 1 %}
+        </ul>
+        {% endif %}
+
+        {% endwith %}
+        {% endwith %}
+
         {% endfor %}
     </ul>
     <!-- New notepad -->
