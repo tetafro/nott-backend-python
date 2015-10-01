@@ -261,6 +261,7 @@ span.expand {
 
 .content {
     padding: 50px 100px;
+    color: #333;
 }
 
 .usercard {
@@ -269,32 +270,35 @@ span.expand {
     border: 1px solid #ddd;
 }
 
-.usercard > .upper {
-    height: 80px;
-    border-bottom: 1px solid #ddd;
-    background-color: #aaa;
-}
-
-.usercard > .middle {
+.usercard > .image-block {
     position: absolute;
-    top: 38px;
+    top: 15px;
     width: 100%;
+    text-align: center;
 }
 
-.usercard > .middle > img {
+.usercard > .image-block img {
+    width: 110px;
+    height: 110px;
+    border-radius: 55px;
+}
+
+.usercard > .username-block {
+    position: absolute;
+    top: 130px;
+    width: 100%;
+    text-align: center;
     font-size: 26px;
-    width: 80px;
-    height: 80px;
-    border-radius: 40px;
 }
 
-.usercard > .lower {
-    height: 118px;
-    padding: 70px 10px 0px 10px;
-    font-size: 20px;
-    background-color: #f7f7f7;
+.usercard > .stat-block {
+    position: absolute;
+    top: 165px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
 }
-
 
 /* ---------------------------------------*/
 /* User profile                           */

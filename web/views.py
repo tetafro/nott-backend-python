@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 # Models
 from django.contrib.auth.models import User
 from data.models import Notepad, Note
-
+from django.db.models import Count
 
 def user_auth(request):
     if request.method == 'POST':
@@ -90,6 +90,7 @@ def userlist(request):
 
     context = {'users': users}
     return render(request, 'web/userlist.html', context)
+
 
 @login_required
 def profile(request, user_id):

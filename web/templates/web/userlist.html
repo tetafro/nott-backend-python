@@ -14,14 +14,20 @@
 
     <div class="row">
         {% for user in users %}
-        <div class="col-md-3 usercard">
-            <div class="upper">
-                <img src="">
+        <div class="col-md-2 usercard">
+            <div class="image-block">
+                <a href="#">
+                    <img src="{{ user.profile.avatar_url }}">
+                </a>
             </div>
-            <div class="middle text-center">
-                <img src="{{ user.profile.avatar_url }}">
+            <div class="username-block">
+                <a href="#">{{ user.username }}</a>
             </div>
-            <div class="lower text-center">{{ user.username }}</div>
+            <div class="stat-block">
+                <span>notepads: X</span>
+                <span>|</span>
+                <span>notes: X</span>
+            </div>
         </div>
         {% endfor %}
 
