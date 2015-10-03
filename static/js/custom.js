@@ -35,16 +35,24 @@ function htmlUnescape(text) {
 // Display error in fadein/fadeout box in the center of the screen
 function displayFlash(status, text) {
     var $block = $('#flash-message');
+    var timeout;
     if (status == 'error') {
         $block.find('span').removeClass('label-primary').addClass('label-danger');
         text = text || 'Error';
+        timeout = 3000;
     } else if (status == 'info') {
         $block.find('span').removeClass('label-danger').addClass('label-primary');
         text = text || 'Success';
+        timeout = 500;
     }
     $block.find('span').html(text);
 
-    $block.fadeIn(300).delay(500).fadeOut(300);
+    // Hide automatically
+    // There also is a function below for closing on button press
+    $block.fadeIn(300);
+    setTimeout(function() {
+        $block.fadeOut(300);
+    }, timeout);
 }
 
 // Template for list item in side panel
@@ -393,13 +401,13 @@ function renameItem(event) {
         beforeSend: function (response, settings) {
             csrftoken = getCookie('csrftoken');
             response.setRequestHeader('X-CSRFToken', csrftoken);
+            $('#modal-edit').modal('hide');
         },
         url: url,
         type: 'PUT',
         data: {title: elementTitle},
         success: function (response) {
             console.log(response);
-            $('#modal-edit').modal('hide');
             $('li[data-type="' + elementType + '"][data-id="' + elementId + '"] > a').html(htmlEscape(elementTitle));
         },
         error: function (response) {
@@ -459,14 +467,14 @@ $(document).on('click', '#modal-del-submit', function (event) {
 
     $.ajax({
         beforeSend: function (response, settings) {
-            csrftoken = getCookie('csrftoken');
-            response.setRequestHeader('X-CSRFToken', csrftoken);
+            // csrftoken = getCookie('csrftoken');
+            // response.setRequestHeader('X-CSRFToken', csrftoken);
+            $('#modal-del').modal('hide');
         },
         url: url,
         type: 'DELETE',
         success: function (response) {
             console.log(response);
-            $('#modal-del').modal('hide');
             // If it was active notepad - hide right panel and disable input
             // Notes deleted automaticaly by Django (cascade delete)
             var $listItem = $('li[data-type="' + elementType + '"][data-id="' + elementId + '"]');
@@ -534,21 +542,6 @@ $(document).on('click', '.link-add-child', function () {
     }
 });
 
-// Tooltip in top navbar
-$(document).ready(function () {
-    $content = $('#profile-menu-content');
-    if ($content.length > 0) {
-        $('#navbar-profile').attr('data-title', $content.html());
-        $content.remove(); 
-    }
-
-    $('[data-toggle="tooltip"]').tooltip({
-        trigger: 'click',
-        placement: 'bottom',
-        html: true
-    });
-});
-
 // Change icon for expand/collapse children notepads
 $(document).on('click', '.expand', function () {
     $icon = $(this).children().first()
@@ -556,3 +549,9 @@ $(document).on('click', '.expand', function () {
         .toggleClass('glyphicon-triangle-bottom')
         .toggleClass('glyphicon-triangle-right');
 });
+
+// Close button for flash messages
+$(document).on('click', '.flash-close', function () {
+    var $block = $('#flash-message');
+    $block.fadeOut(300);
+})

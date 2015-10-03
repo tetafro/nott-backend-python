@@ -23,6 +23,10 @@ import json
 
 @login_required
 def notepad(request, notepad_id=None):
+    """
+    Full CRUD for working with notepads
+    """
+
     # Create notepad
     if request.method == 'POST':
         data = QueryDict(request.body).dict()
@@ -112,6 +116,10 @@ def notepad(request, notepad_id=None):
 
 @login_required
 def note(request, note_id=None):
+    """
+    Full CRUD for working with notes
+    """
+
     # Create note
     if request.method == 'POST':
         data = QueryDict(request.body).dict()
@@ -197,3 +205,13 @@ def note(request, note_id=None):
     else:
         response = {'error': 'Bad request'}
         return HttpResponse(json.dumps(response), status=400)
+
+
+@csrf_exempt
+def csrf_failure(request, reason=""):
+    """
+    Custom error for missing CSRF token
+    """
+    
+    response = {'error': 'CSRF is missing'}
+    return HttpResponse(json.dumps(response), status=403)

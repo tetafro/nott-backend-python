@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from data.models import Notepad, Note
 from django.db.models import Count
 
+
 def user_auth(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -87,6 +88,10 @@ def index(request):
 @login_required
 def userlist(request):
     users = User.objects.all()
+    # Attach notepads and notes count for each user
+    for user in users:
+        user.notepads_count = user.notepads.count()
+        user.notes_count = User.objects.filter(notepads__notes__isnull=False).count()
 
     context = {'users': users}
     return render(request, 'web/userlist.html', context)
@@ -94,5 +99,26 @@ def userlist(request):
 
 @login_required
 def profile(request, user_id):
+    user = request.user
+    # Attach notepads and notes count for the user
+    user.notepads_count = user.notepads.count()
+    user.notes_count = User.objects.filter(notepads__notes__isnull=False).count()
+
     context = {}
     return render(request, 'web/profile.html', context)
+
+
+@login_required
+def profile_edit(request, user_id):
+    if user_id != int(request.user.id):
+        # TODO: display forbidden error
+        return redirect('profile', user_id=user_id)
+
+    user = request.user
+    # Attach notepads and notes count for the user
+    user.notepads_count = user.notepads.count()
+    user.notes_count = User.objects.filter(notepads__notes__isnull=False).count()
+
+    context = {}
+    return render(request, 'web/profile_edit.html', context)
+    

@@ -26,28 +26,23 @@
             {% block nav_userlist %}
             <li><a href="{% url 'userlist' %}">Users</a></li>
             {% endblock %}
-        </ul>
-        <!-- Right -->
-        <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-            <li id="navbar-profile" data-toggle="tooltip" data-title="">
-                <img class="avatar" src="{{ user.profile.avatar_url }}">
-            </li>
-            <div id="profile-menu-content" style="display:none;">
-                <div class="profile-menu">
-                    <div class="username">
-                        {{ user.username }}
-                    </div>
-                    <div class="profile">
-                        <a href="{% url 'profile' user_id=user.id %}">Profile</a>
-                    </div>
-                    <div class="logout">
-                        <a href="{% url 'logout' %}">Logout</a>
-                    </div>
-                </div>
-            </div>
+            {% block nav_profile %}
+            <li><a href="{% url 'profile' user_id=user.id %}">Profile</a></li>
+            {% endblock %}
             {% endif %}
         </ul>
+        <!-- Right -->
+        {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <button role="button" type="submit" class="btn btn-link logout">Logout</button>
+                </li>
+            </ul>
+        </form>
+        {% endif %}
     </div>
 </nav>
 
@@ -60,13 +55,18 @@
 
 <!-- Error/info message -->
 <div id="flash-message" class="overlay">
-    <h3><span class="label"></span></h3>
+    <h3><span class="label"></span>
+    <small>
+        <i class="glyphicon glyphicon-remove flash-close" ></i>
+    </small>
+  </h3>
 </div>
 
 <!-- AJAX load icon -->
 <div id="ajax-load-icon" class="overlay">
     <img src="{% static 'images/ajax-loader.gif' %}">
 </div>
+
 
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>

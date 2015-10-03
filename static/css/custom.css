@@ -18,30 +18,12 @@
     cursor: pointer;
 }
 
-.profile-menu {
-    width: 200px;
-    height: 100px;
+.logout {
+    padding: 13px;
 }
 
-.profile-menu .username {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    font-size: 22px;
-}
-
-.profile-menu .profile {
-    position: absolute;
-    bottom: 20px;
-    right: 70px;
-    font-size: 14px;
-}
-
-.profile-menu .logout {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    font-size: 14px;
+.logout:hover {
+    text-decoration: none;
 }
 
 /* Overlay objects */
@@ -51,6 +33,24 @@
     bottom: 50%;
     left: 50%;
     z-index: 10;
+}
+
+/* Close button for flash message */
+#flash-message .label {
+    padding-right: 35px;
+}
+
+.flash-close {
+    position: absolute;
+    padding: 7px 0px 6px 6px;
+    top: 21px;
+    right: 6px;
+    border-left: 1px solid #fff;
+    color: #fff;
+}
+
+.flash-close:hover {
+    cursor: pointer;
 }
 
 /* Modal dialogs */
@@ -262,42 +262,6 @@ span.expand {
 .content {
     padding: 50px 100px;
     color: #333;
-}
-
-.usercard {
-    padding: 0px;
-    height: 200px;
-    border: 1px solid #ddd;
-}
-
-.usercard > .image-block {
-    position: absolute;
-    top: 15px;
-    width: 100%;
-    text-align: center;
-}
-
-.usercard > .image-block img {
-    width: 110px;
-    height: 110px;
-    border-radius: 55px;
-}
-
-.usercard > .username-block {
-    position: absolute;
-    top: 130px;
-    width: 100%;
-    text-align: center;
-    font-size: 26px;
-}
-
-.usercard > .stat-block {
-    position: absolute;
-    top: 165px;
-    width: 100%;
-    text-align: center;
-    font-size: 14px;
-    color: #666;
 }
 
 /* ---------------------------------------*/

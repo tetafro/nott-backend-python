@@ -36,6 +36,9 @@ ROOT_URLCONF = 'notes.urls'
 LOGIN_URL = 'web.views.user_auth'
 LOGOUT_URL = 'web.views.user_logout'
 
+# View function to handle CSRF failures
+CSRF_FAILURE_VIEW = 'ajax.views.csrf_failure'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

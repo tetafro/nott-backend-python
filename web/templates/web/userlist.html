@@ -10,28 +10,30 @@
 <div class="content userlist">
 
     <h1>Users</h1>
-    <hr>
 
-    <div class="row">
-        {% for user in users %}
-        <div class="col-md-2 usercard">
-            <div class="image-block">
-                <a href="#">
-                    <img src="{{ user.profile.avatar_url }}">
-                </a>
-            </div>
-            <div class="username-block">
-                <a href="#">{{ user.username }}</a>
-            </div>
-            <div class="stat-block">
-                <span>notepads: X</span>
-                <span>|</span>
-                <span>notes: X</span>
-            </div>
-        </div>
-        {% endfor %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="col-md-4">Login</th>
+                <th class="col-md-2 text-center">Last seen</th>
+                <th class="col-md-2 text-center">Registered</th>
+                <th class="col-md-2 text-center">Notepads</th>
+                <th class="col-md-2 text-center">Notes</th>
+            </tr>
+        </thead>
 
-    </div>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td><a href="{{ user.id }}">{{ user.username }}</a></td>
+                <td class="text-center">{{ user.last_login|date:'d b Y' }}</td>
+                <td class="text-center">{{ user.date_joined|date:'d b Y' }}</td>
+                <td class="text-center">{{ user.notepads_count }}</td>
+                <td class="text-center">{{ user.notes_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 </div>
 
