@@ -10,7 +10,7 @@
     <h1>{{ user.username }}</h1>
 
     <form class="form-horizontal" role="form" action="" method="post" enctype=multipart/form-data>
-        <div class="col-md-2">
+        <div class="col-md-2 avatar-block">
             <img class="avatar" src="{{ user.profile.avatar_url }}">
         </div>
         <div class="col-md-10">
@@ -19,6 +19,14 @@
                 <div class="col-md-3">
                     <p class="form-control-static">
                         {{ user.email }}
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">Avatar:</label>
+                <div class="col-md-3">
+                    <p class="form-control-static">
+                        {{ user.profile.avatar }}
                     </p>
                 </div>
             </div>
@@ -52,6 +60,11 @@
                     <p class="form-control-static">
                         {{ user.last_login|date:'d.m.Y' }}
                     </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2">
+                    <a href="{% url 'profile_edit' user_id=user.id %}" class="btn btn-primary col-md-2">Edit</a>
                 </div>
             </div>
         </div>

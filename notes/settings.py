@@ -31,7 +31,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'notes.urls'
-    
+
 # Auth URLs
 LOGIN_URL = 'web.views.user_auth'
 LOGOUT_URL = 'web.views.user_logout'

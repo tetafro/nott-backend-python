@@ -1,9 +1,8 @@
 # Main
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 
 # Validation exceptions
+# TODO: user these
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import IntegrityError
 
@@ -14,7 +13,9 @@ from django.contrib.auth.decorators import login_required
 # Models
 from django.contrib.auth.models import User
 from data.models import Notepad, Note
-from django.db.models import Count
+
+# Forms
+from data.forms import UserForm, UserProfileForm
 
 
 def user_auth(request):
@@ -69,10 +70,11 @@ def user_logout(request):
 
 @login_required
 def index(request):
-    root_notepads = list(request.user.notepads
-        .filter(parent_id=1)
-        .exclude(id=1)
-        .order_by('title')
+    root_notepads = list(
+        request.user.notepads \
+                    .filter(parent_id=1) \
+                    .exclude(id=1) \
+                    .order_by('title')
     )
     notepads = []
 
@@ -91,7 +93,9 @@ def userlist(request):
     # Attach notepads and notes count for each user
     for user in users:
         user.notepads_count = user.notepads.count()
-        user.notes_count = User.objects.filter(notepads__notes__isnull=False).count()
+        user.notes_count = User.objects \
+                               .filter(notepads__notes__isnull=False) \
+                               .count()
 
     context = {'users': users}
     return render(request, 'web/userlist.html', context)
@@ -99,10 +103,13 @@ def userlist(request):
 
 @login_required
 def profile(request, user_id):
+    # TODO: make possible to view any user
     user = request.user
     # Attach notepads and notes count for the user
     user.notepads_count = user.notepads.count()
-    user.notes_count = User.objects.filter(notepads__notes__isnull=False).count()
+    user.notes_count = User.objects \
+                           .filter(notepads__notes__isnull=False) \
+                           .count()
 
     context = {}
     return render(request, 'web/profile.html', context)
@@ -110,15 +117,35 @@ def profile(request, user_id):
 
 @login_required
 def profile_edit(request, user_id):
-    if user_id != int(request.user.id):
+    if int(user_id) != request.user.id:
         # TODO: display forbidden error
         return redirect('profile', user_id=user_id)
 
     user = request.user
     # Attach notepads and notes count for the user
     user.notepads_count = user.notepads.count()
-    user.notes_count = User.objects.filter(notepads__notes__isnull=False).count()
+    user.notes_count = User.objects \
+                           .filter(notepads__notes__isnull=False) \
+                           .count()
 
-    context = {}
+    if request.method == 'POST':
+        form_user = UserForm(request.POST, instance=user)
+        form_profile = UserProfileForm(request.POST,
+                                       request.FILES,
+                                       instance=user.profile)
+
+        if form_user.is_valid() and form_profile.is_valid():
+            form_user.save()
+            form_profile.save()
+        else:
+            # TODO: return error
+            pass
+            
+    form_user = UserForm(instance=user)
+    form_profile = UserProfileForm(instance=user.profile)
+
+    context = {
+        'form_user': form_user,
+        'form_profile': form_profile
+    }
     return render(request, 'web/profile_edit.html', context)
-    

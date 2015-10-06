@@ -25,7 +25,7 @@
         <tbody>
             {% for user in users %}
             <tr>
-                <td><a href="{{ user.id }}">{{ user.username }}</a></td>
+                <td><a href="{% url 'profile' user_id=user.id %}">{{ user.username }}</a></td>
                 <td class="text-center">{{ user.last_login|date:'d b Y' }}</td>
                 <td class="text-center">{{ user.date_joined|date:'d b Y' }}</td>
                 <td class="text-center">{{ user.notepads_count }}</td>
