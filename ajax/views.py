@@ -71,10 +71,13 @@ def notepad_create(request):
     if 'parent' in data.keys():
         notepad.parent_id = data['parent']
 
+    print(type(notepad.parent))
+
     try:
         notepad.full_clean()
     except ValidationError as e:
-        error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
+        error_message = str(e)
+        # ', '.join(e.message_dict[NON_FIELD_ERRORS])
         response = {'error': error_message}
         return response, 400
 
@@ -86,6 +89,7 @@ def notepad_create(request):
 
     response = {'id': notepad.id}
     return response, 201
+
 
 @object_required('notepad')
 def notepad_read(request, notepad_id):
@@ -171,7 +175,7 @@ def notepad_crud(request, notepad_id=None):
         response, status = notepad_update(request, notepad_id)
 
     elif request.method == 'DELETE':
-        response, status = notepad_update(request, notepad_id)
+        response, status = notepad_delete(request, notepad_id)
 
     return HttpResponse(
         json.dumps(response, sort_keys=False),

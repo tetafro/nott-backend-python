@@ -1,5 +1,6 @@
 // var baseUrl = 'http://nott.tk';
-var baseUrl = 'http://notes.lily.local:8080';
+var baseUrl = 'http://notes.lily.local';
+
 
 // ----------------------------------------------
 // HELPERS                                      -
@@ -55,90 +56,6 @@ function displayFlash(status, text) {
     }, timeout);
 }
 
-// Template for list item in side panel
-function makeListItem(id, type, title, isChild) {
-    var addChild;
-    var childClass;
-    if (type == 'notepad') {
-        if (isChild) {
-            addChild = '';
-            childClass = 'class="child" ';
-        } else {
-            addChild =
-                '<span class="link-add-child">' +
-                    '<i class="glyphicon glyphicon-plus text-primary"></i>' +
-                '</span>';
-            childClass = '';
-        }
-    } else {
-        addChild = '';
-        childClass = '';
-    }
-
-    var li =
-        '<li ' + childClass + 'data-type="' + type + '" data-id="' + id + '">' +
-            '<a href="#" class="link-get">' +
-                title +
-            '</a>' +
-            addChild +
-            '<span class="link-edit">' +
-                '<i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit"></i>' +
-            '</span>' +
-            '<span class="link-del">' +
-                '<i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del"></i>' +
-            '</span>' +
-        '</li>';
-
-    return li;
-}
-
-// Template for input form for child notepad creation
-function makeForm(id) {
-    var form =
-        '<form>' +
-            '<div class="form-group" data-type="notepad" data-parent-id="' + id + '">' +
-                '<input type="text" name="title" class="form-control input-sm" placeholder="New notepad">' +
-                '<span class="link-add">' +
-                    '<i class="glyphicon glyphicon-plus text-primary"></i>' +
-                '</span>' +
-            '</div>' +
-        '</form>';
-
-    return form;
-}
-
-// Template for save button on editor's panel
-function makeSaveButton() {
-    var button =
-        '<button type="button" class="btn btn-sm btn-primary btn-save" title="Save">' +
-            '<i class="glyphicon glyphicon-ok"></i>' +
-        '</button>';
-
-    return button;
-}
-
-// Template for tab header for editor area
-// (new tab is always active)
-function makeTabHead(tabId) {
-    var tabHead =
-        '<li class="active" data-id=' + tabId + '>' +
-            '<a href="#tab-' + tabId + '" role="tab" data-toggle="tab"></a>' +
-        '</li>';
-
-    return tabHead;
-}
-
-// Template for tab content for editor area
-// (new tab is always active)
-function makeTab(tabId) {
-    var tab =
-        '<div role="tabpanel" class="tab-pane active" id="tab-' + tabId + '">' +
-            '<div id="editor-' + tabId + '" class="editor"></div>' +
-        '</div>';
-
-    return tab;
-}
-
 // Initialize WYSIWYG editor on specified tab
 function newEditor(tabId) {
     // Load WYSIWYG editor
@@ -154,7 +71,103 @@ function newEditor(tabId) {
 
     var saveButton = makeSaveButton();
     $('.trumbowyg-button-pane').append(saveButton);
-};
+}
+
+
+// ----------------------------------------------
+// TEMPLATES                                    -
+// ----------------------------------------------
+
+// Template for list item in side panel
+function makeListItem(id, type, title, isChild) {
+    var addChild;
+    var childClass;
+    if (type == 'notepad') {
+        if (isChild) {
+            addChild = '';
+        } else {
+            addChild =
+                '<span class="link-add-child">' +
+                    '<i class="glyphicon glyphicon-plus text-primary"></i>' +
+                '</span>';
+        }
+    } else {
+        addChild = '';
+    }
+
+    var html =
+        '<li ' + 'data-type="' + type + '" data-id="' + id + '">' +
+            '<a href="#" class="link-get">' +
+                title +
+            '</a>' +
+            addChild +
+            '<span class="link-edit">' +
+                '<i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit"></i>' +
+            '</span>' +
+            '<span class="link-del">' +
+                '<i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del"></i>' +
+            '</span>' +
+        '</li>';
+
+    return html;
+}
+
+// Template for input form for child notepad creation
+function makeForm(id) {
+    var html =
+        '<form>' +
+            '<div class="form-group" data-type="notepad" data-parent-id="' + id + '">' +
+                '<input type="text" name="title" class="form-control input-sm" placeholder="New notepad">' +
+                '<span class="link-add">' +
+                    '<i class="glyphicon glyphicon-plus text-primary"></i>' +
+                '</span>' +
+            '</div>' +
+        '</form>';
+
+    return html;
+}
+
+// Template for expand arrow
+function makeExpandArrow(id) {
+    var html =
+        '<span class="expand" data-toggle="collapse" data-target="#children-' + id + '" aria-expanded="true">' +
+            '<i class="glyphicon text-primary glyphicon-triangle-bottom"></i>' +
+        '</span>';
+
+    return html;
+}
+
+// Template for save button on editor's panel
+function makeSaveButton() {
+    var html =
+        '<button type="button" class="btn btn-sm btn-primary btn-save" title="Save">' +
+            '<i class="glyphicon glyphicon-ok"></i>' +
+        '</button>';
+
+    return html;
+}
+
+// Template for tab header for editor area
+// (new tab is always active)
+function makeTabHead(tabId) {
+    var html =
+        '<li class="active" data-id=' + tabId + '>' +
+            '<a href="#tab-' + tabId + '" role="tab" data-toggle="tab"></a>' +
+        '</li>';
+
+    return html;
+}
+
+// Template for tab content for editor area
+// (new tab is always active)
+function makeTab(tabId) {
+    var html =
+        '<div role="tabpanel" class="tab-pane active" id="tab-' + tabId + '">' +
+            '<div id="editor-' + tabId + '" class="editor"></div>' +
+        '</div>';
+
+    return html;
+}
 
 
 // ----------------------------------------------
@@ -211,7 +224,20 @@ function createItem($form, elementType) {
             if (parentId) {
                 newElement = makeListItem(response.id, elementType, htmlEscape(elementTitle), true);
                 $('.nav-sidebar > form').remove();
-                $(newElement).insertAfter($(sideBar + ' ul li[data-id="' + parentId + '"]'));
+                $parent = $(sideBar + ' ul li[data-id="' + parentId + '"]');
+                // Children block existed before
+                if ($parent.next().hasClass('children-block')) {
+                    $($parent.next()).append(newElement);
+                // Create expandable children block and arrow button
+                } else {
+                    newElement = '<ul id="children-' + parentId +
+                        '" class="nav children-block collapse in" aria-expanded="true">' +
+                        newElement +
+                        '</ul>';
+                    $(newElement).insertAfter($parent);
+                    var arrow = makeExpandArrow(parentId);
+                    $(arrow).insertAfter($parent.find('.link-get'));
+                }
             } else {
                 newElement = makeListItem(response.id, elementType, htmlEscape(elementTitle), false);
                 $(sideBar + ' ul').append(newElement);
@@ -467,35 +493,46 @@ $(document).on('click', '#modal-del-submit', function (event) {
 
     $.ajax({
         beforeSend: function (response, settings) {
-            // csrftoken = getCookie('csrftoken');
-            // response.setRequestHeader('X-CSRFToken', csrftoken);
+            csrftoken = getCookie('csrftoken');
+            response.setRequestHeader('X-CSRFToken', csrftoken);
             $('#modal-del').modal('hide');
         },
         url: url,
         type: 'DELETE',
         success: function (response) {
             console.log(response);
-            // If it was active notepad - hide right panel and disable input
-            // Notes deleted automaticaly by Django (cascade delete)
-            var $listItem = $('li[data-type="' + elementType + '"][data-id="' + elementId + '"]');
-            if ($listItem.hasClass('active')) {
-                $('.sidebar-second ul').html('');
-                $('.sidebar-second input[name="title"]').prop('disabled', true);
-            }
-            if (!$listItem.hasClass('child')) {
-                // Remove all children one by one
-                var nextChild = $listItem.next().hasClass('child');
-                while (nextChild) {
-                    $listItem.next().remove();
-                    nextChild = $listItem.next().hasClass('child');
-                }
-            }
-            $listItem.remove();
 
             // If there were opened form for deleted notepad
             if ($childFormButton) {
                 $childFormButton.closest('form').remove();
             }
+
+            // If it was active notepad - hide right panel and disable input
+            // Notes deleted automaticaly by Django (cascade delete)
+            var $listItem = $(
+                'li'+
+                '[data-type="' + elementType + '"]' +
+                '[data-id="' + elementId + '"]'
+            );
+            if ($listItem.hasClass('active')) {
+                $('.sidebar-second ul').html('');
+                $('.sidebar-second input[name="title"]').prop('disabled', true);
+            }
+
+            // If was parent than remove it with it's children-block
+            if (!$listItem.parent().hasClass('children-block')) {
+                if ($listItem.next().hasClass('children-block')) {
+                    $listItem.next().remove();
+                }
+                $listItem.remove();
+            // If it was last child than delete children block and expand arrow
+            } else if (!$listItem.siblings().length) {
+                $listItem.parent().prev().find('.expand').remove();
+                $listItem.parent().remove();
+            } else {
+                $listItem.remove();
+            }
+
         },
         error: function (response) {
             console.log(response);
@@ -504,6 +541,7 @@ $(document).on('click', '#modal-del-submit', function (event) {
         }
     });
 });
+
 
 // ----------------------------------------------
 // INTERFACE                                    -

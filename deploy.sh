@@ -6,20 +6,33 @@
 #
 
 
-# Files containing vars to replace in prodaction
+# Files containing vars to be replaced in production
 js_custom='./static/js/custom.js'
 django_settings='./notes/settings.py'
 
 # File with passwords (not tracked by Git)
 pass_ini='./pass.ini'
 
-# Check if all files are on their places
-settings=( $js_custom $django_settings $pass_ini )
-for file in "${settings[@]}"
+# Other required files and directories
+avatars_dir='./media/avatars/'
+
+# Check if all files and directories are on their places
+required_files=( $js_custom $django_settings $pass_ini )
+for file in "${required_files[@]}"
 do
     if [ ! -f $file ]
     then
         echo "Missig file: $file"
+        exit 1
+    fi
+done
+
+required_dirs=( $avatars_dir )
+for dir in "${required_dirs[@]}"
+do
+    if [ ! -d $dir ]
+    then
+        echo "Missig file: $dir"
         exit 1
     fi
 done
@@ -55,7 +68,7 @@ else
         # Go to production mode
         pro)
             # baseUrl in JS script
-            sed -i 's/^var baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
+            sed -i 's/^var baseUrl = '\''http:\/\/notes\.lily\.local'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local'\'';/' $js_custom
             sed -i 's/^\/\/ var baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
             sed -ri 's/^(\s*)console\.log/\1\/\/ console\.log/' $js_custom
@@ -74,7 +87,7 @@ else
         # Go to development mode
         dev)
             # baseUrl in JS script
-            sed -i 's/^\/\/ var baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/baseUrl = '\''http:\/\/notes\.lily\.local:8080'\'';/' $js_custom
+            sed -i 's/^\/\/ var baseUrl = '\''http:\/\/notes\.lily\.local'\'';/baseUrl = '\''http:\/\/notes\.lily\.local'\'';/' $js_custom
             sed -i 's/^var baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
             sed -ri 's/^(\s*)\/\/ console\.log/\1console\.log/' $js_custom

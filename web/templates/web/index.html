@@ -16,7 +16,7 @@
         {% with previous_notepad=notepads|previous:forloop.counter0 %}
         {% with next_notepad=notepads|next:forloop.counter0 %}
 
-        {% if previous_notepad.parent_id == 1 and notepad.parent_id != 1 %}
+        {% if not previous_notepad.parent_id and notepad.parent_id %}
         <ul id="children-{{ previous_notepad.id }}" class="nav children-block collapse">
         {% endif %}
 
@@ -29,7 +29,7 @@
                 <i class="glyphicon glyphicon-triangle-right text-primary"></i>
             </span>
             {% endif %}
-            {% if notepad.parent_id == 1 %}
+            {% if not notepad.parent_id %}
             <span class="link-add-child">
                 <i class="glyphicon glyphicon-plus text-primary"></i>
             </span>
@@ -42,7 +42,7 @@
             </span>
         </li>
 
-        {% if notepad.parent_id != 1 and next_notepad.parent_id == 1 %}
+        {% if notepad.parent_id and not next_notepad.parent_id %}
         </ul>
         {% endif %}
 

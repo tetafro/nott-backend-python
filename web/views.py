@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 
 # Validation exceptions
-# TODO: user these
+# TODO: use these
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import IntegrityError
 
@@ -72,7 +72,7 @@ def user_logout(request):
 def index(request):
     root_notepads = list(
         request.user.notepads \
-                    .filter(parent_id=1) \
+                    .filter(parent_id=None) \
                     .exclude(id=1) \
                     .order_by('title')
     )
@@ -140,7 +140,9 @@ def profile_edit(request, user_id):
         else:
             # TODO: return error
             pass
-            
+
+        return redirect('profile', user_id=user_id)
+
     form_user = UserForm(instance=user)
     form_profile = UserProfileForm(instance=user.profile)
 
