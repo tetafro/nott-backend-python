@@ -1,7 +1,6 @@
 // var baseUrl = 'http://nott.tk';
 var baseUrl = 'http://notes.lily.local';
 
-
 // ----------------------------------------------
 // HELPERS                                      -
 // ----------------------------------------------
@@ -51,7 +50,7 @@ function displayFlash(status, text) {
     // Hide automatically
     // There also is a function below for closing on button press
     $block.fadeIn(300);
-    setTimeout(function() {
+    setTimeout(function () {
         $block.fadeOut(300);
     }, timeout);
 }
@@ -59,7 +58,7 @@ function displayFlash(status, text) {
 // Initialize WYSIWYG editor on specified tab
 function newEditor(tabId) {
     // Load WYSIWYG editor
-    $('#editor-'+tabId).trumbowyg({
+    $('#editor-' + tabId).trumbowyg({
         btns: [
             'viewHTML',
             ['bold', 'italic']
@@ -72,7 +71,6 @@ function newEditor(tabId) {
     var saveButton = makeSaveButton();
     $('.trumbowyg-button-pane').append(saveButton);
 }
-
 
 // ----------------------------------------------
 // TEMPLATES                                    -
@@ -102,10 +100,12 @@ function makeListItem(id, type, title, isChild) {
             '</a>' +
             addChild +
             '<span class="link-edit">' +
-                '<i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-edit"></i>' +
+                '<i class="glyphicon glyphicon-pencil text-primary"' +
+                ' data-toggle="modal" data-target="#modal-edit"></i>' +
             '</span>' +
             '<span class="link-del">' +
-                '<i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-del"></i>' +
+                '<i class="glyphicon glyphicon-remove text-danger"' +
+                ' data-toggle="modal" data-target="#modal-del"></i>' +
             '</span>' +
         '</li>';
 
@@ -168,7 +168,6 @@ function makeTab(tabId) {
 
     return html;
 }
-
 
 // ----------------------------------------------
 // CRUD                                         -
@@ -250,7 +249,7 @@ function createItem($form, elementType) {
             displayFlash('error', errorMessage);
         }
     });
-};
+}
 // Create item on clicking plus icon or on pressing enter key
 $(document).on('click', '.sidebar-first .link-add', function (event) {
     createItem($(this).closest('form'), 'notepad');
@@ -317,12 +316,12 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
     $listItem.addClass('active');
 
     // If tab for selected note is already exist
-    if ($('#tab-'+elementId).length > 0) {
+    if ($('#tab-' + elementId).length > 0) {
         // Activate tab
         $('#editor-block > .nav-tabs > li').removeClass('active');
         $('#editor-block > .tab-content > .tab-pane').removeClass('active');
-        $('#editor-block > .nav-tabs > li[data-id="'+elementId+'"]').addClass('active');
-        $('#tab-'+elementId).addClass('active');
+        $('#editor-block > .nav-tabs > li[data-id="' + elementId + '"]').addClass('active');
+        $('#tab-' + elementId).addClass('active');
 
         return;
     }
@@ -350,8 +349,8 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
             newEditor(elementId);
 
             // Need to clear editor explicitly if response text is empty string
-            $('#editor-'+elementId).trumbowyg('empty');
-            $('#editor-'+elementId).trumbowyg('html', response.text);
+            $('#editor-' + elementId).trumbowyg('empty');
+            $('#editor-' + elementId).trumbowyg('html', response.text);
         },
         error: function (response) {
             console.log(response);
@@ -365,7 +364,7 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
 $(document).on('click', '.tab-close', function (event) {
     var $tabHead = $(this).closest('li');
     var elementId = $tabHead.data('id');
-    var $tab = $('#tab-'+elementId);
+    var $tab = $('#tab-' + elementId);
 
     // Closing active tab
     if ($tabHead.hasClass('active')) {
@@ -376,7 +375,7 @@ $(document).on('click', '.tab-close', function (event) {
         }
     }
     // Destroy editor and remove tab
-    $('#editor-'+elementId).trumbowyg('destroy');
+    $('#editor-' + elementId).trumbowyg('destroy');
     $tabHead.remove();
     $tab.remove();
 });
@@ -455,7 +454,7 @@ $(document).on('keypress', '#modal-edit-title', function (event) {
 // Save note's content
 $(document).on('click', '.btn-save', function (event) {
     var noteId = $('#editor-block li.active').data('id');
-    var text = $('#editor-'+noteId).trumbowyg('html');
+    var text = $('#editor-' + noteId).trumbowyg('html');
 
     $.ajax({
         beforeSend: function (response, settings) {
@@ -510,7 +509,7 @@ $(document).on('click', '#modal-del-submit', function (event) {
             // If it was active notepad - hide right panel and disable input
             // Notes deleted automaticaly by Django (cascade delete)
             var $listItem = $(
-                'li'+
+                'li' +
                 '[data-type="' + elementType + '"]' +
                 '[data-id="' + elementId + '"]'
             );
@@ -541,7 +540,6 @@ $(document).on('click', '#modal-del-submit', function (event) {
         }
     });
 });
-
 
 // ----------------------------------------------
 // INTERFACE                                    -
@@ -582,7 +580,7 @@ $(document).on('click', '.link-add-child', function () {
 
 // Change icon for expand/collapse children notepads
 $(document).on('click', '.expand', function () {
-    $icon = $(this).children().first()
+    $icon = $(this).children().first();
     $icon
         .toggleClass('glyphicon-triangle-bottom')
         .toggleClass('glyphicon-triangle-right');
@@ -592,4 +590,4 @@ $(document).on('click', '.expand', function () {
 $(document).on('click', '.flash-close', function () {
     var $block = $('#flash-message');
     $block.fadeOut(300);
-})
+});

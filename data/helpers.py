@@ -15,8 +15,9 @@ class OverwriteStorage(FileSystemStorage):
 
 def avatar_filename(self, filename):
     """ Filename and path for avatars """
-    
-    dir = 'avatars'
+
+    directory = 'avatars'
     filename = self.user.username + '.jpg'
-    path = os.path.join('avatars', filename)
+    path = os.path.join(directory, filename)
+
     return path

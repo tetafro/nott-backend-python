@@ -1,5 +1,4 @@
 from PIL import Image
-from io import StringIO, BytesIO
 
 
 def image_resize(img_input, img_output, max_size):

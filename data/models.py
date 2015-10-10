@@ -44,7 +44,12 @@ class UserProfile(models.Model):
 class Notepad(models.Model):
     title = models.CharField(max_length=80)
     user = models.ForeignKey(User, related_name='notepads')
-    parent = models.ForeignKey('self', related_name='children', null=True, blank=True)
+    parent = models.ForeignKey(
+        'self',
+        related_name='children',
+        null=True,
+        blank=True
+    )
 
     def clean(self):
         if self.title == '':

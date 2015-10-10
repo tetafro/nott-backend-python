@@ -1,5 +1,4 @@
 # Main
-from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -47,10 +46,10 @@ def object_required(object_type):
             elif object_type == 'note':
                 ObjectClass = Note
 
-            try:
-                notepad = ObjectClass.objects.filter(id=object_id).exists()
-            except ObjectClass.DoesNotExist:
-                response = {'error': object_type.capitalize()+' not found on server'}
+            if not ObjectClass.objects.filter(id=object_id).exists():
+                response = {
+                    'error': object_type.capitalize()+' not found on server'
+                }
                 return response, 400
 
             return fn(request, object_id)
@@ -70,8 +69,6 @@ def notepad_create(request):
     notepad = Notepad(title=data['title'], user=request.user)
     if 'parent' in data.keys():
         notepad.parent_id = data['parent']
-
-    print(type(notepad.parent))
 
     try:
         notepad.full_clean()

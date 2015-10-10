@@ -13,8 +13,8 @@
     <ul class="nav nav-sidebar">
         {% for notepad in notepads %}
 
-        {% with previous_notepad=notepads|previous:forloop.counter0 %}
-        {% with next_notepad=notepads|next:forloop.counter0 %}
+        {% with previous_notepad=notepads|prev_element:forloop.counter0 %}
+        {% with next_notepad=notepads|next_element:forloop.counter0 %}
 
         {% if not previous_notepad.parent_id and notepad.parent_id %}
         <ul id="children-{{ previous_notepad.id }}" class="nav children-block collapse">

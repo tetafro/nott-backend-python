@@ -28,9 +28,6 @@ def user_auth(request):
 
         error_message = ''
 
-        print(username)
-        print(password)
-
         # Registration
         if is_reg:
             try:

@@ -7,7 +7,7 @@ register = template.Library()
 
 # Previous list item
 @register.filter
-def previous(iterable, current_index):
+def prev_element(iterable, current_index):
     try:
         return iterable[int(current_index)-1]
     except:
@@ -16,7 +16,7 @@ def previous(iterable, current_index):
 
 # Next list item
 @register.filter
-def next(iterable, current_index):
+def next_element(iterable, current_index):
     try:
         return iterable[int(current_index)+1]
     except:
