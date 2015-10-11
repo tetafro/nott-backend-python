@@ -239,9 +239,9 @@ span.expand {
     height: -moz-calc(100% - 70px);
     height: -webkit-calc(100% - 70px);
     height: calc(100% - 70px);
-    font-family: 'Hack';
+    font-family: 'Ubuntu Mono';
     font-size: 14px;
-}   
+}
 
 .trumbowyg-box {
     width: 100%;

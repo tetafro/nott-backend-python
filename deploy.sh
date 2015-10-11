@@ -33,7 +33,7 @@ for dir in "${required_dirs[@]}"
 do
     if [ ! -d $dir ]
     then
-        echo "Missig file: $dir"
+        echo "Missig directory: $dir"
         exit 1
     fi
 done
