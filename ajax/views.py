@@ -73,8 +73,7 @@ def notepad_create(request):
     try:
         notepad.full_clean()
     except ValidationError as e:
-        error_message = str(e)
-        # ', '.join(e.message_dict[NON_FIELD_ERRORS])
+        error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
         response = {'error': error_message}
         return response, 400
 

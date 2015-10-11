@@ -5,4 +5,4 @@ find .. \
     -not \( -name 'manage.py' \) \
     -name '*.py' \
     -exec echo '>>> ' {} \; \
-    -exec pylint  --reports=n --disable=F0401,C0111 {} \;
+    -exec pylint --reports=n --disable=F0401,C0111 {} \;

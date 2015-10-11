@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #
-# Deploying script set variables to their development or production state
+# Deploying script
+# Sets variables to their development or production states
 # Returns 0 if no errors, 1 if errors occured
 #
 
@@ -82,7 +83,7 @@ else
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$pro_db_pass\'',/' $django_settings
             # Allowed Django hosts
             sed -i 's/^ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \['\''.nott.tk'\'', '\''.nott.tk.'\''\]/' $django_settings
-            
+
             echo 'The app is now in production mode' ;;
         # Go to development mode
         dev)
