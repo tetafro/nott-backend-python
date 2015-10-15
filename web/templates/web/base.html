@@ -34,14 +34,14 @@
         </ul>
         <!-- Right -->
         {% if user.is_authenticated %}
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <ul class="nav navbar-nav navbar-right">
-                <li>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
                     <button role="button" type="submit" class="btn btn-link logout">Logout</button>
-                </li>
-            </ul>
-        </form>
+                </form>
+            </li>
+        </ul>
         {% endif %}
     </div>
 </nav>

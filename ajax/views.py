@@ -31,7 +31,7 @@ def csrf_failure(request, reason=''):
     """
 
     response = {'error': 'CSRF is missing'}
-    return HttpResponse(json.dumps(response), status=403)
+    return HttpResponse(json.dumps(response), status=400)
 
 
 def object_required(object_type):
@@ -115,7 +115,8 @@ def notepad_update(request, notepad_id):
         return response, 400
 
     data = QueryDict(request.body).dict()
-    notepad.title = data['title']
+    if 'title' in data:
+        notepad.title = data['title']
 
     try:
         notepad.full_clean()
@@ -308,6 +309,36 @@ def note_crud(request, note_id=None):
 
     elif request.method == 'DELETE':
         response, status = note_update(request, note_id)
+
+    return HttpResponse(
+        json.dumps(response),
+        status=status,
+        content_type='application/json'
+    )
+
+
+# -----------------------------------------------
+# SEARCH                                        -
+# -----------------------------------------------
+
+@login_required
+def search(request):
+    """
+    Search notes with given text
+    """
+
+    text = request.GET.get('text')
+    if text:
+        notes = Note.objects.filter(text__contains=text)
+        notes_list = []
+        for note in notes:
+            notes_list += [{'id': note.id, 'title': note.title}]
+
+        response = {'notes': notes_list}
+        status = 200
+    else:
+        response = {'error': 'No text provided'}
+        status = 400
 
     return HttpResponse(
         json.dumps(response),

@@ -33,8 +33,8 @@ for dir in "${required_dirs[@]}"
 do
     if [ ! -d $dir ]
     then
-        echo "Missig directory: $dir"
-        exit 1
+        mkdir -p $dir
+        echo "Created missig directory: $dir"
     fi
 done
 

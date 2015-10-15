@@ -18,11 +18,11 @@
     cursor: pointer;
 }
 
-.logout {
+.navbar-nav .logout {
     padding: 13px;
 }
 
-.logout:hover {
+.navbar-nav .logout:hover {
     text-decoration: none;
 }
 
@@ -139,6 +139,10 @@
     background-color: #e9e9e9;
 }
 
+#show-search:hover {
+    cursor: pointer;
+}
+
 /* Action buttons on siderbar */
 .form-group {
     position: relative;
@@ -147,14 +151,16 @@
 span.link-add,
 span.link-add-child,
 span.link-edit,
-span.link-del {
+span.link-del,
+span.search {
     float: right;
     position: absolute;
     padding: 0px;
     display: none;
 }
 
-span.link-add {
+span.link-add,
+span.search {
     right: 12px;
     top: 5px;
 }
@@ -184,12 +190,14 @@ span.expand {
 
 /* Show buttons on row hover */
 .form-group:hover > span.link-add,
+.form-group:hover > span.search,
 .nav-sidebar li:hover > span.link-add-child,
 .nav-sidebar li:hover > span.link-edit,
 .nav-sidebar li:hover > span.link-del,
 .nav-sidebar li:hover > span.expand,
 /* Don't hide buttons of active elements */
 .form-group > input:focus + span.link-add,
+.form-group > input:focus + span.search,
 .nav-sidebar .active > span.link-add-child,
 .nav-sidebar .active > span.link-edit,
 .nav-sidebar .active > span.link-del,

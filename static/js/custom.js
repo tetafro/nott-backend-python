@@ -169,6 +169,38 @@ function makeTab(tabId) {
     return html;
 }
 
+// Template for new note form
+function makeNewNoteForm() {
+    var html =
+        '<form>' +
+            '<div class="form-group" data-type="note">' +
+                '<input type="text" name="title" class="form-control input-sm"' +
+                    ' placeholder="New note" autocomplete="off">' +
+                '<span class="link-add" data-type="note">' +
+                    '<i class="glyphicon glyphicon-plus text-primary"></i>' +
+                '</span>' +
+            '</div>' +
+        '</form>';
+
+    return html;
+}
+
+// Template for search form
+function makeSearchForm() {
+    var html =
+        '<form>' +
+            '<div class="form-group">' +
+                '<input type="text" name="search" class="form-control input-sm"' +
+                    ' placeholder="Search" autocomplete="off">' +
+                '<span class="search">' +
+                    '<i class="glyphicon glyphicon-search text-primary"></i>' +
+                '</span>' +
+            '</div>' +
+        '</form>';
+
+    return html;
+}
+
 // ----------------------------------------------
 // CRUD                                         -
 // ----------------------------------------------
@@ -285,9 +317,16 @@ $(document).on('click', '.sidebar-first .link-get', function (event) {
         dataType: 'json',
         success: function (response) {
             console.log(response);
+
+            // Interface changes: mark active,
             $('.sidebar-first li').removeClass('active');
             $listItem.addClass('active');
-            $('.sidebar-second input[name="title"]').removeAttr('disabled');
+            $('#sidebar-second-title').html($listItem.find('a').html());
+            $('.sidebar-second form').remove();
+            var form = makeNewNoteForm();
+            $(form).insertAfter($('.sidebar-second .nav-sidebar'));
+
+            // Notes list
             var itemsList = '';
             $.each(response.notes, function (index, note) {
                 itemsList += makeListItem(note.id, 'note', note.title, false);
@@ -506,7 +545,7 @@ $(document).on('click', '#modal-del-submit', function (event) {
                 $childFormButton.closest('form').remove();
             }
 
-            // If it was active notepad - hide right panel and disable input
+            // If it was active notepad - hide right panel and remove input
             // Notes deleted automaticaly by Django (cascade delete)
             var $listItem = $(
                 'li' +
@@ -515,7 +554,7 @@ $(document).on('click', '#modal-del-submit', function (event) {
             );
             if ($listItem.hasClass('active')) {
                 $('.sidebar-second ul').html('');
-                $('.sidebar-second input[name="title"]').prop('disabled', true);
+                $('.sidebar-second form').remove();
             }
 
             // If was parent than remove it with it's children-block
@@ -539,6 +578,59 @@ $(document).on('click', '#modal-del-submit', function (event) {
             displayFlash('error', errorMessage);
         }
     });
+});
+
+// ----------------------------------------------
+// SEARCH                                       -
+// ----------------------------------------------
+
+// Show search form
+$(document).on('click', '#show-search', function (event) {
+    // Switch to search
+    $('#sidebar-second-title').html('Search');
+    $('.sidebar-second .nav-sidebar').html('');
+    $('.sidebar-second form').remove();
+
+    // Add searching form
+    var form = makeSearchForm();
+    $(form).insertAfter($('.sidebar-second .nav-sidebar'));
+});
+
+// Find notes by text and display list in the second sidebar
+function searchNotes($form) {
+    var text = $form.find('input').val();
+    var url = baseUrl + '/ajax/search/';
+
+    $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        data: {text: text},
+        success: function (response) {
+            console.log(response);
+            $('.sidebar-first li').removeClass('active');
+            var itemsList = '';
+            $.each(response.notes, function (index, note) {
+                itemsList += makeListItem(note.id, 'note', note.title, false);
+            });
+            $('.sidebar-second ul').html(itemsList);
+        },
+        error: function (response) {
+            console.log(response);
+            var errorMessage = $.parseJSON(response.responseText).error;
+            displayFlash('error', errorMessage);
+        }
+    });
+}
+// Search on clicking icon or on pressing enter key
+$(document).on('click', '.sidebar-second .search', function (event) {
+    searchNotes($(this).closest('form'));
+});
+$(document).on('keypress', '.sidebar-second input[name="search"]', function (event) {
+    if (event.keyCode == 13) {
+        event.preventDefault();
+        searchNotes($(this).closest('form'));
+    }
 });
 
 // ----------------------------------------------
