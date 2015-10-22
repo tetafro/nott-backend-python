@@ -59,7 +59,7 @@ pro_db_pass=$(get_ini pro_db_pass)
 # Check input arguments and make vars replacements
 if [[ $# -ne 1 || ($1 != 'pro' && $1 != 'dev') ]]
 then
-    echo 'Deployment script v0.1'
+    echo 'Deployment script v0.3'
     echo 'Usage:'
     echo '  pro         change settings for production usage'
     echo '  dev         change settings for development usage'
@@ -105,5 +105,6 @@ else
 
             echo 'The app is now in development mode' ;;
     esac
-    exit 0
 fi
+
+exit 0
