@@ -252,8 +252,11 @@ function createItem($form, elementType) {
         data: data,
         success: function (response) {
             console.log(response);
+            var elementId = response.id;
+            elementTitle = htmlEscape(elementTitle);
+
             if (parentId) {
-                newElement = makeListItem(response.id, elementType, htmlEscape(elementTitle), true);
+                newElement = makeListItem(elementId, elementType, elementTitle, true);
                 $('.nav-sidebar > form').remove();
                 $parent = $(sideBar + ' ul li[data-id="' + parentId + '"]');
                 // Children block existed before
@@ -270,10 +273,49 @@ function createItem($form, elementType) {
                     $(arrow).insertAfter($parent.find('.link-get'));
                 }
             } else {
-                newElement = makeListItem(response.id, elementType, htmlEscape(elementTitle), false);
+                newElement = makeListItem(elementId, elementType, elementTitle, false);
                 $(sideBar + ' ul').append(newElement);
             }
             $form.find('input').val('');
+
+            // Open created element
+            var $newElement;
+            if (elementType == 'notepad') {
+                $newElement = $('.sidebar-first li[data-id="' + elementId + '"]');
+                $('.sidebar-first li').removeClass('active');
+                $newElement.addClass('active');
+                $('#sidebar-second-title').html(elementTitle);
+                $('.sidebar-second ul').html('');
+                $('.sidebar-second form').remove(); // maybe this is a search form
+                var form = makeNewNoteForm();
+                $(form).insertAfter($('.sidebar-second .nav-sidebar'));
+            } else if (elementType == 'note') {
+                // Unhide editor block
+                $('#editor-block').css({visibility: 'visible'});
+                $('.btn-save').prop('disabled', false);
+
+                // Make new tab
+                var newTabHead = makeTabHead(elementId);
+                var newTab = makeTab(elementId);
+                var $newElement = $('.sidebar-second li[data-id="' + elementId + '"]');
+                $newElement.siblings().removeClass('active');
+                $newElement.addClass('active');
+
+                // Append new tab
+                $('#editor-block > .nav-tabs > li').removeClass('active');
+                $('#editor-block > .tab-content > .tab-pane').removeClass('active');
+                $('#editor-block > .nav-tabs').append(newTabHead);
+                $('#editor-block > .tab-content').append(newTab);
+                $('#editor-block > .nav-tabs > .active > a').html(elementTitle +
+                     '<div class="tab-close">&times;</div>');
+
+                // Make editor for the tab
+                newEditor(elementId);
+
+                // Need to clear editor explicitly
+                $('#editor-' + elementId).trumbowyg('empty');
+            }
+
         },
         error: function (response) {
             console.log(response);
@@ -322,7 +364,7 @@ $(document).on('click', '.sidebar-first .link-get', function (event) {
             $('.sidebar-first li').removeClass('active');
             $listItem.addClass('active');
             $('#sidebar-second-title').html($listItem.find('a').html());
-            $('.sidebar-second form').remove();
+            $('.sidebar-second form').remove(); // maybe this is a search form
             var form = makeNewNoteForm();
             $(form).insertAfter($('.sidebar-second .nav-sidebar'));
 
@@ -343,6 +385,7 @@ $(document).on('click', '.sidebar-first .link-get', function (event) {
 
 // Read note's content
 $(document).on('click', '.sidebar-second .link-get', function (event) {
+    // Unhide editor block
     $('#editor-block').css({visibility: 'visible'});
     $('.btn-save').prop('disabled', false);
 
@@ -552,7 +595,7 @@ $(document).on('click', '#modal-del-submit', function (event) {
                 '[data-type="' + elementType + '"]' +
                 '[data-id="' + elementId + '"]'
             );
-            if ($listItem.hasClass('active')) {
+            if ($listItem.hasClass('active') && elementType == 'notepad') {
                 $('.sidebar-second ul').html('');
                 $('.sidebar-second form').remove();
             }
