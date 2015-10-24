@@ -28,7 +28,7 @@
             {% endblock %}
             {% if user.is_authenticated %}
             {% block nav_profile %}
-            <li><a href="{% url 'profile' user_id=user.id %}">Profile</a></li>
+            <li><a href="{% url 'profile' user_id='me' %}">Profile</a></li>
             {% endblock %}
             {% endif %}
         </ul>
@@ -55,11 +55,12 @@
 
 <!-- Error/info message -->
 <div id="flash-message" class="overlay">
-    <h3><span class="label"></span>
-    <small>
-        <i class="glyphicon glyphicon-remove flash-close" ></i>
-    </small>
-  </h3>
+    <h3>
+        <span class="label"></span>
+        <small>
+            <i class="glyphicon glyphicon-remove flash-close" ></i>
+        </small>
+    </h3>
 </div>
 
 <!-- AJAX load icon -->

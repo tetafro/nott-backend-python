@@ -1,7 +1,7 @@
 {% extends "web/base.html" %}
 
 {% block nav_profile %}
-<li class="active"><a href="{% url 'profile' user_id=user.id %}">Profile</a></li>
+<li class="active"><a href="{% url 'profile' user_id='me' %}">Profile</a></li>
 {% endblock %}
 
 {% block content %}
@@ -62,11 +62,13 @@
                     </p>
                 </div>
             </div>
+            {% if is_me %}
             <div class="form-group">
                 <div class="col-md-offset-2">
                     <a href="{% url 'profile_edit' user_id=user.id %}" class="btn btn-primary col-md-2">Edit</a>
                 </div>
             </div>
+            {% endif %}
         </div>
     </form>
 </div>

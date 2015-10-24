@@ -308,7 +308,7 @@ def note_crud(request, note_id=None):
         response, status = note_update(request, note_id)
 
     elif request.method == 'DELETE':
-        response, status = note_update(request, note_id)
+        response, status = note_delete(request, note_id)
 
     return HttpResponse(
         json.dumps(response),

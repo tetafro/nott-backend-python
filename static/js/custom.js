@@ -11,7 +11,7 @@ function getCookie(name) {
     if (document.cookie) {
         var cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
+            var cookie = $.trim(cookies[i]);
             // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) == (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -33,17 +33,20 @@ function htmlUnescape(text) {
 }
 
 // Display error in fadein/fadeout box in the center of the screen
-function displayFlash(status, text) {
+function displayFlash(displayOnly, status, text) {
     var $block = $('#flash-message');
     var timeout;
+    var errorTimeout = 3000;
+    var infoTimeout = 500;
+
     if (status == 'error') {
         $block.find('span').removeClass('label-primary').addClass('label-danger');
         text = text || 'Error';
-        timeout = 3000;
+        timeout = errorTimeout;
     } else if (status == 'info') {
         $block.find('span').removeClass('label-danger').addClass('label-primary');
         text = text || 'Success';
-        timeout = 500;
+        timeout = infoTimeout;
     }
     $block.find('span').html(text);
 
@@ -200,6 +203,57 @@ function makeSearchForm() {
 
     return html;
 }
+
+// ----------------------------------------------
+// INTERFACE                                    -
+// ----------------------------------------------
+
+// Show loading icon on each AJAX query
+var $loaderIcon = $('#ajax-load-icon').hide();
+$(document)
+    .ajaxStart(function () {
+        $loaderIcon.show();
+    })
+    .ajaxStop(function () {
+        $loaderIcon.hide();
+    });
+
+// Make new input form for creating child notepad
+$(document).on('click', '.link-add-child', function () {
+    var $listItem = $(this).closest('li');
+    var parentId = $listItem.data('id');
+
+    // Check if there already is an additional form
+    var $prevForm = $('.sidebar-first > .nav-sidebar > form');
+    var prevId;
+    if ($prevForm.length) {
+        prevId = $prevForm.find('.form-group').data('parent-id');
+    } else {
+        prevId = null;
+    }
+
+    // If it is second click on same element
+    // then only hide previous form
+    $('.nav-sidebar > form').remove();
+    if (parentId != prevId || !prevId) {
+        var newForm = makeForm(parentId);
+        $(newForm).insertAfter($listItem);
+    }
+});
+
+// Change icon for expand/collapse children notepads
+$(document).on('click', '.expand', function () {
+    $icon = $(this).children().first();
+    $icon
+        .toggleClass('glyphicon-triangle-bottom')
+        .toggleClass('glyphicon-triangle-right');
+});
+
+// Close button for flash messages
+$(document).on('click', '.flash-close', function () {
+    var $block = $('#flash-message');
+    $block.fadeOut(300);
+});
 
 // ----------------------------------------------
 // CRUD                                         -
@@ -443,9 +497,8 @@ $(document).on('click', '.sidebar-second .link-get', function (event) {
 });
 
 // Close note's tab
-$(document).on('click', '.tab-close', function (event) {
-    var $tabHead = $(this).closest('li');
-    var elementId = $tabHead.data('id');
+function closeEditorTab(elementId) {
+    var $tabHead = $('#editor-block li[data-id="' + elementId + '"]');
     var $tab = $('#tab-' + elementId);
 
     // Closing active tab
@@ -460,6 +513,10 @@ $(document).on('click', '.tab-close', function (event) {
     $('#editor-' + elementId).trumbowyg('destroy');
     $tabHead.remove();
     $tab.remove();
+}
+$(document).on('click', '.tab-close', function () {
+    var elementId = $(this).closest('li').data('id');
+    closeEditorTab(elementId);
 });
 
 // Put notepad/note info into hidden inputs on modal show
@@ -583,37 +640,50 @@ $(document).on('click', '#modal-del-submit', function (event) {
         success: function (response) {
             console.log(response);
 
-            // If there were opened form for deleted notepad
-            if ($childFormButton) {
-                $childFormButton.closest('form').remove();
-            }
-
-            // If it was active notepad - hide right panel and remove input
-            // Notes deleted automaticaly by Django (cascade delete)
             var $listItem = $(
                 'li' +
                 '[data-type="' + elementType + '"]' +
                 '[data-id="' + elementId + '"]'
             );
-            if ($listItem.hasClass('active') && elementType == 'notepad') {
-                $('.sidebar-second ul').html('');
-                $('.sidebar-second form').remove();
-            }
+            if (elementType == 'notepad') {
+                // If there were opened form for deleted notepad
+                if ($childFormButton) {
+                    $childFormButton.closest('form').remove();
+                }
 
-            // If was parent than remove it with it's children-block
-            if (!$listItem.parent().hasClass('children-block')) {
-                if ($listItem.next().hasClass('children-block')) {
-                    $listItem.next().remove();
+                // If it was active notepad then hide right panel,
+                // remove input and close all opened tabs
+                // Notes deleted automaticaly by Django (cascade delete)
+                if ($listItem.hasClass('active')) {
+                    var noteId;
+                    $('.sidebar-second ul > li').each(function (index) {
+                        noteId = $(this).data('id');
+                        closeEditorTab(noteId);
+                    });
+                    $('.sidebar-second ul').html('');
+                    $('.sidebar-second form').remove();
+                }
+
+                // If was parent then remove it with it's children-block
+                if (!$listItem.parent().hasClass('children-block')) {
+                    if ($listItem.next().hasClass('children-block')) {
+                        $listItem.next().remove();
+                    }
+                    $listItem.remove();
+                // If it was last child then delete children block and expand arrow
+                } else if (!$listItem.siblings().length) {
+                    $listItem.parent().prev().find('.expand').remove();
+                    $listItem.parent().remove();
+                } else {
+                    $listItem.remove();
+                }
+            } else if (elementType == 'note') {
+                // If it was opened note then close it's tab
+                if ($('#tab-' + elementId).length > 0) {
+                    closeEditorTab(elementId);
                 }
                 $listItem.remove();
-            // If it was last child than delete children block and expand arrow
-            } else if (!$listItem.siblings().length) {
-                $listItem.parent().prev().find('.expand').remove();
-                $listItem.parent().remove();
-            } else {
-                $listItem.remove();
             }
-
         },
         error: function (response) {
             console.log(response);
@@ -674,55 +744,4 @@ $(document).on('keypress', '.sidebar-second input[name="search"]', function (eve
         event.preventDefault();
         searchNotes($(this).closest('form'));
     }
-});
-
-// ----------------------------------------------
-// INTERFACE                                    -
-// ----------------------------------------------
-
-// Show loading icon on each AJAX query
-var $loaderIcon = $('#ajax-load-icon').hide();
-$(document)
-    .ajaxStart(function () {
-        $loaderIcon.show();
-    })
-    .ajaxStop(function () {
-        $loaderIcon.hide();
-    });
-
-// Make new input form for creating child notepad
-$(document).on('click', '.link-add-child', function () {
-    var $listItem = $(this).closest('li');
-    var parentId = $listItem.data('id');
-
-    // Check if there already is an additional form
-    var $prevForm = $('.sidebar-first > .nav-sidebar > form');
-    var prevId;
-    if ($prevForm.length) {
-        prevId = $prevForm.find('.form-group').data('parent-id');
-    } else {
-        prevId = null;
-    }
-
-    // If it is second click on same element
-    // then only hide previous form
-    $('.nav-sidebar > form').remove();
-    if (parentId != prevId || !prevId) {
-        var newForm = makeForm(parentId);
-        $(newForm).insertAfter($listItem);
-    }
-});
-
-// Change icon for expand/collapse children notepads
-$(document).on('click', '.expand', function () {
-    $icon = $(this).children().first();
-    $icon
-        .toggleClass('glyphicon-triangle-bottom')
-        .toggleClass('glyphicon-triangle-right');
-});
-
-// Close button for flash messages
-$(document).on('click', '.flash-close', function () {
-    var $block = $('#flash-message');
-    $block.fadeOut(300);
 });

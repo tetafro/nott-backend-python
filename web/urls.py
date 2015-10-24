@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^users$', views.userlist, name='userlist'),
     url(r'^users/(?P<user_id>\d+)$', views.profile, name='profile'),
+    url(r'^users/me$', views.profile, {'user_id': 'me'}, name='profile'),
     url(r'^users/(?P<user_id>\d+)/edit$', views.profile_edit, name='profile_edit')
 ]

@@ -1,4 +1,6 @@
 {% extends "web/base.html" %}
+{% load widget_tweaks %}
+
 {% block content %}
 
 <div class="page col-md-6 col-md-offset-3 ">
@@ -26,12 +28,12 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <div class="col-md-10 col-md-offset-1">
-                        <input class="form-control" name="username" type="text" placeholder="Username">
+                        {{ login_form.username|add_class:"form-control"|attr:"placeholder:Username" }}
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-10 col-md-offset-1">
-                        <input class="form-control" name="password" type="password" placeholder="Password">
+                        {{ login_form.password|add_class:"form-control"|attr:"placeholder:Password" }}
                     </div>
                 </div>
                 <div class="row">
@@ -54,22 +56,22 @@
                 <input class="form-control" name="reg" type="hidden" value=1>
                 <div class="form-group">
                     <div class="col-md-10 col-md-offset-1">
-                        <input class="form-control" name="username" type="text" placeholder="Username">
+                        {{ reg_form.username|add_class:"form-control"|attr:"placeholder:Username" }}
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-10 col-md-offset-1">
-                        <input class="form-control" name="email" type="email" placeholder="E-mail">
+                        {{ reg_form.email|add_class:"form-control"|attr:"placeholder:E-mail" }}
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-10 col-md-offset-1">
-                        <input class="form-control" name="password" type="password" placeholder="Password">
+                        {{ reg_form.password1|add_class:"form-control"|attr:"placeholder:Password" }}
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-10 col-md-offset-1">
-                        <input class="form-control" type="password" placeholder="Confirm password">
+                        {{ reg_form.password2|add_class:"form-control"|attr:"placeholder:Confirm password" }}
                     </div>
                 </div>
                 <div class="row">
@@ -80,6 +82,16 @@
             </form>
         </div>
     </div>
+    {% for field, errors in reg_form.errors.items %}
+        {% for error in errors %}
+            <p class="auth-errors text-danger">{{ error }}</p>
+        {% endfor %}
+    {% endfor %}
+    {% for field, errors in login_form.errors.items %}
+        {% for error in errors %}
+            <p class="auth-errors text-danger">{{ error }}</p>
+        {% endfor %}
+    {% endfor %}
 
 </div>
 
