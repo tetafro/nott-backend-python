@@ -532,13 +532,29 @@ function populateModal(event) {
     if ($(event.currentTarget).find('input[name="title"]').length) {
         var elementTitle = htmlUnescape($listItem.find('a').html().trim());
         $(event.currentTarget).find('input[name="title"]').val(elementTitle);
+
+        // Notes can be moved between notepads
+        var $move = $('#modal-move');
+        if (elementType == 'note') {
+            $move.show();
+            // Current notepad
+            var notepadId = $('.sidebar-first li.active').data('id');
+            $move.find('option').each(function () {
+                if ($(this).val() == notepadId) {
+                    $(this).prop('selected', true);
+                    return false; // it's break for each()
+                }
+            })
+        } else {
+            $move.hide();
+        }
     }
 }
 $(document).on('show.bs.modal', '#modal-edit', populateModal);
 $(document).on('show.bs.modal', '#modal-del', populateModal);
 
-// Rename notepad/note (via modal window)
-function renameItem(event) {
+// Rename or move notepad/note (via modal window)
+function editItem(event) {
     var elementId = $('#modal-edit-id').val();
     var elementType = $('#modal-edit-type').val();
     var elementTitle = $('#modal-edit-title').val();
@@ -555,10 +571,19 @@ function renameItem(event) {
     }
 
     var url;
+    var data;
     if (elementType == 'notepad') {
         url = baseUrl + '/ajax/notepad/' + elementId;
+        data = {title: elementTitle};
     } else if (elementType == 'note') {
         url = baseUrl + '/ajax/note/' + elementId;
+        var newNotepadId = $('#modal-move').find('option:selected').val();
+        var oldNotepadId = $('.sidebar-first li.active').data('id');
+
+        data = {title: elementTitle}
+        if (newNotepadId != oldNotepadId) {
+            data.notepad_id = newNotepadId;
+        }
     }
 
     $.ajax({
@@ -569,10 +594,21 @@ function renameItem(event) {
         },
         url: url,
         type: 'PUT',
-        data: {title: elementTitle},
+        data: data,
         success: function (response) {
             console.log(response);
-            $('li[data-type="' + elementType + '"][data-id="' + elementId + '"] > a').html(htmlEscape(elementTitle));
+            var $element = $('li' +
+                '[data-type="' + elementType + '"]' +
+                '[data-id="' + elementId + '"] > a');
+            if (elementType == 'notepad') {
+                $element.html(htmlEscape(elementTitle));
+            } else if (elementType == 'note') {
+                if (newNotepadId != oldNotepadId) {
+                    $element.remove();
+                } else {
+                    $element.html(htmlEscape(elementTitle));
+                }
+            }
         },
         error: function (response) {
             console.log(response);
@@ -582,11 +618,11 @@ function renameItem(event) {
         }
     });
 }
-$(document).on('click', '#modal-edit-submit', renameItem);
+$(document).on('click', '#modal-edit-submit', editItem);
 $(document).on('keypress', '#modal-edit-title', function (event) {
     if (event.keyCode == 13) {
         event.preventDefault();
-        renameItem(event);
+        editItem(event);
     }
 });
 

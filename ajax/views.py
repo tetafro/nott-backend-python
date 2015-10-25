@@ -237,7 +237,7 @@ def note_read(request, note_id):
 
 @object_required('note')
 def note_update(request, note_id):
-    """ Rename note or save new text """
+    """ Rename note, move note to other notepad or save new text """
     if note_id is None:
         response = {'error': 'Bad request'}
         return response, 400
@@ -253,6 +253,8 @@ def note_update(request, note_id):
         note.title = data['title']
     if 'text' in data:
         note.text = data['text']
+    if 'notepad_id' in data:
+        note.notepad_id = data['notepad_id']
 
     try:
         note.full_clean()

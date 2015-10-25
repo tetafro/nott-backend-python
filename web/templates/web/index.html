@@ -82,7 +82,7 @@
 </div>
 
 
-<!-- Modal windows for renaming -->
+<!-- Modal windows for renaming/moving -->
 <div class="modal fade" id="modal-edit" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -94,6 +94,13 @@
             </div>
             <div class="modal-body">
                 <input id="modal-edit-title" name="title" type="text" class="form-control" autocomplete="off">
+                <select id="modal-move" name="move" class="form-control">
+                    {% for notepad in notepads %}
+                    <option value="{{ notepad.id }}">
+                        {% if notepad.parent_id %}--- {% endif %}{{ notepad.title }}
+                    </option>
+                    {% endfor %}
+                </select>
                 <input id="modal-edit-id" name="id" type="hidden" value="0">
                 <input id="modal-edit-type" name="type" type="hidden" value="0">
             </div>
