@@ -120,16 +120,15 @@ def profile(request, user_id):
                            .filter(notepads__notes__isnull=False) \
                            .count()
 
-    context = {'is_me': is_me}
+    context = {
+        'is_me': is_me,
+        'usercard': user
+    }
     return render(request, 'web/profile.html', context)
 
 
 @login_required
-def profile_edit(request, user_id):
-    if int(user_id) != request.user.id:
-        # TODO: display forbidden error
-        return redirect('profile', user_id=user_id)
-
+def profile_edit(request):
     user = request.user
     # Attach notepads and notes count for the user
     user.notepads_count = user.notepads.count()
