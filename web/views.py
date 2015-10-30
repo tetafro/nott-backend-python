@@ -18,6 +18,9 @@ from data.models import UserProfile, Notepad, Note
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserForm, UserProfileForm, RegistrationForm
 
+# Helpers
+from notes.helpers import get_client_location
+
 
 def user_auth(request):
     """
@@ -120,9 +123,13 @@ def profile(request, user_id):
                            .filter(notepads__notes__isnull=False) \
                            .count()
 
+    # Geo info
+    geo_info = get_client_location(request)
+
     context = {
         'is_me': is_me,
-        'usercard': user
+        'usercard': user,
+        'geo_info': geo_info
     }
     return render(request, 'web/profile.html', context)
 

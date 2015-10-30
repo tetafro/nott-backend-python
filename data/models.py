@@ -25,7 +25,7 @@ class UserProfile(models.Model):
         if self.avatar and os.path.isfile(avatar_file):
             avatar = settings.MEDIA_URL + str(self.avatar)
         else:
-            avatar = settings.STATIC_URL + 'images/no_avatar.png'
+            avatar = settings.STATIC_URL + 'images/no-avatar.png'
         return avatar
 
 

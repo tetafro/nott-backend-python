@@ -1,4 +1,15 @@
+# Main
+from django.http import HttpResponse
+
+# HTTP exceptions
+from django.http import Http404
+from notes.middleware import Http400, Http403, Http500
+
+# Proccessing avatars
 from PIL import Image
+
+# Getting GeoIP info
+import requests
 
 
 def image_resize(img_input, img_output, max_size):
@@ -21,3 +32,74 @@ def image_resize(img_input, img_output, max_size):
     image.save(img_output, format='JPEG')
 
     return image
+
+
+def csrf_failure(request, reason=''):
+    """
+    Custom error for missing CSRF token
+    """
+
+    # Doesn't tell user anything!
+    if request.get_full_path()[:5] == '/ajax':
+        response = {'error': 'Please refresh the page'}
+        return HttpResponse(json.dumps(response), status=400)
+    else:
+        raise Http400
+
+
+def get_client_ip(request):
+    """
+    Get client's IP
+    """
+
+    real_ip = request.META.get('HTTP_X_REAL_IP')
+    # Proxy
+    if real_ip:
+        ip = real_ip
+    # No proxy
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+def get_client_location(request):
+    """
+    Get client's geo info in JSON
+    Sample:
+        ip: 10.10.10.10,
+        country_code: XX,
+        country_name: Country,
+        region_code: YYY,
+        region_name: State name,
+        city: City,
+        zip_code: 123456,
+        time_zone: Region/Zone,
+        latitude: 10.123,
+        longitude: 10.123,
+        metro_code: 0
+    """
+
+    ip = '128.70.126.226' #get_client_ip(request)
+    result = {}
+    try:
+        response = requests.get('http://freegeoip.net/json/'+ip)
+    except ConnectionError:
+        result['error'] = 'Connection error'
+    except Timeout:
+        result['error'] = 'Connection timeout'
+    except HTTPError:
+        result['error'] = 'Invalid response'
+    else:
+        if response.status_code == 200:
+            json = response.json()
+            if not json['latitude'] and not json['longitude']:
+                result['error'] = 'No geo info available'
+            else:
+                result = json
+        else:
+            result['error'] = 'Bad request'
+
+    print('---')
+    print(result)
+    print('---')
+    return result

@@ -70,6 +70,7 @@ function newEditor(tabId) {
         removeformatPasted: true,
         fullscreenable: false
     });
+    $('#editor-' + tabId).attr('spellcheck', 'false');
 
     var saveButton = makeSaveButton();
     $('.trumbowyg-button-pane').append(saveButton);

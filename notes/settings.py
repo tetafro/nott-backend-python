@@ -28,6 +28,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'notes.middleware.HttpErrorsMiddleware',
 )
 
 ROOT_URLCONF = 'notes.urls'
@@ -37,12 +38,12 @@ LOGIN_URL = 'web.views.user_auth'
 LOGOUT_URL = 'web.views.user_logout'
 
 # View function to handle CSRF failures
-CSRF_FAILURE_VIEW = 'ajax.views.csrf_failure'
+CSRF_FAILURE_VIEW = '.helpers.csrf_failure'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['notes/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

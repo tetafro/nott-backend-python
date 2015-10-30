@@ -64,6 +64,14 @@
             </div>
             {% if is_me %}
             <div class="form-group">
+                <label class="col-md-2 control-label">IP:</label>
+                <div class="col-md-3">
+                    <p class="form-control-static">
+                        {{ geo_info.city }}
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
                 <div class="col-md-offset-2">
                     <a href="{% url 'profile_edit' %}" class="btn btn-primary col-md-2">Edit</a>
                 </div>

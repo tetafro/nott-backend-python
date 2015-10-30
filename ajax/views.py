@@ -24,17 +24,11 @@ import json
 # HELPERS                                       -
 # -----------------------------------------------
 
-@csrf_exempt
-def csrf_failure(request, reason=''):
-    """
-    Custom error for missing CSRF token
-    """
-
-    response = {'error': 'CSRF is missing'}
-    return HttpResponse(json.dumps(response), status=400)
-
-
 def object_required(object_type):
+    """
+    Decocrator for checking if object with given id exists
+    """
+
     def decorator(fn):
         def wrapped(request, object_id):
             if object_id is None:
