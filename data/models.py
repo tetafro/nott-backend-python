@@ -4,14 +4,21 @@ from django.core.exceptions import ValidationError
 
 from django.conf import settings
 
+from notes.helpers import get_client_location
+
 import os
 
 # Helpers
-from notes import helpers
+from notes.helpers import get_client_location
 from .helpers import OverwriteStorage, avatar_filename
 
 
 class UserProfile(models.Model):
+    """
+    Additional info for standard User model,
+    created automaticaly by RegistrationForm
+    """
+
     user = models.OneToOneField(User, related_name='profile')
     avatar = models.FileField(upload_to=avatar_filename,
                               storage=OverwriteStorage(),
@@ -38,7 +45,41 @@ class UserProfile(models.Model):
             helpers.image_resize(avatar_file, avatar_file, 180)
 
     def __repr__(self):
-        return 'User ID%d' % self.id
+        return 'User ID%d Profile' % self.id
+
+
+class UserGeo(models.Model):
+    """
+    Geo info for standard User model,
+    created automaticaly by RegistrationForm
+    """
+
+    user = models.OneToOneField(User, related_name='geo_info')
+    ip = models.CharField(max_length=15, null=True, blank=True)
+    country_code = models.CharField(max_length=2, null=True, blank=True)
+    country_name = models.CharField(max_length=16, null=True, blank=True)
+    region_code = models.CharField(max_length=8, null=True, blank=True)
+    region_name = models.CharField(max_length=32, null=True, blank=True)
+    city = models.CharField(max_length=16, null=True, blank=True)
+    zip_code = models.IntegerField(null=True, blank=True)
+    time_zone = models.CharField(max_length=16, null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    metro_code = models.IntegerField(null=True, blank=True)
+
+    def update_geo(self, ip):
+        """ Save fields from geo info remote service """
+        info = get_client_location(ip)
+        if 'error' in info:
+            return False
+        else:
+            for attr in info:
+                setattr(self, attr, info[attr])
+            self.save()
+            return True
+
+    def __repr__(self):
+        return 'User ID%d Geo Info' % self.id
 
 
 class Notepad(models.Model):

@@ -12,14 +12,14 @@ from django.contrib.auth.decorators import login_required
 
 # Models
 from django.contrib.auth.models import User
-from data.models import UserProfile, Notepad, Note
+from data.models import UserProfile, UserGeo, Notepad, Note
 
 # Forms
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserForm, UserProfileForm, RegistrationForm
 
 # Helpers
-from notes.helpers import get_client_location
+from notes.helpers import get_client_ip
 
 
 def user_auth(request):
@@ -53,7 +53,17 @@ def user_auth(request):
             # specify data argument explicitly
             login_form = AuthenticationForm(data=request.POST)
             if login_form.is_valid():
+                # Save current user's location
                 login(request, login_form.get_user())
+                # TODO: remove when all users have it
+                # try:
+                #     geo_info = UserGeo.objects.get(user_id=request.user.id)
+                # except UserGeo.DoesNotExist:
+                #     geo_info = UserGeo(user=request.user)
+                #     geo_info.save()
+                # Fetch geo info and save it
+                ip = get_client_ip(request)
+                request.user.geo_info.update_geo(ip)
             else:
                 errors = True
 
@@ -123,13 +133,9 @@ def profile(request, user_id):
                            .filter(notepads__notes__isnull=False) \
                            .count()
 
-    # Geo info
-    geo_info = get_client_location(request)
-
     context = {
         'is_me': is_me,
-        'usercard': user,
-        'geo_info': geo_info
+        'usercard': user
     }
     return render(request, 'web/profile.html', context)
 

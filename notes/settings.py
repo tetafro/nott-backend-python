@@ -3,7 +3,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = ',cgi6&g]({g&9$4>g=nj:s2n3!]xh6rk{$oz#r$f|el(m|@6@n'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -38,7 +38,7 @@ LOGIN_URL = 'web.views.user_auth'
 LOGOUT_URL = 'web.views.user_logout'
 
 # View function to handle CSRF failures
-CSRF_FAILURE_VIEW = '.helpers.csrf_failure'
+CSRF_FAILURE_VIEW = 'notes.helpers.csrf_failure'
 
 TEMPLATES = [
     {

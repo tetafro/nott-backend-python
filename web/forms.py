@@ -1,6 +1,6 @@
 from django.forms import ModelForm, FileInput
 from django.contrib.auth.models import User
-from data.models import UserProfile
+from data.models import UserProfile, UserGeo
 
 # Django buit-in registration form
 from django.contrib.auth.forms import UserCreationForm
@@ -31,12 +31,14 @@ class RegistrationForm(UserCreationForm):
             'password2'
         ]
 
-    # Make profile for new user
+    # Make profile and geo info for new user
     def save(self, commit=True):
         user = super(RegistrationForm, self).save(commit=False)
         if commit:
             user.save()
             profile = UserProfile(user=user)
             profile.save()
+            geo_info = UserGeo(user=user)
+            geo_info.save()
 
         return user

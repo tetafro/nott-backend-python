@@ -3,7 +3,7 @@ from django.http import HttpResponse
 
 # HTTP exceptions
 from django.http import Http404
-from notes.middleware import Http400, Http403, Http500
+from .middleware import Http400, Http403, Http500
 
 # Proccessing avatars
 from PIL import Image
@@ -39,12 +39,12 @@ def csrf_failure(request, reason=''):
     Custom error for missing CSRF token
     """
 
-    # Doesn't tell user anything!
+    # Don't tell user anything!
     if request.get_full_path()[:5] == '/ajax':
         response = {'error': 'Please refresh the page'}
         return HttpResponse(json.dumps(response), status=400)
     else:
-        raise Http400
+        raise Http400()
 
 
 def get_client_ip(request):
@@ -59,10 +59,11 @@ def get_client_ip(request):
     # No proxy
     else:
         ip = request.META.get('REMOTE_ADDR')
+
     return ip
 
 
-def get_client_location(request):
+def get_client_location(ip):
     """
     Get client's geo info in JSON
     Sample:
@@ -79,7 +80,8 @@ def get_client_location(request):
         metro_code: 0
     """
 
-    ip = '128.70.126.226' #get_client_ip(request)
+    # TODO: remove after testing
+    ip = '128.70.126.226'
     result = {}
     try:
         response = requests.get('http://freegeoip.net/json/'+ip)
@@ -92,14 +94,11 @@ def get_client_location(request):
     else:
         if response.status_code == 200:
             json = response.json()
-            if not json['latitude'] and not json['longitude']:
+            if not 'latitude' in json and not 'longitude' in json:
                 result['error'] = 'No geo info available'
             else:
                 result = json
         else:
             result['error'] = 'Bad request'
 
-    print('---')
-    print(result)
-    print('---')
     return result
