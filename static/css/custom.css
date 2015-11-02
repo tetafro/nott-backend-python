@@ -302,3 +302,10 @@ span.expand {
     width:402px;
     height:402px;
 }
+
+.map h3 {
+    position: absolute; color: red;
+    top: 173px;
+    left: 163px;
+    color: #aaa;
+}

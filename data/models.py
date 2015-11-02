@@ -1,10 +1,13 @@
+# Django
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
 from django.conf import settings
 
+# Helper libs
 import os
+from pytz import timezone
+from datetime import datetime
 
 # Helpers
 from notes.helpers import UpdateGeo
@@ -70,7 +73,26 @@ class UserGeo(models.Model):
         UpdateGeo(self, ip).start()
 
     @property
-    def short(self):
+    def local_time(self):
+        """ Get local time by timezone from geo info """
+        if self.time_zone:
+            tzone = timezone(self.time_zone)
+            local_time = datetime.now(tzone)
+        else:
+            local_time = datetime.now()
+        return local_time.strftime('%H:%M')
+
+    @property
+    def str_coordinates(self):
+        """ Output coordinates for using in map """
+        if self.latitude and self.longitude:
+            info = '%s, %s' % (str(self.latitude), str(self.longitude))
+        else:
+            info = None
+        return info
+
+    @property
+    def str_short(self):
         """ Output short geo info """
         if self.city and self.country_name:
             lat_grad = round(self.latitude)
