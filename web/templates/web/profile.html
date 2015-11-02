@@ -1,4 +1,5 @@
 {% extends "web/base.html" %}
+{% load easy_maps_tags %}
 
 {% block nav_profile %}
 <li class="active"><a href="{% url 'profile' user_id='me' %}">Profile</a></li>
@@ -13,50 +14,50 @@
         <div class="col-md-2 avatar-block">
             <img class="avatar" src="{{ usercard.profile.avatar_url }}">
         </div>
-        <div class="col-md-10">
+        <div class="col-md-5">
             <div class="form-group">
-                <label class="col-md-2 control-label">E-mail:</label>
-                <div class="col-md-3">
+                <label class="col-md-4 control-label">E-mail:</label>
+                <div class="col-md-8">
                     <p class="form-control-static">
                         {{ usercard.email }}
                     </p>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">Avatar:</label>
-                <div class="col-md-3">
+                <label class="col-md-4 control-label">Avatar:</label>
+                <div class="col-md-8">
                     <p class="form-control-static">
                         {{ usercard.profile.avatar }}
                     </p>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">Notepads:</label>
-                <div class="col-md-3">
+                <label class="col-md-4 control-label">Notepads:</label>
+                <div class="col-md-8">
                     <p class="form-control-static">
                         {{ usercard.notepads_count }}
                     </p>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">Notes:</label>
-                <div class="col-md-3">
+                <label class="col-md-4 control-label">Notes:</label>
+                <div class="col-md-8">
                     <p class="form-control-static">
                         {{ usercard.notes_count }}
                     </p>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">Registered:</label>
-                <div class="col-md-3">
+                <label class="col-md-4 control-label">Registered:</label>
+                <div class="col-md-8">
                     <p class="form-control-static">
                         {{ usercard.date_joined|date:'d.m.Y' }}
                     </p>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label">Last seen:</label>
-                <div class="col-md-3">
+                <label class="col-md-4 control-label">Last seen:</label>
+                <div class="col-md-8">
                     <p class="form-control-static">
                         {{ usercard.last_login|date:'d.m.Y' }}
                     </p>
@@ -64,19 +65,17 @@
             </div>
             {% if is_me %}
             <div class="form-group">
-                <label class="col-md-2 control-label">IP:</label>
-                <div class="col-md-3">
-                    <p class="form-control-static">
-                        {{ usercard.geo_info.ip }}
-                    </p>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2">
-                    <a href="{% url 'profile_edit' %}" class="btn btn-primary col-md-2">Edit</a>
+                <div class="col-md-offset-4">
+                    <a href="{% url 'profile_edit' %}" class="btn btn-primary col-md-3">Edit</a>
                 </div>
             </div>
             {% endif %}
+        </div>
+        <div class="col-md-5">
+            <div class="map">
+                {% easy_map '45.045, 38.976' 400 400 2 %}
+            </div>
+            <span>{{ usercard.geo_info.short }}</span>
         </div>
     </form>
 </div>

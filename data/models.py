@@ -4,12 +4,10 @@ from django.core.exceptions import ValidationError
 
 from django.conf import settings
 
-from notes.helpers import get_client_location
-
 import os
 
 # Helpers
-from notes.helpers import get_client_location
+from notes.helpers import UpdateGeo
 from .helpers import OverwriteStorage, avatar_filename
 
 
@@ -69,14 +67,25 @@ class UserGeo(models.Model):
 
     def update_geo(self, ip):
         """ Save fields from geo info remote service """
-        info = get_client_location(ip)
-        if 'error' in info:
-            return False
+        UpdateGeo(self, ip).start()
+
+    @property
+    def short(self):
+        """ Output short geo info """
+        if self.city and self.country_name:
+            lat_grad = round(self.latitude)
+            lon_grad = round(self.longitude)
+            # First two digits of decimal part
+            lat_min = str(self.latitude % 1)[2:4]
+            lon_min = str(self.longitude % 1)[2:4]
+
+            # Using %s, because %f gives a bunch of trailing zeros
+            info = '%s, %s (%s°%s′, %s°%s′)' % (self.country_name, self.city,
+                                               lat_grad, lat_min,
+                                               lon_grad, lon_min)
         else:
-            for attr in info:
-                setattr(self, attr, info[attr])
-            self.save()
-            return True
+            info = None
+        return info
 
     def __repr__(self):
         return 'User ID%d Geo Info' % self.id

@@ -296,3 +296,9 @@ span.expand {
     max-width: 180px;
     max-height: 180px;
 }
+
+.map {
+    border: 1px solid #ccc;
+    width:402px;
+    height:402px;
+}

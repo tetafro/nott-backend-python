@@ -56,11 +56,11 @@ def user_auth(request):
                 # Save current user's location
                 login(request, login_form.get_user())
                 # TODO: remove when all users have it
-                # try:
-                #     geo_info = UserGeo.objects.get(user_id=request.user.id)
-                # except UserGeo.DoesNotExist:
-                #     geo_info = UserGeo(user=request.user)
-                #     geo_info.save()
+                try:
+                    geo_info = UserGeo.objects.get(user_id=request.user.id)
+                except UserGeo.DoesNotExist:
+                    geo_info = UserGeo(user=request.user)
+                    geo_info.save()
                 # Fetch geo info and save it
                 ip = get_client_ip(request)
                 request.user.geo_info.update_geo(ip)

@@ -10,7 +10,7 @@ from PIL import Image
 
 # Getting GeoIP info
 import requests
-
+import threading
 
 def image_resize(img_input, img_output, max_size):
     """
@@ -102,3 +102,24 @@ def get_client_location(ip):
             result['error'] = 'Bad request'
 
     return result
+
+
+class UpdateGeo(threading.Thread):
+    """
+    Save geo info to the database model
+    """
+
+    def __init__(self, model, ip, **kwargs):
+        self.model = model
+        self.ip = ip
+        super(UpdateGeo, self).__init__(**kwargs)
+
+    def run(self):
+        info = get_client_location(self.ip)
+        if 'error' in info:
+            return False
+        else:
+            for attr in info:
+                setattr(self.model, attr, info[attr])
+            self.model.save()
+            return True
