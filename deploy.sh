@@ -14,6 +14,9 @@ django_settings='./notes/settings.py'
 # File with passwords (not tracked by Git)
 pass_ini='./pass.ini'
 
+# Base template to change favicon
+base_template='./web/templates/web/base.html'
+
 # Other required files and directories
 avatars_dir='./media/avatars/'
 
@@ -69,8 +72,8 @@ else
         # Go to production mode
         pro)
             # baseUrl in JS script
-            sed -i 's/^var baseUrl = '\''http:\/\/notes\.lily\.local'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local'\'';/' $js_custom
-            sed -i 's/^\/\/ var baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
+            sed -i 's/^baseUrl = '\''http:\/\/notes\.lily\.local'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local'\'';/' $js_custom
+            sed -i 's/^\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
             sed -ri 's/^(\s*)console\.log/\1\/\/ console\.log/' $js_custom
             # Debug mode in Django setting
@@ -82,14 +85,16 @@ else
             # DB password
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$pro_db_pass\'',/' $django_settings
             # Allowed Django hosts
-            sed -i 's/^ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \['\''.nott.tk'\'', '\''.nott.tk.'\''\]/' $django_settings
+            sed -i 's/^ALLOWED_HOSTS = \['\''localhost'\''\]/ALLOWED_HOSTS = \['\''.nott.tk'\'', '\''.nott.tk.'\''\]/' $django_settings
+            # Favicon
+            sed -i 's/{% static '\''images\/favicon-dev.png'\'' %}/{% static '\''images\/favicon.png'\'' %}/' $base_template
 
             echo 'The app is now in production mode' ;;
         # Go to development mode
         dev)
             # baseUrl in JS script
-            sed -i 's/^\/\/ var baseUrl = '\''http:\/\/notes\.lily\.local'\'';/baseUrl = '\''http:\/\/notes\.lily\.local'\'';/' $js_custom
-            sed -i 's/^var baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
+            sed -i 's/^\/\/ baseUrl = '\''http:\/\/notes\.lily\.local'\'';/baseUrl = '\''http:\/\/notes\.lily\.local'\'';/' $js_custom
+            sed -i 's/^baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
             sed -ri 's/^(\s*)\/\/ console\.log/\1console\.log/' $js_custom
             # Debug mode in Django setting
@@ -101,7 +106,9 @@ else
             # DB password
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$dev_db_pass\'',/' $django_settings
             # Allowed Django hosts
-            sed -i 's/^ALLOWED_HOSTS = \[.*\]/ALLOWED_HOSTS = \[\]/' $django_settings
+            sed -i 's/^ALLOWED_HOSTS = \[.*\]/ALLOWED_HOSTS = \['\''localhost'\''\]/' $django_settings
+            # Favicon
+            sed -i 's/{% static '\''images\/favicon.png'\'' %}/{% static '\''images\/favicon-dev.png'\'' %}/' $base_template
 
             echo 'The app is now in development mode' ;;
     esac
