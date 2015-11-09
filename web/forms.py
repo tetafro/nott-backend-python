@@ -17,7 +17,7 @@ class UserProfileForm(ModelForm):
     class Meta:
         model = UserProfile
         fields = ['avatar']
-        widgets = {'avatar': FileInput(),}
+        widgets = {'avatar': FileInput(), }
 
 
 # Extended registration form

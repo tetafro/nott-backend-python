@@ -12,6 +12,9 @@ from PIL import Image
 import requests
 import threading
 
+# Other helpers
+import json
+
 def image_resize(img_input, img_output, max_size):
     """
     Resizes input image so that longest side is equal to max_size
@@ -81,20 +84,20 @@ def get_client_location(ip):
     """
 
     # TODO: remove after testing
-    ip = '128.70.126.226'
+    # ip = '128.70.126.226'
     result = {}
     try:
         response = requests.get('http://freegeoip.net/json/'+ip)
-    except ConnectionError:
+    except requests.ConnectionError:
         result['error'] = 'Connection error'
-    except Timeout:
+    except requests.Timeout:
         result['error'] = 'Connection timeout'
-    except HTTPError:
+    except requests.HTTPError:
         result['error'] = 'Invalid response'
     else:
         if response.status_code == 200:
             json = response.json()
-            if not 'latitude' in json and not 'longitude' in json:
+            if 'latitude' not in json and 'longitude' not in json:
                 result['error'] = 'No geo info available'
             else:
                 result = json

@@ -1,12 +1,14 @@
-from django.http import HttpResponse
 from django.shortcuts import render
+
 
 # Classes for HTTP errors
 class Http400(Exception):
     pass
 
+
 class Http403(Exception):
     pass
+
 
 class Http500(Exception):
     pass

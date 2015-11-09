@@ -42,7 +42,7 @@ def user_auth(request):
                 reg_form.save()
                 user = authenticate(
                     username=reg_form.cleaned_data['username'],
-                    password=reg_form.cleaned_data['password1'] # password2 - confirmation
+                    password=reg_form.cleaned_data['password1']  # password2 - confirmation
                 )
                 login(request, user)
             else:
@@ -162,7 +162,7 @@ def profile_edit(request):
             # TODO: return error
             pass
 
-        return redirect('profile', user_id=user_id)
+        return redirect('profile', user_id='me')
 
     form_user = UserForm(instance=user)
     form_profile = UserProfileForm(instance=user.profile)

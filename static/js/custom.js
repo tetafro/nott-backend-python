@@ -76,6 +76,19 @@ function newEditor(tabId) {
     $('.trumbowyg-button-pane').append(saveButton);
 }
 
+// Sort sidebar list (num - 1 or 2)
+function sortSidebar($list) {
+    $list.children('li').each(function () {
+        console.log($(this).find('a:first').html().trim());
+        var currentTitle = $(this).find('a:first').html().trim();
+        var nextTitle = $(this).next().find('a:first').html().trim();
+        if ($(this).next() && (currentTitle > nextTitle)) {
+            $(this).next().insertAfter($(this));
+            $(this).detach();
+        }
+    });
+}
+
 // ----------------------------------------------
 // TEMPLATES                                    -
 // ----------------------------------------------
@@ -331,6 +344,7 @@ function createItem($form, elementType) {
                 newElement = makeListItem(elementId, elementType, elementTitle, false);
                 $(sideBar + ' ul').append(newElement);
             }
+            sortSidebar($(sideBar + ' > ul'));
             $form.find('input').val('');
 
             // Open created element
@@ -545,7 +559,7 @@ function populateModal(event) {
                     $(this).prop('selected', true);
                     return false; // it's break for each()
                 }
-            })
+            });
         } else {
             $move.hide();
         }
@@ -581,7 +595,7 @@ function editItem(event) {
         var newNotepadId = $('#modal-move').find('option:selected').val();
         var oldNotepadId = $('.sidebar-first li.active').data('id');
 
-        data = {title: elementTitle}
+        data = {title: elementTitle};
         if (newNotepadId != oldNotepadId) {
             data.notepad_id = newNotepadId;
         }

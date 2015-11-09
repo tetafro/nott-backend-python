@@ -10,7 +10,7 @@ from pytz import timezone
 from datetime import datetime
 
 # Helpers
-from notes.helpers import UpdateGeo
+from notes.helpers import UpdateGeo, image_resize
 from .helpers import OverwriteStorage, avatar_filename
 
 
@@ -36,14 +36,13 @@ class UserProfile(models.Model):
             avatar = settings.STATIC_URL + 'images/no-avatar.png'
         return avatar
 
-
     def save(self, *args, **kwargs):
         super(UserProfile, self).save(*args, **kwargs)
 
         # Resize uploaded file
         if self.avatar:
             avatar_file = os.path.join(settings.MEDIA_ROOT, str(self.avatar))
-            helpers.image_resize(avatar_file, avatar_file, 180)
+            image_resize(avatar_file, avatar_file, 180)
 
     def __repr__(self):
         return 'User ID%d Profile' % self.id
@@ -102,12 +101,35 @@ class UserGeo(models.Model):
             lon_min = str(self.longitude % 1)[2:4]
 
             # Using %s, because %f gives a bunch of trailing zeros
-            info = '%s, %s (%s°%s′, %s°%s′)' % (self.country_name, self.city,
-                                               lat_grad, lat_min,
-                                               lon_grad, lon_min)
+            # Unicode symbols - grads and minutes
+            info = u'%s, %s (%s\u00B0%s\u2032, %s\u00B0%s\u2032)' % (
+                self.country_name, self.city,
+                lat_grad, lat_min,
+                lon_grad, lon_min)
+
         else:
             info = None
         return info
+
+    @property
+    def country_flag(self):
+        """ Return URL for flag image or to undefined flag """
+
+        base_url = settings.STATIC_URL + 'images/flags/'
+
+        # Default
+        flag = base_url + '_unknown.png'
+
+        # Check if file exists
+        if self.country_code:
+            for directory in settings.STATICFILES_DIRS:
+                filename = self.country_code.lower()+'.png'
+                flag_file = os.path.join(directory, 'images', 'flags', filename)
+                if os.path.isfile(flag_file):
+                    flag = base_url + filename
+                    break
+
+        return flag
 
     def __repr__(self):
         return 'User ID%d Geo Info' % self.id

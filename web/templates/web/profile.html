@@ -24,14 +24,6 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-4 control-label">Avatar:</label>
-                <div class="col-md-8">
-                    <p class="form-control-static">
-                        {{ usercard.profile.avatar }}
-                    </p>
-                </div>
-            </div>
-            <div class="form-group">
                 <label class="col-md-4 control-label">Notepads:</label>
                 <div class="col-md-8">
                     <p class="form-control-static">
@@ -63,14 +55,6 @@
                     </p>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-md-4 control-label">Local time:</label>
-                <div class="col-md-8">
-                    <p class="form-control-static">
-                        {{ user.geo_info.local_time }}
-                    </p>
-                </div>
-            </div>
             {% if is_me %}
             <div class="form-group">
                 <div class="col-md-offset-4">
@@ -79,13 +63,17 @@
             </div>
             {% endif %}
         </div>
-        {% if is_me and user.geo_info.str_coordinates %}
+        {% if usercard.geo_info.str_coordinates %}
         <div class="col-md-5">
             <div class="map">
                 <h3>Loading...</h3>
-                {% easy_map user.geo_info.str_coordinates 400 400 2 %}
+                {% easy_map usercard.geo_info.str_coordinates 400 400 2 %}
             </div>
-            <p>{{ user.geo_info.str_short }}</p>
+            <p>
+                Location: {{ usercard.geo_info.str_short }}
+                <br>
+                Time: {{ usercard.geo_info.local_time }}
+            </p>
         </div>
         {% endif %}
     </form>
