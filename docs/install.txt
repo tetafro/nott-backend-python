@@ -1,0 +1,5 @@
+1. Install servers
+apt-get install nginx uwsgi uwsgi-plugin-python3 postgresql
+
+2. Copy configs
+cp configs/nginx/sites-avaliable/* /etc/nginx/sites-avaliable

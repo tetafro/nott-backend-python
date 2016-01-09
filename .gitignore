@@ -1,8 +1,11 @@
-/venv*/
+# Folders
+/venv/
+/project/media/
 __pycache__/
+
+# Files
 *.pyc
 *.db
 /pass.ini
 .DS_Store
-/archive/
-/media/
+*dump*.sql
