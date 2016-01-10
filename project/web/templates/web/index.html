@@ -18,8 +18,7 @@
             {% if item|is_folder %}
                 <li data-type="folder" data-id="{{ item.id }}">
                     <a href="#" class="expand" data-toggle="collapse" data-target="#folder-{{ item.id }}" aria-expanded="false">
-                        <i class="glyphicon glyphicon-folder-close"></i>
-                        <span>{{ item.title }}</span>
+                        <i class="glyphicon glyphicon-folder-close"></i><span>{{ item.title }}</span>
                     </a>
                     <span class="link-add">
                         <i class="glyphicon glyphicon-plus text-primary" data-toggle="modal" data-target="#modal-crud"></i>
@@ -40,8 +39,7 @@
             {% else %}
                 <li data-type="notepad" data-id="{{ item.id }}">
                     <a href="#" class="link-get">
-                        <i class="glyphicon glyphicon-paperclip"></i>
-                        <span>{{ item.title }}</span>
+                        <i class="glyphicon glyphicon-paperclip"></i><span>{{ item.title }}</span>
                     </a>
                     <span class="link-edit">
                         <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-crud"></i>

@@ -66,6 +66,10 @@
     margin-top: 10px;
 }
 
+option[disabled] {
+    background: #ddd;
+}
+
 /* ---------------------------------------*/
 /* Login/register page                    */
 /* ---------------------------------------*/

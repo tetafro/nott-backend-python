@@ -337,6 +337,7 @@ function populateModal(event) {
         $selectParent.html('');
 
         var selected;
+        var disabled;
         var level;
         var ident;
         var parentId;
@@ -379,22 +380,20 @@ function populateModal(event) {
             });
         } else if (elementType == 'note') {
             var $currentNotepad = $('.sidebar-first li[data-type="notepad"].active');
-            var $notepads = $currentNotepad.siblings().addBack(); // siblings and itself
+            var $allNotepads = $('.sidebar-first li');
             parentId = $currentNotepad.data('id');
 
-            // List of notepads from the same folders in <select>
-            $notepads.each(function (index) {
-                if (parentId && $(this).data('id') == parentId) {
-                    selected = true;
-                } else {
-                    selected = false;
-                }
+            // List of all notepads in <select>
+            $allNotepads.each(function (index) {
+                selected = (parentId && $(this).data('id') == parentId);
+                disabled = ($(this).data('type') == 'folder');
 
                 $selectParent.append(
                     $('<option></option>')
                         .attr('value', $(this).data('id'))
                         .text($(this).find('a > span').text())
                         .prop('selected', selected)
+                        .prop('disabled', disabled)
                 );
             });
         }
@@ -495,7 +494,7 @@ function folderCreate(title, parentId) {
     var url = baseUrl + '/ajax/folder/';
     var data = {title: title}
     if (parentId) {
-        data.parent = parentId;
+        data.parent_id = parentId;
     }
 
     $.ajax({
@@ -541,7 +540,7 @@ function folderEdit(id, parentId, title) {
     var url = baseUrl + '/ajax/folder/' + id;
     var data = {title: title};
     if (parentId) {
-        data.parent = parentId;
+        data.parent_id = parentId;
     }
 
     $.ajax({
@@ -635,7 +634,7 @@ function notepadCreate(title, folderId) {
     }
 
     var url = baseUrl + '/ajax/notepad/';
-    var data = {title: title, folder: folderId};
+    var data = {title: title, folder_id: folderId};
 
     $.ajax({
         beforeSend: function (response, settings) {
@@ -719,7 +718,7 @@ function notepadEdit(id, folderId, title) {
     var url = baseUrl + '/ajax/notepad/' + id;
     var data = {title: title};
     if (folderId) {
-        data.folder = folderId;
+        data.folder_id = folderId;
     }
 
     $.ajax({
@@ -809,7 +808,7 @@ function noteCreate(title, notepadId) {
     }
 
     var url = baseUrl + '/ajax/note/';
-    var data = {title: title, id: notepadId};
+    var data = {title: title, notepad_id: notepadId};
 
     $.ajax({
         beforeSend: function (response, settings) {
@@ -930,7 +929,7 @@ function noteEdit(id, notepadId, title) {
     var url = baseUrl + '/ajax/note/' + id;
     var data = {title: title};
     if (notepadId) {
-        data.notepad = notepadId;
+        data.notepad_id = notepadId;
     }
 
     $.ajax({
