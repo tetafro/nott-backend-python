@@ -1,6 +1,6 @@
 from django.forms import ModelForm, FileInput
 from django.contrib.auth.models import User
-from data.models import UserProfile, UserGeo
+from apps.data.models import UserProfile, UserGeo
 
 # Django buit-in registration form
 from django.contrib.auth.forms import UserCreationForm

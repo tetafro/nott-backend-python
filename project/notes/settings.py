@@ -15,9 +15,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'easy_maps',
     'widget_tweaks',
-    'data',
-    'web',
-    'ajax'
+    'apps.data',
+    'apps.web',
+    'apps.ajax'
 )
 
 MIDDLEWARE_CLASSES = (

@@ -279,6 +279,18 @@ span.expand {
     height: 100%;
 }
 
+.nav-tabs > li > a {
+    border: 1px solid #ddd;
+    border-radius: 4px 4px 0 0;
+    background-color: #ecf0f1;
+    color: #aaa;
+}
+
+.nav-tabs > li > a:hover {
+    border: 1px solid #ddd; /* override Bootstrap style */
+    background-color: #f3f3f3;
+}
+
 .editor {
     height: -moz-calc(100% - 70px);
     height: -webkit-calc(100% - 70px);

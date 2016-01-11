@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 
 # Models
 from django.contrib.auth.models import User
-from data.models import UserProfile, UserGeo, Folder, Notepad, Note
+from apps.data.models import UserProfile, UserGeo, Folder, Notepad, Note
 
 # Forms
 from django.contrib.auth.forms import AuthenticationForm
@@ -21,7 +21,7 @@ from .forms import UserForm, UserProfileForm, RegistrationForm
 
 # Helpers
 from notes.helpers import get_client_ip
-from data.helpers import tree_to_list
+from apps.data.helpers import tree_to_list
 
 
 def user_auth(request):

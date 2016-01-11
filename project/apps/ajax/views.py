@@ -14,7 +14,7 @@ from django.http import QueryDict
 
 # Models
 from django.contrib.auth.models import User
-from data.models import Folder, Notepad, Note
+from apps.data.models import Folder, Notepad, Note
 
 # Other helpers
 import json
