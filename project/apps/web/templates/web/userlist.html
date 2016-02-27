@@ -33,7 +33,7 @@
                 <td class="text-center">{{ user.notepads_count }}</td>
                 <td class="text-center">{{ user.notes_count }}</td>
                 <td class="text-center">{{ user.last_login|date:'d b Y' }}</td>
-                <td class="text-center">{{ user.date_joined|date:'d b Y' }}</td>
+                <td class="text-center">{{ user.created|date:'d b Y' }}</td>
             </tr>
             {% endfor %}
         </tbody>

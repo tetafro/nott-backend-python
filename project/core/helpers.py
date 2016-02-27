@@ -50,7 +50,7 @@ def csrf_failure(request, reason=''):
         raise Http400()
 
 
-def get_client_ip(request):
+def get_ip(request):
     """
     Get client's IP
     """
@@ -66,7 +66,7 @@ def get_client_ip(request):
     return ip
 
 
-def get_client_location(ip):
+def get_location(ip):
     """
     Get client's geo info in JSON
     Sample:
@@ -118,7 +118,7 @@ class UpdateGeo(threading.Thread):
         super(UpdateGeo, self).__init__(**kwargs)
 
     def run(self):
-        info = get_client_location(self.ip)
+        info = get_location(self.ip)
         if 'error' in info:
             return False
         else:

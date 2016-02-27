@@ -7,7 +7,6 @@ class OverwriteStorage(FileSystemStorage):
     """ Provide filename for uploads """
 
     def get_available_name(self, name):
-        # Remove if already exists
         if self.exists(name):
             os.remove(os.path.join(settings.MEDIA_ROOT, name))
         return name

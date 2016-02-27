@@ -12,15 +12,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 # Models
-from django.contrib.auth.models import User
-from apps.data.models import UserProfile, UserGeo, Folder, Notepad, Note
+# from django.contrib.auth.models import User
+from apps.data.models import User, UserGeo, Folder, Notepad, Note
+from django.db.models import Count
 
 # Forms
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import UserForm, UserProfileForm, RegistrationForm
+from .forms import UserForm, RegistrationForm
 
 # Helpers
-from notes.helpers import get_client_ip
+from core.helpers import get_ip
 from apps.data.helpers import tree_to_list
 
 
@@ -55,16 +56,9 @@ def user_auth(request):
             # specify data argument explicitly
             login_form = AuthenticationForm(data=request.POST)
             if login_form.is_valid():
-                # Save current user's location
                 login(request, login_form.get_user())
-                # TODO: remove when all users have it
-                try:
-                    geo_info = UserGeo.objects.get(user_id=request.user.id)
-                except UserGeo.DoesNotExist:
-                    geo_info = UserGeo(user=request.user)
-                    geo_info.save()
                 # Fetch geo info and save it
-                ip = get_client_ip(request)
+                ip = get_ip(request)
                 request.user.geo_info.update_geo(ip)
             else:
                 errors = True
@@ -104,19 +98,11 @@ def index(request):
 
 @login_required
 def userlist(request):
-    users = User.objects.all()
-    # TODO: rewrite in one query
-    # Attach notepads and notes count for each user
-    for user in users:
-        user.folders_count = user.folders.count()
-        user.notepads_count = User.objects \
-                               .filter(id=user.id) \
-                               .filter(folders__notepads__isnull=False) \
-                               .count()
-        user.notes_count = User.objects \
-                               .filter(id=user.id) \
-                               .filter(folders__notepads__notes__isnull=False) \
-                               .count()
+    # Get users with stats
+    users = User.objects.annotate(folders_count=Count('folders', distinct=True)) \
+                            .annotate(notepads_count=Count('folders__notepads', distinct=True)) \
+                            .annotate(notes_count=Count('folders__notepads__notes', distinct=True)) \
+                            .all()
 
     context = {'users': users}
     return render(request, 'web/userlist.html', context)
@@ -125,23 +111,16 @@ def userlist(request):
 @login_required
 def profile(request, user_id):
     if user_id == 'me' or request.user.id == int(user_id):
-        user = request.user
+        user_id = request.user.id
         is_me = True
     else:
-        user = User.objects.get(id=user_id)
         is_me = False
 
-    # TODO: rewrite in one query
-    # Attach notepads and notes count for the user
-    user.folders_count = user.folders.count()
-    user.notepads_count = User.objects \
-                              .filter(id=user.id) \
-                              .filter(folders__notepads__isnull=False) \
-                              .count()
-    user.notes_count = User.objects \
-                           .filter(id=user.id) \
-                           .filter(folders__notepads__notes__isnull=False) \
-                           .count()
+    # Get user's stats
+    user = User.objects.annotate(folders_count=Count('folders', distinct=True)) \
+                       .annotate(notepads_count=Count('folders__notepads', distinct=True)) \
+                       .annotate(notes_count=Count('folders__notepads__notes', distinct=True)) \
+                       .get(id=user_id)
 
     context = {
         'is_me': is_me,
@@ -152,28 +131,17 @@ def profile(request, user_id):
 
 @login_required
 def profile_edit(request):
-    user = request.user
-    # TODO: rewrite in one query
-    # Attach notepads and notes count for the user
-    user.folders_count = user.folders.count()
-    user.notepads_count = User.objects \
-                              .filter(id=user.id) \
-                              .filter(folders__notepads__isnull=False) \
-                              .count()
-    user.notes_count = User.objects \
-                           .filter(id=user.id) \
-                           .filter(folders__notepads__notes__isnull=False) \
-                           .count()
+    # Get user's stats
+    user = User.objects.annotate(folders_count=Count('folders', distinct=True)) \
+                       .annotate(notepads_count=Count('folders__notepads', distinct=True)) \
+                       .annotate(notes_count=Count('folders__notepads__notes', distinct=True)) \
+                       .get(id=request.user.id)
 
     if request.method == 'POST':
-        form_user = UserForm(request.POST, instance=user)
-        form_profile = UserProfileForm(request.POST,
-                                       request.FILES,
-                                       instance=user.profile)
+        form_user = UserForm(request.POST, request.FILES, instance=user)
 
-        if form_user.is_valid() and form_profile.is_valid():
+        if form_user.is_valid():
             form_user.save()
-            form_profile.save()
         else:
             # TODO: return error
             pass
@@ -181,10 +149,9 @@ def profile_edit(request):
         return redirect('profile', user_id='me')
 
     form_user = UserForm(instance=user)
-    form_profile = UserProfileForm(instance=user.profile)
 
     context = {
-        'form_user': form_user,
-        'form_profile': form_profile
+        'usercard': user,
+        'form_user': form_user
     }
     return render(request, 'web/profile_edit.html', context)

@@ -1,26 +1,61 @@
 # Django
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import BaseUserManager
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.utils import timezone
 
 # Helper libs
 import os
-from pytz import timezone
+# from pytz import timezone
 from datetime import datetime
 
 # Helpers
-from notes.helpers import UpdateGeo, image_resize
+from core.helpers import UpdateGeo, image_resize
 from .helpers import OverwriteStorage, avatar_filename
 
 
-class UserProfile(models.Model):
+class UserManager(BaseUserManager):
+    def create_user(self, username, email, password):
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            email=self.normalize_email(email),
+            username=username,
+            is_active=True)
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+
+class User(AbstractBaseUser):
     """
-    Additional info for standard User model,
-    created automaticaly by RegistrationForm
+    Custom user model
     """
 
-    user = models.OneToOneField(User, related_name='profile')
+    username = models.CharField(max_length=40, unique=True)
+    email = models.CharField(max_length=40, unique=True)
+    created = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+
+    USERNAME_FIELD = 'username'
+
+    # This is only for createsuperuser command
+    # Username and password should not be here,
+    # they are always required
+    REQUIRED_FIELDS = ['email']
+
+    objects = UserManager()
+
+    def get_full_name(self):
+        return self.username
+    def get_short_name(self):
+        return self.username
+
     avatar = models.FileField(upload_to=avatar_filename,
                               storage=OverwriteStorage(),
                               blank=True,
@@ -37,12 +72,11 @@ class UserProfile(models.Model):
         return avatar
 
     def save(self, *args, **kwargs):
-        super(UserProfile, self).save(*args, **kwargs)
-
         # Resize uploaded file
         if self.avatar:
             avatar_file = os.path.join(settings.MEDIA_ROOT, str(self.avatar))
             image_resize(avatar_file, avatar_file, 180)
+        super().save(*args, **kwargs)
 
     def __repr__(self):
         return 'User ID%d Profile' % self.id

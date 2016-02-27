@@ -1,22 +1,15 @@
 from django.forms import ModelForm, FileInput
-from django.contrib.auth.models import User
-from apps.data.models import UserProfile, UserGeo
+from apps.data.models import User, UserGeo
 
-# Django buit-in registration form
-from django.contrib.auth.forms import UserCreationForm
+# Custom registration form for creating user
+from apps.data.forms import UserCreationForm
 
 
 # These two form is used in user profile editing
 class UserForm(ModelForm):
     class Meta:
         model = User
-        fields = ['email']
-
-
-class UserProfileForm(ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ['avatar']
+        fields = ['email', 'avatar']
         widgets = {'avatar': FileInput(), }
 
 
@@ -33,11 +26,9 @@ class RegistrationForm(UserCreationForm):
 
     # Make profile and geo info for new user
     def save(self, commit=True):
-        user = super(RegistrationForm, self).save(commit=False)
+        user = super().save(commit=False)
         if commit:
             user.save()
-            profile = UserProfile(user=user)
-            profile.save()
             geo_info = UserGeo(user=user)
             geo_info.save()
 

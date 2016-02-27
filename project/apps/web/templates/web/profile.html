@@ -12,7 +12,7 @@
 
     <form class="form-horizontal" role="form" action="" method="post" enctype=multipart/form-data>
         <div class="col-md-2 avatar-block">
-            <img class="avatar" src="{{ usercard.profile.avatar_url }}">
+            <img class="avatar" src="{{ usercard.avatar_url }}">
         </div>
         <div class="col-md-5">
             <div class="form-group">
@@ -51,7 +51,7 @@
                 <label class="col-md-4 control-label">Registered:</label>
                 <div class="col-md-8">
                     <p class="form-control-static">
-                        {{ usercard.date_joined|date:'d.m.Y' }}
+                        {{ usercard.created|date:'d b Y' }}
                     </p>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                 <label class="col-md-4 control-label">Last seen:</label>
                 <div class="col-md-8">
                     <p class="form-control-static">
-                        {{ usercard.last_login|date:'d.m.Y' }}
+                        {{ usercard.last_login|date:'d b Y' }}
                     </p>
                 </div>
             </div>

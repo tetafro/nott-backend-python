@@ -1,367 +1,199 @@
-# Main
+# Standard modules
+import json
+
+# Django modules
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-
-# Validation exceptions
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
-from django.db import IntegrityError
+from django.views.generic import View
 
 # Auth
 from django.contrib.auth.decorators import login_required
 
-# Django helpers
+# Helpers
 from django.http import QueryDict
 
 # Models
 from django.contrib.auth.models import User
 from apps.data.models import Folder, Notepad, Note
 
-# Other helpers
-import json
+# Custom helpers
+from .helpers import object_required, object_save, ajax_response
 
 
-# -----------------------------------------------
-# HELPERS                                       -
-# -----------------------------------------------
+class FolderView(View):
+    """Full CRUD for Folders"""
 
-def object_required(object_type):
-    """
-    Decocrator for checking if object with given id exists
-    """
-
-    def decorator(fn):
-        def wrapped(obj):
-            if obj.id is None:
-                response = {'error': 'Bad request'}
-                return response, 400
-
-            if object_type == 'folder':
-                ObjectClass = Folder
-            elif object_type == 'notepad':
-                ObjectClass = Notepad
-            elif object_type == 'note':
-                ObjectClass = Note
-
-            if not ObjectClass.objects.filter(id=obj.id).exists():
-                response = {
-                    'error': object_type.capitalize()+' not found on server'
-                }
-                return response, 400
-
-            return fn(obj)
-
-        return wrapped
-
-    return decorator
-
-
-def object_save(obj):
-    """ Full clean, save and return errors if occured """
-    try:
-        obj.full_clean()
-    except ValidationError as e:
-        error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
-        response = {'error': error_message}
-        return response, 400
-
-    try:
-        obj.save()
-    except IntegrityError as e:
-        response = {'error': 'Bad request'}
-        return response, 400
-
-    return True
-
-
-# -----------------------------------------------
-# FOLDERS                                       -
-# -----------------------------------------------
-
-class FolderCrud(object):
-    """
-    Full CRUD for working with folders
-    """
-
-    def __init__(self, request, id=None):
-        self.request = request
-        self.data = QueryDict(request.body).dict()
-        self.id = id
-
-
-    def create(self):
-        """ Create folder """
-        folder = Folder(user=self.request.user, **self.data)
+    def post(self, request, *args, **kwargs):
+        data = QueryDict(request.body).dict()
+        folder = Folder(user=request.user, **data)
 
         save_result = object_save(folder)
         if save_result is True:
             response = {'id': folder.id}
-            return response, 201
+            return ajax_response(response, 201)
         else:
-            return save_result
+            return ajax_response(*save_result)
 
-
-    @object_required('folder')
-    def read(self):
-        """ Get JSON with all notes of the folder """
-        folder = Folder.objects.get(id=self.id)
+    @object_required(Folder)
+    def get(self, request, *args, **kwargs):
+        folder_id = self.kwargs['folder_id']
+        folder = Folder.objects.get(id=folder_id)
         notepads = list(folder.notepads.all().order_by('title').values('id', 'title'))
 
         response = {'notes': notepads}
-        return response, 200
+        return ajax_response(response, 200)
 
+    @object_required(Folder)
+    def put(self, request, *args, **kwargs):
+        folder_id = self.kwargs['folder_id']
+        folder = Folder.objects.get(id=folder_id)
+        data = QueryDict(request.body).dict()
 
-    @object_required('folder')
-    def update(self):
-        """ Rename and/or move folder """
-        folder = Folder.objects.get(id=self.id)
-        for (key, value) in self.data.items():
+        for (key, value) in data.items():
             setattr(folder, key, value)
 
         save_result = object_save(folder)
         if save_result is True:
-            return '', 204
+            return ajax_response('', 204)
         else:
-            return save_result
+            return ajax_response(*save_result)
 
-
-    @object_required('folder')
-    def delete(self):
-        """ Delete folder """
-        folder = Folder.objects.get(id=self.id)
+    @object_required(Folder)
+    def delete(self, request, *args, **kwargs):
+        folder_id = self.kwargs['folder_id']
+        folder = Folder.objects.get(id=folder_id)
 
         try:
             folder.delete()
         except IntegrityError as e:
             response = {'error': 'Bad request'}
-            return response, 400
+            return ajax_response(response, 400)
 
-        return '', 204
-
-
-@login_required
-def folder(request, folder_id=None):
-    folder = FolderCrud(request, folder_id)
-
-    if request.method == 'POST':
-        response, status = folder.create()
-    elif request.method == 'GET':
-        response, status = folder.read()
-    elif request.method == 'PUT':
-        response, status = folder.update()
-    elif request.method == 'DELETE':
-        response, status = folder.delete()
-
-    return HttpResponse(
-        json.dumps(response, sort_keys=False),
-        status=status,
-        content_type='application/json'
-    )
+        return ajax_response('', 204)
 
 
-# -----------------------------------------------
-# NOTEPADS                                      -
-# -----------------------------------------------
+class NotepadView(View):
+    """Full CRUD for Notepads"""
 
-class NotepadCrud(object):
-    """
-    Full CRUD for working with notepads
-    """
-
-    def __init__(self, request, id=None):
-        self.request = request
-        self.data = QueryDict(request.body).dict()
-        self.id = id
-
-
-    def create(self):
-        """ Create notepad """
-        if not self.data.get('folder_id') or not self.data.get('title'):
+    def post(self, request, *args, **kwargs):
+        data = QueryDict(request.body).dict()
+        if not data.get('folder_id') or not data.get('title'):
             response = {'error': 'Bad request'}
-            return response, 400
+            return ajax_response(response, 400)
 
-        notepad = Notepad(**self.data)
+        notepad = Notepad(**data)
 
         save_result = object_save(notepad)
         if save_result is True:
             response = {'id': notepad.id}
-            return response, 201
+            return ajax_response(response, 201)
         else:
-            return save_result
+            return ajax_response(*save_result)
 
-
-    @object_required('notepad')
-    def read(self):
-        """ Get JSON with all notes of active notepad """
-        notepad = Notepad.objects.get(id=self.id)
+    @object_required(Notepad)
+    def get(self, request, *args, **kwargs):
+        notepad_id = self.kwargs['notepad_id']
+        notepad = Notepad.objects.get(id=notepad_id)
         notes = list(notepad.notes.all().order_by('title').values('id', 'title'))
 
         response = {'notes': notes}
-        return response, 200
+        return ajax_response(response, 200)
 
+    @object_required(Notepad)
+    def put(self, request, *args, **kwargs):
+        notepad_id = self.kwargs['notepad_id']
+        notepad = Notepad.objects.get(id=notepad_id)
+        data = QueryDict(request.body).dict()
 
-    @object_required('notepad')
-    def update(self):
-        """ Rename and/or move notepad """
-        notepad = Notepad.objects.get(id=self.id)
-
-        for (key, value) in self.data.items():
+        for (key, value) in data.items():
             setattr(notepad, key, value)
 
         save_result = object_save(notepad)
         if save_result is True:
-            return '', 204
+            return ajax_response('', 204)
         else:
-            return save_result
+            return ajax_response(save_result)
 
-
-    @object_required('notepad')
-    def delete(self):
-        """ Delete notepad """
-        notepad = Notepad.objects.get(id=self.id)
+    @object_required(Notepad)
+    def delete(self, request, *args, **kwargs):
+        notepad_id = self.kwargs['notepad_id']
+        notepad = Notepad.objects.get(id=notepad_id)
 
         try:
             notepad.delete()
         except IntegrityError as e:
             response = {'error': 'Bad request'}
-            return response, 400
+            return ajax_response(response, 400)
 
-        return '', 204
-
-
-@login_required
-def notepad(request, notepad_id=None):
-    notepad = NotepadCrud(request, notepad_id)
-
-    if request.method == 'POST':
-        response, status = notepad.create()
-    elif request.method == 'GET':
-        response, status = notepad.read()
-    elif request.method == 'PUT':
-        response, status = notepad.update()
-    elif request.method == 'DELETE':
-        response, status = notepad.delete()
-
-    return HttpResponse(
-        json.dumps(response, sort_keys=False),
-        status=status,
-        content_type='application/json'
-    )
+        return ajax_response('', 204)
 
 
-# -----------------------------------------------
-# NOTES                                         -
-# -----------------------------------------------
+class NoteView(View):
+    """Full CRUD for Notes"""
 
-class NoteCrud(object):
-    """
-    Full CRUD for working with notes
-    """
-
-    def __init__(self, request, id=None):
-        self.request = request
-        self.data = QueryDict(request.body).dict()
-        self.id = id
-
-
-    def create(self):
-        """ Create note """
-        if (
-            not self.data.get('notepad_id') or
-            not self.data.get('title') or
-            not Notepad.objects.filter(id=self.data['notepad_id']).exists()
-            ):
+    def post(self, request, *args, **kwargs):
+        data = QueryDict(request.body).dict()
+        if not data.get('notepad_id') or not data.get('title'):
             response = {'error': 'Bad request'}
             return response, 400
-        else:
-            note = Note(**self.data)
+
+        note = Note(**data)
 
         save_result = object_save(note)
         if save_result is True:
             response = {'id': note.id}
-            return response, 201
+            return ajax_response(response, 201)
         else:
-            return save_result
+            return ajax_response(*save_result)
 
-
-    @object_required('note')
-    def read(self):
-        """ Get note's content """
-        note = Note.objects.get(id=self.id)
+    @object_required(Note)
+    def get(self, request, *args, **kwargs):
+        note_id = self.kwargs['note_id']
+        note = Note.objects.get(id=note_id)
 
         response = {'text': note.text}
-        return response, 200
+        return ajax_response(response, 200)
 
+    @object_required(Note)
+    def put(self, request, *args, **kwargs):
+        note_id = self.kwargs['note_id']
+        note = Note.objects.get(id=note_id)
+        data = QueryDict(request.body).dict()
 
-    @object_required('note')
-    def update(self):
-        """ Rename note, move note to other notepad or save new text """
-        note = Note.objects.get(id=self.id)
-
-        for (key, value) in self.data.items():
+        for (key, value) in data.items():
             setattr(note, key, value)
 
         save_result = object_save(note)
         if save_result is True:
-            return '', 204
+            return ajax_response('', 204)
         else:
-            return save_result
+            return ajax_response(save_result)
 
-
-    @object_required('note')
-    def delete(self):
-        """ Delete note """
-        note = Note.objects.get(id=self.id)
+    @object_required(Note)
+    def delete(self, request, *args, **kwargs):
+        note_id = self.kwargs['note_id']
+        note = Note.objects.get(id=note_id)
 
         try:
             note.delete()
         except IntegrityError as e:
             response = {'error': 'Bad request'}
-            return response, 400
+            return ajax_response(response, 400)
 
-        return '', 204
-
-
-@login_required
-def note(request, note_id=None):
-    note = NoteCrud(request, note_id)
-
-    if request.method == 'POST':
-        response, status = note.create()
-    elif request.method == 'GET':
-        response, status = note.read()
-    elif request.method == 'PUT':
-        response, status = note.update()
-    elif request.method == 'DELETE':
-        response, status = note.delete()
-
-    return HttpResponse(
-        json.dumps(response),
-        status=status,
-        content_type='application/json'
-    )
+        return ajax_response('', 204)
 
 
-# -----------------------------------------------
-# SEARCH                                        -
-# -----------------------------------------------
+class SearchView(View):
+    """ Search notes with given text """
 
-@login_required
-def search(request):
-    """
-    Search notes with given text
-    """
+    def get(self, request, *args, **kwargs):
+        text = request.GET.get('text')
+        if text:
+            notes = list(Note.objects.filter(text__contains=text).values('id', 'title'))
+            response = {'notes': notes}
+            status = 200
+        else:
+            response = {'error': 'No text provided'}
+            status = 400
 
-    text = request.GET.get('text')
-    if text:
-        notes = list(Note.objects.filter(text__contains=text).values('id', 'title'))
-        response = {'notes': notes}
-        status = 200
-    else:
-        response = {'error': 'No text provided'}
-        status = 400
-
-    return HttpResponse(
-        json.dumps(response),
-        status=status,
-        content_type='application/json'
-    )
+        return ajax_response(response, status)
