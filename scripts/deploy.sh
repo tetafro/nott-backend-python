@@ -9,13 +9,13 @@
 
 # Files containing vars to be replaced in production
 js_custom='./project/static/js/custom.js'
-django_settings='./project/notes/settings.py'
+django_settings='./project/core/settings.py'
 
 # File with passwords (not tracked by Git)
 pass_ini='./pass.ini'
 
 # Base template to change favicon
-base_template='./project/web/templates/web/base.html'
+base_template='./project/apps/web/templates/web/base.html'
 
 # Other required files and directories
 avatars_dir='./project/media/avatars/'

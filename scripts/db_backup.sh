@@ -7,7 +7,7 @@
 DATE=$(date '+%Y%m%d')
 DIR="/var/backups/postgresql/db_notes/"
 FILE="$DATE.sql"
-LOG="/var/backups/postgresql/db_notes/backup.log"
+LOG="/var/logs/notes/db_backup.log"
 
 TIME=$(date '+%H:%M:%S %d.%m.%Y')
 echo -e "\nStart job: $TIME" >> $LOG

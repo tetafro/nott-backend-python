@@ -30,13 +30,13 @@ pip3 install -r requirements.txt
 #### 5. Copy configs
 ```
 cp configs/nginx/sites-avaliable/* /etc/nginx/sites-available/
-cp configs/uwsgi/apps-available/* /etc/uwsgi/apps-available/
+cp configs/uwsgi/apps-available/ /etc/uwsgi/apps-available/
 
 cd /etc/nginx/sites-enabled/
-ln -s ../sites-available/* .
+ln -s ../sites-available/notes .
 
 cd /etc/uwsgi/apps-enabled/
-ln -s ../apps-available/* .
+ln -s ../apps-available/notes.ini .
 ```
 
 #### 6. DB setup
@@ -58,6 +58,9 @@ chown postgres:postgres /var/lib/postgresql/db_backup.sh /var/lib/postgresql/dro
 
 mkdir -p /var/backups/postgresql/db_notes/
 chown -R postgres:postgres /var/backups/postgresql/
+
+mkdir /var/logs/notes/
+chmod a+rw /var/logs/notes/
 
 su - postgres
 chmod u+x dropbox_upload.py db_backup.sh
