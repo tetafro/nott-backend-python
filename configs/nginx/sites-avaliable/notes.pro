@@ -1,6 +1,4 @@
 server {
-
-    # listen 80 default_server;
     listen [::]:80 default_server;
     server_name nott.tk;
     root /var/www/notes/project/;

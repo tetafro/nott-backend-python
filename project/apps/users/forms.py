@@ -1,8 +1,16 @@
+from django.contrib.auth import forms
 from django.forms import ModelForm, FileInput
-from apps.data.models import User, UserGeo
 
-# Custom registration form for creating user
-from apps.data.forms import UserCreationForm
+from .models import User, UserGeo
+
+
+class UserCreationForm(forms.UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
 
 
 # These two form is used in user profile editing

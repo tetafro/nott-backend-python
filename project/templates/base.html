@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+    <title>Notes</title>
+    {% load staticfiles %}
+    <link rel="shortcut icon" href="{% static 'images/favicon-dev.png' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/trumbowyg.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/trumbowyg-colors.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Mono:400,400italic,700,700italic&subset=latin,cyrillic-ext,latin-ext,cyrillic' rel='stylesheet' type='text/css'>
+</head>
+<body>
+
+<!-- Top bar -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/"><i class="glyphicon glyphicon-home"></i></a>
+        </div>
+        {% if user.is_authenticated %}
+        <!-- Left -->
+        <ul class="nav navbar-nav">
+            {% block nav_notes %}
+            <li><a href="{% url 'index' %}">Notes</a></li>
+            {% endblock %}
+            {% block nav_userlist %}
+            <li><a href="{% url 'userlist' %}">Users</a></li>
+            {% endblock %}
+            {% if user.is_authenticated %}
+            {% block nav_profile %}
+            <li><a href="{% url 'profile' user_id='me' %}">Profile</a></li>
+            {% endblock %}
+            {% endif %}
+        </ul>
+        <!-- Right -->
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button role="button" type="submit" class="btn btn-link logout">Logout</button>
+                </form>
+            </li>
+        </ul>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- Window content -->
+<div class="container-fluid">
+    <div class="row">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<!-- Error/info message -->
+<div id="flash-message" class="overlay">
+    <h3>
+        <span class="label"></span>
+        <small>
+            <i class="glyphicon glyphicon-remove flash-close" ></i>
+        </small>
+    </h3>
+</div>
+
+<!-- AJAX load icon -->
+<div id="ajax-load-icon" class="overlay">
+    <img src="{% static 'images/ajax-loader.gif' %}">
+</div>
+
+
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/trumbowyg.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/trumbowyg-colors.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

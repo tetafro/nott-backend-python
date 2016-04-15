@@ -1,22 +1,10 @@
-# Standard modules
 import json
 
-# Django modules
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-
-# Auth
-from django.contrib.auth.decorators import login_required
-
-# Helpers
 from django.http import QueryDict
 
-# Models
-from django.contrib.auth.models import User
-from apps.data.models import Folder, Notepad, Note
-
-# Custom helpers
+from .models import Folder, Notepad, Note
 from .helpers import object_required, object_save, ajax_response
 
 

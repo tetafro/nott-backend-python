@@ -76,16 +76,12 @@ else
             sed -i 's/^\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
             sed -ri 's/^(\s*)console\.log/\1\/\/ console\.log/' $js_custom
-            # Debug mode in Django setting
-            sed -i 's/^DEBUG = True/DEBUG = False/' $django_settings
             # Django CSRF key
             sed -i 's/^SECRET_KEY = '\''.*'\''/SECRET_KEY = '\'$pro_django_csrf\''/' $django_settings
             # DB username
             sed -i 's/^        '\''USER'\'': '\''.*'\'',/        '\''USER'\'': '\'$pro_db_user\'',/' $django_settings
             # DB password
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$pro_db_pass\'',/' $django_settings
-            # Allowed Django hosts
-            sed -i 's/^ALLOWED_HOSTS = \['\''localhost'\''\]/ALLOWED_HOSTS = \['\''.nott.tk'\'', '\''.nott.tk.'\''\]/' $django_settings
             # Favicon
             sed -i 's/{% static '\''images\/favicon-dev.png'\'' %}/{% static '\''images\/favicon.png'\'' %}/' $base_template
 
@@ -97,16 +93,12 @@ else
             sed -i 's/^baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
             # JS debug
             sed -ri 's/^(\s*)\/\/ console\.log/\1console\.log/' $js_custom
-            # Debug mode in Django setting
-            sed -i 's/^DEBUG = False/DEBUG = True/' $django_settings
             # Django CSRF key
             sed -i 's/^SECRET_KEY = '\''.*'\''/SECRET_KEY = '\'$dev_django_csrf\''/' $django_settings
             # DB username
             sed -i 's/^        '\''USER'\'': '\''.*'\'',/        '\''USER'\'': '\'$dev_db_user\'',/' $django_settings
             # DB password
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$dev_db_pass\'',/' $django_settings
-            # Allowed Django hosts
-            sed -i 's/^ALLOWED_HOSTS = \[.*\]/ALLOWED_HOSTS = \['\''localhost'\''\]/' $django_settings
             # Favicon
             sed -i 's/{% static '\''images\/favicon.png'\'' %}/{% static '\''images\/favicon-dev.png'\'' %}/' $base_template
 

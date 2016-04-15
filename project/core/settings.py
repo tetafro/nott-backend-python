@@ -2,8 +2,12 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = ',cgi6&g]({g&9$4>g=nj:s2n3!]xh6rk{$oz#r$f|el(m|@6@n'
-DEBUG = True
-ALLOWED_HOSTS = ['localhost']
+
+if os.environ.get('SERVER_MODE') == 'dev':
+    DEBUG = True
+else:
+    DEBUG = False
+    ALLOWED_HOSTS = ['nott.tk']
 
 
 # Application definition
@@ -15,9 +19,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'easy_maps',
     'widget_tweaks',
-    'apps.data',
-    'apps.web',
-    'apps.ajax'
+    'apps.users',
+    'apps.notes'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -34,11 +37,11 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'core.urls'
 
-AUTH_USER_MODEL = 'data.User'
+AUTH_USER_MODEL = 'users.User'
 
 # Auth URLs
-LOGIN_URL = 'apps.web.views.user_auth'
-LOGOUT_URL = 'apps.web.views.user_logout'
+LOGIN_URL = 'apps.users.views.user_auth'
+LOGOUT_URL = 'apps.users.views.user_logout'
 
 # View function to handle CSRF failures
 CSRF_FAILURE_VIEW = 'core.helpers.csrf_failure'
@@ -46,7 +49,7 @@ CSRF_FAILURE_VIEW = 'core.helpers.csrf_failure'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['core/templates'],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,3 +96,6 @@ STATIC_ROOT = ''
 # User uploads
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AVATARS_URL = '/media/avatars/'
+AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')

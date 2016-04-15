@@ -1,19 +1,14 @@
-# Django
+import os
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
-from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils import timezone
 
-# Helper libs
-import os
-# from pytz import timezone
-from datetime import datetime
-
-# Helpers
-from core.helpers import UpdateGeo, image_resize
-from .helpers import OverwriteStorage, avatar_filename
+from .helpers import OverwriteStorage, UpdateGeo, \
+    avatar_filename, image_resize
 
 
 class UserManager(BaseUserManager):
@@ -56,7 +51,7 @@ class User(AbstractBaseUser):
     def get_short_name(self):
         return self.username
 
-    avatar = models.FileField(upload_to=avatar_filename,
+    avatar = models.FileField(upload_to=lambda u, f: u.username,
                               storage=OverwriteStorage(),
                               blank=True,
                               null=True)
@@ -64,19 +59,19 @@ class User(AbstractBaseUser):
     @property
     def avatar_url(self):
         """ Check if avatar file exist and return URL """
-        avatar_file = os.path.join(settings.MEDIA_ROOT, str(self.avatar))
+        avatar_file = os.path.join(settings.AVATARS_ROOT, str(self.avatar))
         if self.avatar and os.path.isfile(avatar_file):
-            avatar = settings.MEDIA_URL + str(self.avatar)
+            avatar = settings.AVATARS_URL + str(self.avatar)
         else:
             avatar = settings.STATIC_URL + 'images/no-avatar.png'
         return avatar
 
-    def save(self, *args, **kwargs):
-        # Resize uploaded file
-        if self.avatar:
-            avatar_file = os.path.join(settings.MEDIA_ROOT, str(self.avatar))
-            image_resize(avatar_file, avatar_file, 180)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Resize uploaded file
+    #     if self.avatar:
+    #         avatar_file = os.path.join(settings.AVATARS_ROOT, str(self.avatar))
+    #         image_resize(avatar_file, avatar_file, 180)
+    #     super().save(*args, **kwargs)
 
     def __repr__(self):
         return 'User ID%d Profile' % self.id
@@ -167,60 +162,3 @@ class UserGeo(models.Model):
 
     def __repr__(self):
         return 'User ID%d Geo Info' % self.id
-
-
-class Folder(models.Model):
-    """
-    Folders are containers for notepads
-    Root folders (with no parents) can also contain
-    other folders
-    """
-
-    title = models.CharField(max_length=80)
-    user = models.ForeignKey(User, related_name='folders')
-    parent = models.ForeignKey(
-        'self',
-        related_name='subfolders',
-        null=True,
-        blank=True
-    )
-
-    def clean(self):
-        if self.title == '':
-            raise ValidationError('Title cannot be empty')
-        if len(self.title) > 80:
-            raise ValidationError('Title is too long')
-        if not self.parent and self.parent is not None:
-            raise ValidationError('This field cannot be blank')
-
-    def __repr__(self):
-        return 'Folder ID%d' % self.id
-
-
-class Notepad(models.Model):
-    title = models.CharField(max_length=80)
-    folder = models.ForeignKey(Folder, related_name='notepads', null=True)
-
-    def clean(self):
-        if self.title == '':
-            raise ValidationError('Title cannot be empty')
-        if len(self.title) > 80:
-            raise ValidationError('Title is too long')
-
-    def __repr__(self):
-        return 'Notepad ID%d' % self.id
-
-
-class Note(models.Model):
-    title = models.CharField(max_length=80)
-    text = models.TextField(blank=True)
-    notepad = models.ForeignKey(Notepad, related_name='notes')
-
-    def clean(self):
-        if self.title == '':
-            raise ValidationError('Title cannot be empty')
-        if len(self.title) > 80:
-            raise ValidationError('Title is too long')
-
-    def __repr__(self):
-        return 'Note ID%d' % self.id

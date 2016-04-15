@@ -1,5 +1,5 @@
 // baseUrl = 'http://nott.tk';
-baseUrl = 'http://notes.lily.local';
+baseUrl = 'http://lily.local';
 
 // ----------------------------------------------
 // HELPERS                                      -

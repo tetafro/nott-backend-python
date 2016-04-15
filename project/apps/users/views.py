@@ -1,8 +1,6 @@
 # Main
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-
-# Validation exceptions
 # TODO: use these
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import IntegrityError
@@ -12,17 +10,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 # Models
-# from django.contrib.auth.models import User
-from apps.data.models import User, UserGeo, Folder, Notepad, Note
 from django.db.models import Count
+from .models import User, UserGeo
 
 # Forms
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserForm, RegistrationForm
 
 # Helpers
-from core.helpers import get_ip
-from apps.data.helpers import tree_to_list
+from .helpers import get_ip
+from apps.notes.helpers import tree_to_list
 
 
 def user_auth(request):
@@ -72,28 +69,13 @@ def user_auth(request):
         'reg_form': reg_form,
         'login_form': login_form
     }
-    return render(request, 'web/auth.html', context)
+    return render(request, 'users/auth.html', context)
 
 
 @login_required
 def user_logout(request):
     logout(request)
     return redirect('login')
-
-
-@login_required
-def index(request):
-    root_folders = request.user.folders \
-                               .filter(parent_id=None) \
-                               .order_by('title')
-
-    # Folders and notepads
-    items = []
-    for folder in root_folders:
-        items += tree_to_list(folder)
-
-    context = {'items': items}
-    return render(request, 'web/index.html', context)
 
 
 @login_required
@@ -105,7 +87,7 @@ def userlist(request):
                             .all()
 
     context = {'users': users}
-    return render(request, 'web/userlist.html', context)
+    return render(request, 'users/userlist.html', context)
 
 
 @login_required
@@ -126,7 +108,7 @@ def profile(request, user_id):
         'is_me': is_me,
         'usercard': user
     }
-    return render(request, 'web/profile.html', context)
+    return render(request, 'users/profile.html', context)
 
 
 @login_required
@@ -154,4 +136,4 @@ def profile_edit(request):
         'usercard': user,
         'form_user': form_user
     }
-    return render(request, 'web/profile_edit.html', context)
+    return render(request, 'users/profile_edit.html', context)

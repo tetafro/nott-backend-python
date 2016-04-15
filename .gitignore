@@ -2,6 +2,7 @@
 /venv/
 /project/media/
 __pycache__/
+/.idea/
 
 # Files
 *.pyc

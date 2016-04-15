@@ -15,9 +15,10 @@ pip3 install dropbox # for DB backup
 git clone https://github.com/tetafro/notes.git
 ```
 
-#### 3. Run deploy script for production mode
+#### 3. Environment variables
 ```
-scripts/deploy.sh pro
+export SERVER_MODE=production
+echo SERVER_MODE=production >> /etc/environment
 ```
 
 #### 4. Make virtualenv
