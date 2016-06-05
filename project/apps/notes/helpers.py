@@ -1,6 +1,4 @@
-import json
-
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import IntegrityError
 
@@ -26,15 +24,15 @@ def object_required(ObjectClass):
 
     def decorator(fn):
         def wrapped(self, request, *args, **kwargs):
-            id_field = ObjectClass.__name__.lower() + '_id'
-            if id_field not in kwargs:
-                response = {'error': 'Bad request'}
-                return ajax_response(response, 400)
+            try:
+                obj_id = kwargs['id']
+            except KeyError:
+                response = {'error': 'No id provided'}
+                return JsonResponse(response, status=400)
 
-            obj_id = kwargs[id_field]
             if not ObjectClass.objects.filter(id=obj_id).exists():
                 response = {'error': 'Not found'}
-                return ajax_response(response, 400)
+                return JsonResponse(response, status=400)
 
             return fn(self, request, *args, **kwargs)
 
@@ -43,6 +41,7 @@ def object_required(ObjectClass):
     return decorator
 
 
+# TODO: move this to signals
 def object_save(obj):
     """ Full clean, save and return errors if occured """
 
@@ -60,12 +59,3 @@ def object_save(obj):
         return response, 400
 
     return True
-
-
-# TODO: change for standart Django Jsonify
-def ajax_response(response, status):
-    return HttpResponse(
-        json.dumps(response),
-        status=status,
-        content_type='application/json'
-    )

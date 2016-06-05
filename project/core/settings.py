@@ -17,6 +17,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'debug_toolbar',
     'easy_maps',
     'widget_tweaks',
     'apps.users',
@@ -87,9 +88,9 @@ USE_TZ = True
 
 
 # Static files
-STATIC_URL = '/static/'
+STATIC_URL = '/public/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'public'),
 )
 STATIC_ROOT = ''
 

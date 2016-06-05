@@ -3,11 +3,11 @@ from django.contrib.auth.decorators import login_required
 from .views_ajax import FolderView, NotepadView, NoteView, SearchView
 
 urlpatterns = [
-    url(r'^folder/$', login_required(FolderView.as_view())),
-    url(r'^folder/(?P<folder_id>\d+)/$', login_required(FolderView.as_view())),
-    url(r'^notepad/$', login_required(NotepadView.as_view())),
-    url(r'^notepad/(?P<notepad_id>\d+)/$', login_required(NotepadView.as_view())),
-    url(r'^note/$', login_required(NoteView.as_view())),
-    url(r'^note/(?P<note_id>\d+)/$', login_required(NoteView.as_view())),
-    url(r'^search/$', login_required(SearchView.as_view())),
+    url(r'^folders/?$', login_required(FolderView.as_view())),
+    url(r'^folders/(?P<id>\d+)/?$', login_required(FolderView.as_view())),
+    url(r'^notepads/?$', login_required(NotepadView.as_view())),
+    url(r'^notepads/(?P<id>\d+)/?$', login_required(NotepadView.as_view())),
+    url(r'^notes/?$', login_required(NoteView.as_view())),
+    url(r'^notes/(?P<id>\d+)/?$', login_required(NoteView.as_view())),
+    url(r'^search/?$', login_required(SearchView.as_view())),
 ]
