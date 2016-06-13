@@ -302,15 +302,15 @@ span.del {
 }
 
 @font-face {
-    font-family: 'Droid Sans Mono';
-    src: url('http://lily.local/public/fonts/droid_sans_mono.ttf') format('truetype');
+    font-family: "Droid Sans Mono";
+    src: url("/public/fonts/droid_sans_mono.ttf") format("truetype");
 }
 
 .editor {
     height: -moz-calc(100% - 70px);
     height: -webkit-calc(100% - 70px);
     height: calc(100% - 70px);
-    font-family: 'Droid Sans Mono';
+    font-family: "Droid Sans Mono";
     font-size: 12px;
 }
 
@@ -323,6 +323,18 @@ span.del {
     position: absolute;
     top: 2px;
     right: 2px;
+    height: 30px;
+    width: 34px;
+}
+
+.btn-save.loading {
+    background-image: url("/public/images/loading.gif");
+    background-position: 3px 2px;
+    background-repeat: no-repeat;
+}
+
+.btn-save.loading > i {
+    display: none;
 }
 
 /* ---------------------------------------*/

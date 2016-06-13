@@ -17,7 +17,8 @@ define(
             },
             template: _.template(
                 `<a href="#tab-<%= id %>" role="tab" data-toggle="tab">
-                    <%= title %><div class="tab-close">&times;</div>
+                    <span><%= title %></span>
+                    <div class="tab-close">&times;</div>
                 </a>`
             ),
 
@@ -30,12 +31,17 @@ define(
                 // Initially opened == true
                 this.listenTo(this.model, 'change:opened', this.remove);
                 this.listenTo(this.model, 'change:active', this.onChangeActive);
+                this.listenTo(this.model, 'change:title', this.rename);
                 this.listenTo(this.model, 'destroy', this.remove);
                 this.render();
             },
 
             open: function () {
                 this.model.open();
+            },
+
+            rename: function () {
+                this.$('> a > span').text(this.model.get('title'));
             },
 
             close: function () {

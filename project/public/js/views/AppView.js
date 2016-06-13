@@ -30,6 +30,7 @@ define(
                 App.notepadsCollection = new NotepadsCollection();
                 App.notesCollection = new NotesCollection();
                 App.editorsCollection = new EditorsCollection();
+                App.AppView = this;
 
                 this.listenTo(App.notepadsCollection, 'change:active', this.onNotepadActivate);
 
@@ -54,6 +55,10 @@ define(
                         type: 'note'
                     });
                 }
+            },
+
+            displayError: function (msg) {
+                console.log('ERROR: ' + msg);
             },
 
             render: function() {
