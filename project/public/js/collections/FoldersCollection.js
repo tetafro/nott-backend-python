@@ -17,9 +17,9 @@ define(
             parse: function (response) {
                 var data = response.folders;
                 data.sort(function (a, b) {
-                    if (a.parent_id < b.parent_id) {return -1;}
-                    if (a.parent_id == b.parent_id) {return 0;}
-                    if (a.parent_id > b.parent_id) {return 1;}
+                    if (a.title < b.title) {return -1;}
+                    if (a.title == b.title) {return 0;}
+                    if (a.title > b.title) {return 1;}
                 });
                 return data;
             },

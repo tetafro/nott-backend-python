@@ -24,7 +24,8 @@ define(
                 'click [name="save"]': 'submit',
                 'click [name="delete"]': 'submit',
                 'keypress [name="title"]': 'submit',
-                'hidden.bs.modal': 'remove' // built-in function
+                'click [name="type"]': 'onChangeType',
+                'hidden.bs.modal': 'remove' // built-in remove
             },
 
             initialize: function (options) {
@@ -86,6 +87,18 @@ define(
                 }
             },
 
+            onChangeType: function (event) {
+                var $firstOption = this.$('select > option').first()
+                    type = this.$('[name="type"]:checked').val();
+
+                // Remove blank option for notepads - they must have parent folder
+                if (type == 'folder' && $firstOption.val() != '') {
+                    $('<option></option>').insertBefore($firstOption);
+                } else if (type == 'notepad' && $firstOption.val() == '') {
+                    $firstOption.remove();
+                }
+            },
+
             displayError: function (model, response) {
                 var msg = $.parseJSON(response.responseText).error;
                 this.$('.error-message').html(msg);
@@ -112,7 +125,9 @@ define(
                     parentId,
                     elementsList = '<option></option>'; // empty element for root
 
-                if (elementType == 'folder') {
+                if (that.options.parentId) {
+                    parentId = that.options.parentId;
+                } else if (elementType == 'folder') {
                     parentId = that.model ? that.model.get('parent_id') : null;
                 } else if (elementType == 'notepad') {
                     parentId = that.model ? that.model.get('folder_id') : null;
@@ -127,12 +142,23 @@ define(
                     collection = App.notepadsCollection;
                 }
 
+                var prevParentId;
                 collection.each(function (element) {
-                    if (element.get('id') == parentId) {
+                    // TODO: Skip not only current model, but all it's children
+                    // to avoid loops.
+                    if (that.model && (
+                            element.get('id') == that.model.get('id') ||  // skip current model
+                            element.get('id') == prevParentId // skip all children of current model
+                        )
+                    ) {
+                        prevParentId = element.get('id');
+                        return true;
+                    } else if (element.get('id') == parentId) {
                         selected = 'selected';
                     } else {
                         selected = '';
                     }
+
                     elementsList +=
                         '<option value=' + element.get('id') + ' ' + selected + '>' +
                             element.get('title') +
