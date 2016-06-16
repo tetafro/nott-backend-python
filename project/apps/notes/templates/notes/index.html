@@ -6,138 +6,49 @@
 {% endblock %}
 
 {% block content %}
+<div id="app">
 
-<!-- List of folders and notepads -->
-<div class="sidebar-first">
-    <h4>Notepads</h4>
-    <ul class="nav nav-sidebar">
-        {% for item in items %}
-
-            {% with next_item=items|next_element:forloop.counter0 %}
-
-            {% if item|is_folder %}
-                <li data-type="folder" data-id="{{ item.id }}">
-                    <a href="#" class="expand" data-toggle="collapse" data-target="#folder-{{ item.id }}" aria-expanded="false">
-                        <i class="glyphicon glyphicon-folder-close"></i><span>{{ item.title }}</span>
-                    </a>
-                    <span class="link-add">
-                        <i class="glyphicon glyphicon-plus text-primary" data-toggle="modal" data-target="#modal-crud"></i>
-                    </span>
-                    <span class="link-edit">
-                        <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-crud"></i>
-                    </span>
-                    <span class="link-del">
-                        <i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-crud"></i>
-                    </span>
-                </li>
-
-                <ul id="folder-{{ item.id }}" class="nav children-block collapse lvl-{{ item.level }}">
-                {# If there are no subfolders, then close <ul> immediately #}
-                {% if item.level >= next_item.level %}
-                    </ul>
-                {% endif %}
-            {% else %}
-                <li data-type="notepad" data-id="{{ item.id }}">
-                    <a href="#" class="link-get">
-                        <i class="glyphicon glyphicon-paperclip"></i><span>{{ item.title }}</span>
-                    </a>
-                    <span class="link-edit">
-                        <i class="glyphicon glyphicon-pencil text-primary" data-toggle="modal" data-target="#modal-crud"></i>
-                    </span>
-                    <span class="link-del">
-                        <i class="glyphicon glyphicon-remove text-danger" data-toggle="modal" data-target="#modal-crud"></i>
-                    </span>
-                </li>
-            {% endif %}
-
-            {# Close all <ul> from previous blocks #}
-            {% if forloop.last %}
-                {% for i in item.level|range_diff:-1 %}
-                    </ul>
-                {% endfor %}
-            {% elif item.level > next_item.level %}
-                {% for i in item.level|range_diff:next_item.level %}
-                    </ul>
-                {% endfor %}
-            {% endif %}
-
-            {% endwith %}
-
-        {% endfor %}
-    </ul>
-    <!-- New folder -->
-    <form>
-        <div class="form-group" data-type="folder">
-            <input type="text" name="title" class="form-control input-sm" placeholder="New folder" autocomplete="off">
-            <span class="link-add">
+    <!-- List of folders and notepads -->
+    <div class="sidebar-first">
+        <h4>
+            Notepads
+            <span id="new-folder-notepad" class="pull-right">
                 <i class="glyphicon glyphicon-plus text-primary"></i>
             </span>
-        </div>
-    </form>
-</div>
-
-<!-- List of notes -->
-<div class="sidebar-second">
-    <h4>
-        <span id="sidebar-second-title">Notes</span>
-        <span id="show-search" class="pull-right">
-            <i class="glyphicon glyphicon-search text-primary"></i>
-        </span>
-    </h4>
-    <ul class="nav nav-sidebar">
-    </ul>
-</div>
-
-
-<!-- Main block -->
-<div id="editor-block" style="visibility:hidden;">
-    <ul class="nav nav-tabs" role="tablist"></ul>
-    <div class="tab-content"></div>
-</div>
-
-
-<!-- Modal windows for creating/renaming/moving/deleting -->
-<div class="modal fade" id="modal-crud" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title"><!-- Title --></h4>
-            </div>
-            <div class="modal-body">
-                <div class="block-delete">
-                    Are you shure you want to delete <strong></strong>?
-                </div>
-
-                <div class="block-create-edit">
-                    <input name="title" type="text" class="form-control" autocomplete="off">
-                    <select name="move" class="form-control">
-                        <!-- Options -->
-                    </select>
-
-                    <div class="radio-type">
-                        <label class="radio-inline">
-                            <input type="radio" name="is-folder" value="1" checked> Folder
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="is-folder" value="0"> Notepad
-                        </label>
-                    </div>
-                </div>
-
-                <input name="id" type="hidden" value="">
-                <input name="type" type="hidden" value="">
-                <input name="action" type="hidden" value="">
-            </div>
-            <div class="modal-footer">
-                <button name="save" type="button" class="btn btn-primary btn-modal-submit">Save</button>
-                <button name="delete" type="button" class="btn btn-danger">Delete</button>
-                <button name="cancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            </div>
-        </div>
+        </h4>
+        <ul class="nav nav-sidebar"></ul>
     </div>
-</div>
 
+    <!-- List of notes -->
+    <div class="sidebar-second">
+        <h4>
+            Notes
+            <span id="show-search" class="pull-right">
+                <i class="glyphicon glyphicon-search text-primary"></i>
+            </span>
+            <span id="new-note" class="pull-right" style="display:none;">
+                <i class="glyphicon glyphicon-plus text-primary"></i>
+            </span>
+        </h4>
+        <ul class="nav nav-sidebar"></ul>
+
+        <!-- Search form -->
+        <form id="search-form" style="display:none;">
+            <div class="form-group">
+                <input type="text" name="search" class="form-control input-sm" placeholder="Search" autocomplete="off">
+                <span class="search">
+                    <i class="glyphicon glyphicon-search text-primary"></i>
+                </span>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- Main block -->
+    <div id="editor-block">
+        <ul class="nav nav-tabs" role="tablist"></ul>
+        <div class="tab-content"></div>
+    </div>
+
+</div>
 {% endblock %}

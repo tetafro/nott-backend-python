@@ -1,13 +1,13 @@
 #### 1. Install software
 ```
-apt-get install python3-pip python3-dev gcc
-apt-get install libjpeg-dev zlib1g-dev # for Pillow
-apt-get install nginx
-apt-get install uwsgi uwsgi-plugin-python3
-apt-get install postgresql libpq-dev
-apt-get install git
-pip3 install virtualenv
-pip3 install dropbox # for DB backup
+sudo apt-get install python3-pip python3-dev gcc
+sudo apt-get install libjpeg-dev zlib1g-dev # for Pillow
+sudo apt-get install nginx
+sudo apt-get install uwsgi uwsgi-plugin-python3
+sudo apt-get install postgresql libpq-dev
+sudo apt-get install git
+sudo pip3 install virtualenv
+sudo pip3 install dropbox # for DB backup
 ```
 
 #### 2. Clone the repository
@@ -15,14 +15,14 @@ pip3 install dropbox # for DB backup
 git clone https://github.com/tetafro/notes.git
 ```
 
-#### 3. Environment variables
+#### 3. Run deploy script for production mode
 ```
-export SERVER_MODE=production
-echo SERVER_MODE=production >> /etc/environment
+scripts/deploy.sh pro
 ```
 
 #### 4. Make virtualenv
 ```
+cd notes
 virtualenv -p python3 venv
 source venv/bin/activate
 pip3 install -r requirements.txt
@@ -30,19 +30,19 @@ pip3 install -r requirements.txt
 
 #### 5. Copy configs
 ```
-cp configs/nginx/sites-avaliable/* /etc/nginx/sites-available/
-cp configs/uwsgi/apps-available/ /etc/uwsgi/apps-available/
+sudo cp configs/nginx/sites-avaliable/* /etc/nginx/sites-available/
+sudo cp configs/uwsgi/apps-available/* /etc/uwsgi/apps-available/
 
 cd /etc/nginx/sites-enabled/
-ln -s ../sites-available/notes .
+sudo ln -s ../sites-available/notes .
 
 cd /etc/uwsgi/apps-enabled/
-ln -s ../apps-available/notes.ini .
+sudo ln -s ../apps-available/notes.ini .
 ```
 
 #### 6. DB setup
 ```
-su - postgres
+sudo su - postgres
 createdb db_notes
 createuser --no-createdb pguser
 psql
@@ -50,8 +50,6 @@ psql
 GRANT ALL PRIVILEGES ON DATABASE db_notes TO pguser;
 \quit
 psql db_notes < db_notes_dump.sql
-
-manage.py migrate
 ```
 
 #### 7. DB backup
