@@ -38,25 +38,43 @@ define(
             },
 
             render: function() {
-                var that = this;
+                var that = this,
+                    len = that.collection.length;
 
                 // Clear list of folders and notepads
                 that.$el.empty();
 
-                var folder,
-                    folderView,
-                    parentId;
+                // Recursion function for rendering tree
+                var renderChildren = function (parentFolder) {
+                    var folder,
+                        folderView,
+                        parentFolderId = parentFolder.get('id'),
+                        parentFolderParentId = parentFolder.get('parent_id');
 
-                for (var i = 0; i < that.collection.length; i++) {
-                    folder = that.collection.at(i);
-                    folderView = new FolderView({model: folder});
-
-                    parentId = folder.get('parent_id');
-                    if (parentId) {
-                        that.$('#folder-' + parentId + '.children-block')
-                            .append(folderView.$el);
-                    } else {
+                    folderView = new FolderView({model: parentFolder});
+                    if (parentFolderParentId == null) {
                         that.$el.append(folderView.$el);
+                    } else {
+                        that.$('#folder-' + parentFolderParentId + '.children-block')
+                            .append(folderView.$el);
+                    }
+
+                    for (var i = 0; i < len; i++) {
+                        folder = that.collection.at(i);
+                        if (parentFolderId == folder.get('parent_id')) {
+                            renderChildren(folder);
+                        }
+                    };
+                }
+
+                that.collection.sortBy('title');
+
+                // Render folders from root
+                var folder;
+                for (var i = 0; i < len; i++) {
+                    folder = that.collection.at(i);
+                    if (!folder.get('parent_id')) {
+                        renderChildren(folder);
                     }
                 };
             }
