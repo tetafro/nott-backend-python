@@ -8,7 +8,6 @@
 
 
 # Files containing vars to be replaced in production
-js_custom='./project/static/js/custom.js'
 django_settings='./project/core/settings.py'
 
 # File with passwords (not tracked by Git)
@@ -21,7 +20,7 @@ base_template='./project/apps/web/templates/web/base.html'
 avatars_dir='./project/media/avatars/'
 
 # Check if all files and directories are on their places
-required_files=( $js_custom $django_settings $pass_ini )
+required_files=( $django_settings $pass_ini )
 for file in "${required_files[@]}"
 do
     if [ ! -f $file ]
@@ -71,11 +70,7 @@ else
     case $1 in
         # Go to production mode
         pro)
-            # baseUrl in JS script
-            sed -i 's/^baseUrl = '\''http:\/\/notes\.lily\.local'\'';/\/\/ baseUrl = '\''http:\/\/notes\.lily\.local'\'';/' $js_custom
-            sed -i 's/^\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
-            # JS debug
-            sed -ri 's/^(\s*)console\.log/\1\/\/ console\.log/' $js_custom
+            # TODO: remove all console.log() from JS
             # Django CSRF key
             sed -i 's/^SECRET_KEY = '\''.*'\''/SECRET_KEY = '\'$pro_django_csrf\''/' $django_settings
             # DB username
@@ -88,11 +83,6 @@ else
             echo 'The app is now in production mode' ;;
         # Go to development mode
         dev)
-            # baseUrl in JS script
-            sed -i 's/^\/\/ baseUrl = '\''http:\/\/notes\.lily\.local'\'';/baseUrl = '\''http:\/\/notes\.lily\.local'\'';/' $js_custom
-            sed -i 's/^baseUrl = '\''http:\/\/nott\.tk'\'';/\/\/ baseUrl = '\''http:\/\/nott\.tk'\'';/' $js_custom
-            # JS debug
-            sed -ri 's/^(\s*)\/\/ console\.log/\1console\.log/' $js_custom
             # Django CSRF key
             sed -i 's/^SECRET_KEY = '\''.*'\''/SECRET_KEY = '\'$dev_django_csrf\''/' $django_settings
             # DB username

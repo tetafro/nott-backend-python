@@ -1,13 +1,20 @@
-# Folders
+# Python
 /venv/
-/project/media/
 __pycache__/
-/.idea/
-/etc/
-
-# Files
 *.pyc
-*.db
-/pass.ini
+
+# OS, tools
+/.idea/
 .DS_Store
+
+# DB dumps
 *dump*.sql
+
+# Static, media
+/project/media/
+
+# Secrets
+/pass.ini
+
+# TODO: Wtf?
+/etc/

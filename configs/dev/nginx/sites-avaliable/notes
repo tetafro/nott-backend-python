@@ -1,6 +1,8 @@
 server {
+    sendfile off;
+
     listen 80 default_server;
-    server_name vm.local;
+    server_name nott.local;
     root /var/www/notes/project/;
 
     location / {
