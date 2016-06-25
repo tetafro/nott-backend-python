@@ -20,18 +20,19 @@ define(
             template: _.template('<div id="editor-<%= id %>" class="editor"></div>'),
             templateSaveButton: `
                 <button type="button" class="btn btn-sm btn-primary btn-save" title="Save">
-                    <i class="glyphicon glyphicon-ok"></i>
+                    <i class="glyphicon glyphicon-ok-circle"></i>
                 </button>`,
 
             // Trumbowyg
             editorOptions: {
                 btns: [
                     'viewHTML',
-                    ['bold', 'italic']
+                    ['bold', 'italic'],
+                    ['foreColor']
                 ],
-                btnsAdd: ['foreColor'],
                 removeformatPasted: true,
-                fullscreenable: false
+                fullscreenable: false,
+                svgPath: '/public/images/trumbowyg-icons.svg'
             },
 
             events: {

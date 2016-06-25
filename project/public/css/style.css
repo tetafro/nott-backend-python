@@ -319,21 +319,22 @@ span.del {
     margin: 0px;
 }
 
-.btn-save {
+.trumbowyg-button-pane .btn-save {
     position: absolute;
-    top: 2px;
+    top: 1px;
     right: 2px;
-    height: 30px;
-    width: 34px;
+    color: #337ab7;
+    font-size: 18px;
+    line-height: 18px;
 }
 
-.btn-save.loading {
+.trumbowyg-button-pane .btn-save.loading {
     background-image: url("/public/images/loading.gif");
-    background-position: 3px 2px;
+    background-position: 5px 5px;
     background-repeat: no-repeat;
 }
 
-.btn-save.loading > i {
+.trumbowyg-button-pane .btn-save.loading > i {
     display: none;
 }
 
