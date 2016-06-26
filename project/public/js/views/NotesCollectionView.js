@@ -14,7 +14,8 @@ define(
             el: $('.sidebar-second .nav-sidebar'),
 
             initialize: function () {
-                this.listenTo(this.collection, 'reset', this.render);
+                // this.listenTo(this.collection, 'reset', this.render);
+                this.listenTo(this.collection, 'rerender', this.render);
                 this.render();
             },
 

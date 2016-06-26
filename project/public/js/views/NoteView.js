@@ -46,6 +46,10 @@ define(
 
             // Modal window with details for CRUD operation
             showModal: function (event) {
+                // Since lists are nested, clicking on child element
+                // is propagating to all parents. It shouldn't happen.
+                event.stopPropagation();
+
                 if ($(event.currentTarget).hasClass('edit')) {
                     new ModalView({
                         model: this.model,
@@ -65,6 +69,10 @@ define(
 
             render: function() {
                 this.$el.html(this.template(this.model.toJSON()));
+                // In case of rendering model, which is opened in tabs
+                if (this.model.get('active')) {
+                    this.$el.addClass('active');
+                }
             }
         });
 

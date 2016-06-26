@@ -16,7 +16,8 @@ define(
                 text: null,
                 notepad_id: null,
 
-                opened: false, // tab is opened
+                opened: false, // tab is opened,
+                               // need for view to fire close event
                 active: false // tab is active
             },
             // Interface fields, not stored in DB
@@ -53,22 +54,13 @@ define(
                 var that = this;
 
                 // Model is already opened - make it's tab active
-                if (App.editorsCollection.contains(that)) {
+                if (that.get('opened')) {
                     App.editorsCollection.openOne(that);
                 // Fetch model and open it in new tab
                 } else {
                     that.fetch({
                         success: function () {
-                            App.editorsCollection.add(that);
                             App.editorsCollection.openOne(that);
-
-                            // TODO: Move it... somewhere. It doesn't belong here.
-                            // Open editor
-                            var editorHeadView = new EditorHeadView({model: that});
-                            $('#editor-block > .nav-tabs').append(editorHeadView.$el);
-                            var editorContentView = new EditorContentView({model: that});
-                            $('#editor-block > .tab-content').append(editorContentView.$el);
-                            editorContentView.initEditor();
                         }
                     });
                 }
@@ -76,8 +68,6 @@ define(
 
             close: function () {
                 if (!this.get('opened')) { return; }
-
-                this.set('opened', true);
                 App.editorsCollection.closeOne(this);
             },
 

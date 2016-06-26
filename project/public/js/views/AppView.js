@@ -5,7 +5,7 @@ define(
         'collections/FoldersCollection', 'collections/NotepadsCollection',
         'collections/NotesCollection', 'collections/EditorsCollection',
         'views/FoldersCollectionView', 'views/NotepadsCollectionView',
-        'views/NotesCollectionView', 'views/ModalView'
+        'views/NotesCollectionView', 'views/EditorsCollectionView', 'views/ModalView'
     ],
     function (
         $, _, Backbone, App,
@@ -13,7 +13,7 @@ define(
         FoldersCollection, NotepadsCollection,
         NotesCollection, EditorsCollection,
         FoldersCollectionView, NotepadsCollectionView,
-        NotesCollectionView, ModalView
+        NotesCollectionView, EditorsCollectionView, ModalView
     ) {
         var AppView = Backbone.View.extend({
             el: '#app',
@@ -82,6 +82,10 @@ define(
                 // List of notes in left panel
                 new NotesCollectionView({
                     collection: App.notesCollection
+                });
+                // List of notes in left panel
+                new EditorsCollectionView({
+                    collection: App.editorsCollection
                 });
             }
         });

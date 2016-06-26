@@ -14,10 +14,15 @@ define(
 
             openOne: function(note) {
                 var eachNote;
+
                 this.each(function (eachNote) {
                     eachNote.set('active', false);
                 });
                 note.set({active: true, opened: true});
+
+                if (!this.contains(note)) {
+                    App.editorsCollection.add(note);
+                }
             },
 
             closeOne: function(note) {

@@ -20,10 +20,29 @@ define(
                 return response.notes;
             },
 
-            openNotepad: function (notepad) {
-                this.notepad = notepad;
-                this.url = '/ajax/notes?notepad-id=' + notepad.get('id');
-                this.fetch({reset: true});
+            switchNotepad: function (notepad) {
+                var that = this;
+
+                that.notepad = notepad;
+                that.url = '/ajax/notes?notepad-id=' + notepad.get('id');
+                that.fetch({
+                    reset: true,
+                    // Synchronize models with EditorsCollection
+                    success: function () {
+                        var note,
+                            openedNote;
+                        for (var i = 0; i < that.length; i++) {
+                            note = that.at(i);
+                            openedNote = App.editorsCollection.get(note.get('id'));
+                            if (openedNote) {
+                                that.models[i] = openedNote;
+                            }
+                        };
+
+                        // Event to render view
+                        that.trigger('rerender');
+                    }
+                });
             },
 
             createOne: function (note, title, notepadId) {

@@ -50,7 +50,7 @@ define(
                 if (this.get('active')) { return; }
 
                 this.collection.setActive(this);
-                App.notesCollection.openNotepad(this);
+                App.notesCollection.switchNotepad(this);
             },
 
             // Filter the data to send to the server
