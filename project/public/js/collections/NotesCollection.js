@@ -45,7 +45,7 @@ define(
                 });
             },
 
-            createOne: function (note, title, notepadId) {
+            createOne: function (title, notepadId) {
                 var that = this,
                     notepadId = this.notepad.get('id');
 

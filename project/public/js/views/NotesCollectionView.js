@@ -14,6 +14,7 @@ define(
             el: $('.sidebar-second .nav-sidebar'),
 
             initialize: function () {
+                this.listenTo(this.collection, 'add', this.onAdd);
                 // this.listenTo(this.collection, 'reset', this.render);
                 this.listenTo(this.collection, 'rerender', this.render);
                 this.render();
@@ -35,6 +36,11 @@ define(
                     title = $input.val();
 
                 that.collection.createOne(title);
+            },
+
+            onAdd: function (note) {
+                var noteView = new NoteView({model: note});
+                this.$el.append(noteView.$el);
             },
 
             render: function() {

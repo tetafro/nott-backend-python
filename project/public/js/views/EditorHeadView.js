@@ -23,7 +23,7 @@ define(
             ),
 
             events: {
-                'click li': 'open',
+                'click': 'open',
                 'click .tab-close': 'close'
             },
 
@@ -36,7 +36,7 @@ define(
                 this.render();
             },
 
-            open: function () {
+            open: function (event) {
                 this.model.open();
             },
 
@@ -44,7 +44,7 @@ define(
                 this.$('> a > span').text(this.model.get('title'));
             },
 
-            close: function () {
+            close: function (event) {
                 this.model.close();
             },
 

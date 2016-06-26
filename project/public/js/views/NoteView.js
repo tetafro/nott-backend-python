@@ -35,7 +35,7 @@ define(
                 this.render();
             },
 
-            open: function() {
+            open: function () {
                 this.model.open();
             },
 
