@@ -45,6 +45,7 @@ define(
             },
 
             close: function (event) {
+                event.stopPropagation();
                 this.model.close();
             },
 

@@ -25,17 +25,14 @@ define(
             },
 
             closeOne: function(note) {
-                var that = this;
+                // Remove from opened and set unactive
+                this.remove(note);
 
                 // Make active first of remaining opened notes
-                if (note.get('active') && that.length > 1) {
-                    var newActiveNote = (that.at(0).get('id') == note.get('id')) ?
-                        that.at(1) : that.at(0);
-                    that.openOne(newActiveNote);
+                if (this.length && note.get('active')) {
+                    this.at(0).set('active', true);
                 }
 
-                // Remove from opened and set unactive
-                that.remove(note);
                 note.set({active: false, opened: false});
             }
         });
