@@ -51,7 +51,12 @@ class User(AbstractBaseUser):
     def get_short_name(self):
         return self.username
 
-    avatar = models.FileField(upload_to=lambda u, f: u.username,
+    # Note: this can't be lamba, otherwise makemigration
+    # will give an error
+    def upload_to(u, f):
+        return u.username
+
+    avatar = models.FileField(upload_to=upload_to,
                               storage=OverwriteStorage(),
                               blank=True,
                               null=True)

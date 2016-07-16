@@ -38,6 +38,7 @@ sudo ln -s ../sites-available/notes .
 
 cd /etc/uwsgi/apps-enabled/
 sudo ln -s ../apps-available/notes.ini .
+sudo service nginx reload
 ```
 
 #### 6. DB setup
@@ -48,7 +49,6 @@ createuser --no-createdb pguser
 psql
 \password pguser
 GRANT ALL PRIVILEGES ON DATABASE db_notes TO pguser;
-\quit
 psql db_notes < db_notes_dump.sql
 ```
 

@@ -29,10 +29,11 @@ pip3 install -r requirements.txt
 
 #### 6. Copy configs
 ```
-sudo cp configs/nginx/sites-avaliable/notes /etc/nginx/sites-available/
+sudo cp configs/dev/nginx/sites-avaliable/notes /etc/nginx/sites-available/
 
 cd /etc/nginx/sites-enabled/
 sudo ln -s ../sites-available/notes .
+sudo service nginx reload
 ```
 
 #### 7. DB setup
@@ -43,7 +44,6 @@ createuser --no-createdb pguser
 psql
 \password pguser
 GRANT ALL PRIVILEGES ON DATABASE db_notes TO pguser;
-\quit
 
 ./manage.py migrate
 ```
