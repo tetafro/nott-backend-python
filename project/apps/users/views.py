@@ -1,9 +1,5 @@
 # Main
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-# TODO: use these
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
-from django.db import IntegrityError
 
 # Auth
 from django.contrib.auth import authenticate, login, logout
@@ -11,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 # Models
 from django.db.models import Count
-from .models import User, UserGeo
+from .models import User
 
 # Forms
 from django.contrib.auth.forms import AuthenticationForm
@@ -19,7 +15,6 @@ from .forms import UserForm, RegistrationForm
 
 # Helpers
 from .helpers import get_ip
-from apps.notes.helpers import tree_to_list
 
 
 def user_auth(request):
@@ -81,10 +76,11 @@ def user_logout(request):
 @login_required
 def userlist(request):
     # Get users with stats
-    users = User.objects.annotate(folders_count=Count('folders', distinct=True)) \
-                            .annotate(notepads_count=Count('folders__notepads', distinct=True)) \
-                            .annotate(notes_count=Count('folders__notepads__notes', distinct=True)) \
-                            .all()
+    users = User.objects.\
+                 annotate(folders_count=Count('folders', distinct=True)).\
+                 annotate(notepads_count=Count('folders__notepads', distinct=True)).\
+                 annotate(notes_count=Count('folders__notepads__notes', distinct=True)).\
+                 all()
 
     context = {'users': users}
     return render(request, 'users/userlist.html', context)

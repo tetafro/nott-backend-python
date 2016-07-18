@@ -10,11 +10,23 @@ __pycache__/
 # DB dumps
 *dump*.sql
 
+# Any logs
+*.log
+
 # Static, media
 /project/media/
+
+# Old JS project
+/project/public/js/script.js
+
+# Built app
+/project/public/js/app.js
 
 # Secrets
 /pass.ini
 
-# TODO: Wtf?
+# Some thougths
 /etc/
+
+# JSCS linter is install with NPM
+node_modules/

@@ -1,8 +1,7 @@
 import json
 
 from django.http import HttpResponse
-from django.http import Http404
-from .middleware import Http400, Http403, Http500
+from .middleware import Http400
 
 
 def csrf_failure(request, reason=''):

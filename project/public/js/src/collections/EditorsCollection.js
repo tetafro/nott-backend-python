@@ -26,7 +26,7 @@ define(
                 note.set({active: false, opened: false});
             },
 
-            openOne: function(note) {
+            openOne: function (note) {
                 var eachNote;
                 this.each(function (eachNote) {
                     eachNote.set('active', false);
@@ -38,7 +38,7 @@ define(
                 }
             },
 
-            closeOne: function(note) {
+            closeOne: function (note) {
                 // Remove from opened
                 this.remove(note);
             }

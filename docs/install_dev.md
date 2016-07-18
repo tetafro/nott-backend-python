@@ -1,7 +1,7 @@
 #### 1. Install software
 ```
 sudo apt-get install python3-pip python3-dev gcc
-sudo apt-get install libjpeg-dev zlib1g-dev # for Pillow
+sudo apt-get install libjpeg-dev zlib1g-dev  # for Pillow
 sudo apt-get install nginx
 sudo apt-get install postgresql libpq-dev
 sudo apt-get install git
@@ -51,4 +51,22 @@ GRANT ALL PRIVILEGES ON DATABASE db_notes TO pguser;
 #### 8. Run server
 ```
 ./manage.py runserver
+```
+
+#### 9. Linters
+```
+# JavaScript
+sudo apt-get install nodejs npm
+sudo ln -s /usr/bin/nodejs /usr/bin/node
+sudo npm install -g jscs@2.11  # loris requires jscs < 3.0
+npm install --save-dev jscs-preset-loris
+# Python
+sudo apt-get install pep8 pylint pyflakes
+```
+
+#### 10. JS compiler
+```
+sudo npm install -g requirejs uglify-js
+cd project/public/js/
+r.js -o build.js
 ```

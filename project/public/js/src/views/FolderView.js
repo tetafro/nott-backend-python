@@ -14,7 +14,7 @@ define(
         var FolderView = Backbone.View.extend({
             model: Folder,
             tagName: 'li',
-            attributes : function () {
+            attributes: function () {
                 return {
                     'data-type': 'folder',
                     'data-id': this.model.get('id')

@@ -3,22 +3,6 @@ from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import IntegrityError
 
 
-def tree_to_list(folder, level=0):
-    """ Make a tree representation of folder, subfolders and notepads """
-
-    folder.level = level
-    tree_list = [folder]
-    if folder.subfolders.count():
-        for subfolder in folder.subfolders.order_by('title'):
-            tree_list += tree_to_list(subfolder, level+1)
-    if folder.notepads.count():
-        for notepad in folder.notepads.order_by('title'):
-            notepad.level = level + 1
-            tree_list += [notepad]
-
-    return tree_list
-
-
 def object_required(ObjectClass):
     """ Checking if object with given id exists """
 

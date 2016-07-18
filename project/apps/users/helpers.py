@@ -21,11 +21,6 @@ class OverwriteStorage(FileSystemStorage):
         return name
 
 
-def avatar_filename(instance, filename):
-    """ Filename for avatars """
-    return instance.username + '.jpg'
-
-
 def image_resize(img_input, img_output, max_size):
     """
     Resizes input image so that longest side is equal to max_size

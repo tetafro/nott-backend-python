@@ -29,8 +29,9 @@ define(
                     reset: true,
                     // Synchronize models with EditorsCollection
                     success: function () {
-                        var note,
-                            openedNote;
+                        var note;
+                        var openedNote;
+
                         for (var i = 0; i < that.length; i++) {
                             note = that.at(i);
                             openedNote = App.editorsCollection.get(note.get('id'));
@@ -46,8 +47,8 @@ define(
             },
 
             createOne: function (title, notepadId) {
-                var that = this,
-                    notepadId = this.notepad.get('id');
+                var that = this;
+                var notepadId = this.notepad.get('id');
 
                 var note = new Note();
                 note.save(

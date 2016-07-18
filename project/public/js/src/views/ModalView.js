@@ -14,7 +14,7 @@ define(
             tagName: 'div',
             id: 'modal-crud',
             className: 'modal fade',
-            attributes : {
+            attributes: {
                 tabindex: '-1',
                 role: 'dialog'
             },
@@ -53,11 +53,11 @@ define(
                     }
                 }
 
-                var that = this,
-                    parentId = parseInt(that.$('select[name="move"]').val()) || null,
-                    elementTitle = that.$('input[name="title"]').val(),
-                    elementType = that.$('input[name="type"]:checked').val(),
-                    collection;
+                var that = this;
+                var parentId = parseInt(that.$('select[name="move"]').val()) || null;
+                var elementTitle = that.$('input[name="title"]').val();
+                var elementType = that.$('input[name="type"]:checked').val();
+                var collection;
 
                 switch (elementType) {
                     case 'folder':
@@ -88,8 +88,8 @@ define(
             },
 
             onChangeType: function (event) {
-                var $firstOption = this.$('select > option').first()
-                    type = this.$('[name="type"]:checked').val();
+                var $firstOption = this.$('select > option').first();
+                var type = this.$('[name="type"]:checked').val();
 
                 // Remove blank option for notepads - they must have parent folder
                 if (type == 'folder' && $firstOption.val() != '') {
@@ -105,9 +105,9 @@ define(
             },
 
             render: function () {
-                var that = this,
-                    windowTitle,
-                    elementType;
+                var that = this;
+                var windowTitle;
+                var elementType;
 
                 if (that.options.action == 'create') {
                     elementType = that.options.type;
@@ -121,9 +121,9 @@ define(
                 }
 
                 // Get list of all folders
-                var selected,
-                    parentId,
-                    elementsList = '<option></option>'; // empty element for root
+                var selected;
+                var parentId;
+                var elementsList = '<option></option>'; // empty element for root
 
                 if (that.options.parentId) {
                     parentId = that.options.parentId;

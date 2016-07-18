@@ -23,7 +23,7 @@ define(
         };
 
         var App = {
-            init: function() {
+            init: function () {
                 var token = getCSRF();
 
                 // Set CSRF token for all Backbone's requests

@@ -19,8 +19,8 @@ define(
             },
 
             createOne: function (title, folderId) {
-                var that = this
-                    notepad = new Notepad();
+                var that = this;
+                var notepad = new Notepad();
 
                 notepad.save(
                     {
@@ -48,7 +48,7 @@ define(
                 notepad.destroy({wait: true});
             },
 
-            setActive: function(activeNotepad) {
+            setActive: function (activeNotepad) {
                 var notepad;
                 this.each(function (notepad) {
                     notepad.set('active', false);

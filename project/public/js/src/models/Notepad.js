@@ -1,34 +1,32 @@
 define(
     [
-        'underscore', 'backbone',
+        'backbone',
         'app',
-        'views/EditorHeadView', 'views/EditorContentView'
+        'collections/NotesCollection',
+        'views/NotesCollectionView'
     ],
     function (
-        _, Backbone,
+        Backbone,
         App,
-        EditorHeadView, EditorContentView
+        NotesCollection,
+        NotesCollectionView
     ) {
-        var Note = Backbone.Model.extend({
+        var Notepad = Backbone.Model.extend({
             defaults: {
                 id: null,
                 title: null,
-                text: null,
-                notepad_id: null,
+                folder_id: null,
 
-                opened: false, // tab is opened,
-                               // need for view to fire close event
-                active: false // tab is active
+                active: false
             },
             // Interface fields, not stored in DB
             dontSync: [
-                'opened',
                 'active'
             ],
             // To be able to determine what object type is current model
-            type: 'note',
+            type: 'notepad',
             idAttribute: 'id',
-            urlRoot: '/ajax/notes/',
+            urlRoot: '/ajax/notepads/',
 
             events: {
                 'error': 'displayError'
@@ -47,32 +45,16 @@ define(
                 App.displayError(error);
             },
 
-            // Load from server or activate if already loaded
-            open: function () {
+            activate: function () {
+                // Click on already active model - do nothing
                 if (this.get('active')) { return; }
 
-                var that = this;
-
-                // Model is already opened - make it's tab active
-                if (that.get('opened')) {
-                    App.editorsCollection.openOne(that);
-                // Fetch model and open it in new tab
-                } else {
-                    that.fetch({
-                        success: function () {
-                            App.editorsCollection.openOne(that);
-                        }
-                    });
-                }
-            },
-
-            close: function () {
-                if (!this.get('opened')) { return; }
-                App.editorsCollection.closeOne(this);
+                this.collection.setActive(this);
+                App.notesCollection.switchNotepad(this);
             },
 
             // Filter the data to send to the server
-            save: function(attrs, options) {
+            save: function (attrs, options) {
                 attrs || (attrs = _.clone(this.attributes));
                 options || (options = {});
 
@@ -84,6 +66,6 @@ define(
             }
         });
 
-        return Note;
+        return Notepad;
     }
 );

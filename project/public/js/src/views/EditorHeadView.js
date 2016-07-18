@@ -13,7 +13,7 @@ define(
             attributes: function () {
                 return {
                     'data-id': this.model.get('id')
-                }
+                };
             },
             template: _.template(
                 `<a href="#tab-<%= id %>" role="tab" data-toggle="tab">

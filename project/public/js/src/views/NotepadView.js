@@ -16,7 +16,7 @@ define(
         var NotepadView = Backbone.View.extend({
             model: Notepad,
             tagName: 'li',
-            attributes : function () {
+            attributes: function () {
                 return {
                     'data-type': 'notepad',
                     'data-id': this.model.get('id')

@@ -14,7 +14,7 @@ define(
         var NoteView = Backbone.View.extend({
             model: Note,
             tagName: 'li',
-            attributes : function () {
+            attributes: function () {
                 return {
                     'data-type': 'note',
                     'data-id': this.model.get('id')
@@ -67,7 +67,7 @@ define(
                 this.$('> div > a > span').html(this.model.get('title'));
             },
 
-            render: function() {
+            render: function () {
                 this.$el.html(this.template(this.model.toJSON()));
                 // In case of rendering model, which is opened in tabs
                 if (this.model.get('active')) {

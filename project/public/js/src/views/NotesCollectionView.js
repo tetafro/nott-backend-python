@@ -32,8 +32,8 @@ define(
                     }
                 }
 
-                var $input = $(event.target).closest('form').find('input'),
-                    title = $input.val();
+                var $input = $(event.target).closest('form').find('input');
+                var title = $input.val();
 
                 that.collection.createOne(title);
             },
@@ -43,14 +43,14 @@ define(
                 this.$el.append(noteView.$el);
             },
 
-            render: function() {
+            render: function () {
                 var that = this;
 
                 // Clear list of notes
                 that.$el.empty();
 
-                var note,
-                    noteView;
+                var note;
+                var noteView;
 
                 for (var i = 0; i < that.collection.length; i++) {
                     note = that.collection.at(i);

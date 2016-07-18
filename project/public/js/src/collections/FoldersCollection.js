@@ -19,8 +19,8 @@ define(
             },
 
             createOne: function (title, parentId) {
-                var that = this,
-                    folder = new Folder();
+                var that = this;
+                var folder = new Folder();
 
                 folder.save(
                     {

@@ -14,7 +14,7 @@ define(
                 return 'tab-' + this.model.get('id');
             },
             className: 'tab-pane',
-            attributes : {
+            attributes: {
                 role: 'tabpanel'
             },
             template: _.template('<div id="editor-<%= id %>" class="editor"></div>'),
@@ -67,7 +67,7 @@ define(
             saveError: function (note, response) {
                 var msg;
                 if (response.status == 502) {
-                    msg = 'Server is currently unavailable. Please try later.'
+                    msg = 'Server is currently unavailable. Please try later.';
                 } else {
                     msg = $.parseJSON(response.responseText).error;
                 }
@@ -78,8 +78,8 @@ define(
             // must be already on the page before editor renders so it can
             // calculate it's height
             initEditor: function () {
-                var that = this
-                    modelId = that.model.get('id');
+                var that = this;
+                var modelId = that.model.get('id');
 
                 // Load WYSIWYG editor
                 that.$('.editor')

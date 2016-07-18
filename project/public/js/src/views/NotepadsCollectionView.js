@@ -20,8 +20,8 @@ define(
             },
 
             onAdd: function (notepad) {
-                var notepadView = new NotepadView({model: notepad}),
-                    folderId = notepad.get('folder_id');
+                var notepadView = new NotepadView({model: notepad});
+                var folderId = notepad.get('folder_id');
 
                 if (folderId) {
                     this.$('#folder-' + folderId + '.children-block')
@@ -32,17 +32,17 @@ define(
             },
 
             onMove: function (notepad) {
-                var $element = $('[data-type="notepad"][data-id="' + notepad.get('id') + '"]'),
-                    $parent = $('#folder-' + notepad.get('folder_id'));
+                var $element = $('[data-type="notepad"][data-id="' + notepad.get('id') + '"]');
+                var $parent = $('#folder-' + notepad.get('folder_id'));
                 $element.appendTo($parent);
             },
 
-            render: function() {
+            render: function () {
                 // Clear previously rendered
                 this.$('li[data-type="notepad"]').remove();
 
-                var notepad,
-                    notepadView;
+                var notepad;
+                var notepadView;
 
                 this.collection.each(function (notepad) {
                     notepadView = new NotepadView({model: notepad});

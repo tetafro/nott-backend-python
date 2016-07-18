@@ -1,10 +1,14 @@
-find .. \
-    -not \( -path '../venv' -prune \) \
-    -not \( -path '../*/migrations' -prune \) \
-    -not \( -name 'wsgi.py' \) \
-    -not \( -name '__init__.py' \) \
-    -not \( -name 'manage.py' \) \
-    -not \( -name 'populate.py' \) \
+find ../project/apps \
+    -not \( -path '../project/apps/*/migrations' -prune \) \
+    -not -path "*/__pycache__/*" \
     -name '*.py' \
     -exec echo '>>> ' {} \; \
-    -exec pylint --reports=n --disable=F0401,C0111 {} \;
+    -exec pylint --reports=n --disable=F0401,C0111 {} \; \
+    > pylint.log
+
+find ../project/core \
+    -not \( -name 'manage.py' \) \
+    -not -path "*/__pycache__/*" \
+    -exec echo '>>> ' {} \; \
+    -exec pylint --reports=n --disable=F0401,C0111 {} \; \
+    >> pylint.log

@@ -20,8 +20,8 @@ define(
             },
 
             onAdd: function (folder) {
-                var folderView = new FolderView({model: folder}),
-                    parentId = folder.get('parent_id');
+                var folderView = new FolderView({model: folder});
+                var parentId = folder.get('parent_id');
 
                 if (parentId) {
                     this.$('#folder-' + parentId + '.children-block')
@@ -32,26 +32,25 @@ define(
             },
 
             onMove: function (folder) {
-                var $element = $('[data-type="folder"][data-id="' + folder.get('id') + '"]'),
-                    $parent = $('#folder-' + folder.get('parent_id'));
+                var $element = $('[data-type="folder"][data-id="' + folder.get('id') + '"]');
+                var $parent = $('#folder-' + folder.get('parent_id'));
                 $element.appendTo($parent);
             },
 
-            render: function() {
-                var that = this,
-                    len = that.collection.length;
+            render: function () {
+                var that = this;
+                var len = that.collection.length;
 
                 // Clear list of folders and notepads
                 that.$el.empty();
 
                 // Recursion function for rendering tree
                 var renderChildren = function (parentFolder) {
-                    var folder,
-                        folderView,
-                        parentFolderId = parentFolder.get('id'),
-                        parentFolderParentId = parentFolder.get('parent_id');
+                    var folder;
+                    var parentFolderId = parentFolder.get('id');
+                    var parentFolderParentId = parentFolder.get('parent_id');
+                    var folderView = new FolderView({model: parentFolder});
 
-                    folderView = new FolderView({model: parentFolder});
                     if (parentFolderParentId == null) {
                         that.$el.append(folderView.$el);
                     } else {
@@ -65,7 +64,7 @@ define(
                             renderChildren(folder);
                         }
                     };
-                }
+                };
 
                 that.collection.sortBy('title');
 

@@ -1,6 +1,6 @@
 import json
 
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views.generic import View
 from django.db import IntegrityError
 
@@ -60,9 +60,6 @@ class FolderView(ListableView):
 
     @object_required(Folder)
     def put(self, request, *args, **kwargs):
-        # TODO: remove after testing
-        # return JsonResponse({'error': 'Test error message.'}, status=400)
-
         folder_id = kwargs['id']
         folder = Folder.objects.get(id=folder_id)
         data = json.loads(request.body.decode('utf-8'))
@@ -78,9 +75,6 @@ class FolderView(ListableView):
 
     @object_required(Folder)
     def delete(self, request, *args, **kwargs):
-        # TODO: remove after testing
-        # return JsonResponse({'error': 'Test error message.'}, status=400)
-
         folder_id = kwargs['id']
         folder = Folder.objects.get(id=folder_id)
 
@@ -167,7 +161,6 @@ class NoteView(ListableView):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
         if not data.get('notepad_id') or not data.get('title'):
-            print(request.body)
             response = {'error': 'Bad request'}
             return JsonResponse(response, status=400)
 
@@ -238,7 +231,9 @@ class SearchView(View):
     def get(self, request, *args, **kwargs):
         text = request.GET.get('text')
         if text:
-            notes = list(Note.objects.filter(text__contains=text).values('id', 'title'))
+            notes = list(Note.objects.
+                              filter(text__contains=text).
+                              values('id', 'title'))
             response = {'notes': notes}
             status = 200
         else:

@@ -13,9 +13,6 @@ django_settings='./project/core/settings.py'
 # File with passwords (not tracked by Git)
 pass_ini='./pass.ini'
 
-# Base template to change favicon
-base_template='./project/apps/web/templates/web/base.html'
-
 # Other required files and directories
 avatars_dir='./project/media/avatars/'
 
@@ -61,7 +58,7 @@ pro_db_pass=$(get_ini pro_db_pass)
 # Check input arguments and make vars replacements
 if [[ $# -ne 1 || ($1 != 'pro' && $1 != 'dev') ]]
 then
-    echo 'Deployment script v0.3'
+    echo 'Deployment script v0.4'
     echo 'Usage:'
     echo '  pro         change settings for production usage'
     echo '  dev         change settings for development usage'
@@ -70,15 +67,12 @@ else
     case $1 in
         # Go to production mode
         pro)
-            # TODO: remove all console.log() from JS
             # Django CSRF key
             sed -i 's/^SECRET_KEY = '\''.*'\''/SECRET_KEY = '\'$pro_django_csrf\''/' $django_settings
             # DB username
             sed -i 's/^        '\''USER'\'': '\''.*'\'',/        '\''USER'\'': '\'$pro_db_user\'',/' $django_settings
             # DB password
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$pro_db_pass\'',/' $django_settings
-            # Favicon
-            sed -i 's/{% static '\''images\/favicon-dev.png'\'' %}/{% static '\''images\/favicon.png'\'' %}/' $base_template
 
             echo 'The app is now in production mode' ;;
         # Go to development mode
@@ -89,8 +83,6 @@ else
             sed -i 's/^        '\''USER'\'': '\''.*'\'',/        '\''USER'\'': '\'$dev_db_user\'',/' $django_settings
             # DB password
             sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$dev_db_pass\'',/' $django_settings
-            # Favicon
-            sed -i 's/{% static '\''images\/favicon.png'\'' %}/{% static '\''images\/favicon-dev.png'\'' %}/' $base_template
 
             echo 'The app is now in development mode' ;;
     esac

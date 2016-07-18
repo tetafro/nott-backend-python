@@ -61,7 +61,7 @@ define(
                 console.log('ERROR: ' + msg);
             },
 
-            render: function() {
+            render: function () {
                 // Fetch and render all folders and notepads
                 App.foldersCollection.fetch({
                     success: function () {

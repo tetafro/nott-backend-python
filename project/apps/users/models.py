@@ -7,8 +7,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
 from django.utils import timezone
 
-from .helpers import OverwriteStorage, UpdateGeo, \
-    avatar_filename, image_resize
+from .helpers import OverwriteStorage, UpdateGeo, image_resize
 
 
 class UserManager(BaseUserManager):
@@ -48,15 +47,16 @@ class User(AbstractBaseUser):
 
     def get_full_name(self):
         return self.username
+
     def get_short_name(self):
         return self.username
 
     # Note: this can't be lamba, otherwise makemigration
     # will give an error
-    def upload_to(u, f):
+    def _upload_to(u, f):
         return u.username
 
-    avatar = models.FileField(upload_to=upload_to,
+    avatar = models.FileField(upload_to=_upload_to,
                               storage=OverwriteStorage(),
                               blank=True,
                               null=True)
@@ -71,12 +71,12 @@ class User(AbstractBaseUser):
             avatar = settings.STATIC_URL + 'images/no-avatar.png'
         return avatar
 
-    # def save(self, *args, **kwargs):
-    #     # Resize uploaded file
-    #     if self.avatar:
-    #         avatar_file = os.path.join(settings.AVATARS_ROOT, str(self.avatar))
-    #         image_resize(avatar_file, avatar_file, 180)
-    #     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        # Resize uploaded file
+        if self.avatar:
+            avatar_file = os.path.join(settings.AVATARS_ROOT, str(self.avatar))
+            image_resize(avatar_file, avatar_file, 180)
+        super().save(*args, **kwargs)
 
     def __repr__(self):
         return 'User ID%d Profile' % self.id
@@ -95,7 +95,7 @@ class UserGeo(models.Model):
     region_code = models.CharField(max_length=8, null=True, blank=True)
     region_name = models.CharField(max_length=32, null=True, blank=True)
     city = models.CharField(max_length=16, null=True, blank=True)
-    zip_code = models.IntegerField(null=True, blank=True)
+    zip_code = models.CharField(max_length=8, null=True, blank=True)
     time_zone = models.CharField(max_length=16, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
@@ -157,7 +157,7 @@ class UserGeo(models.Model):
         # Check if file exists
         if self.country_code:
             for directory in settings.STATICFILES_DIRS:
-                filename = self.country_code.lower()+'.png'
+                filename = self.country_code.lower() + '.png'
                 flag_file = os.path.join(directory, 'images', 'flags', filename)
                 if os.path.isfile(flag_file):
                     flag = base_url + filename
