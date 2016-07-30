@@ -25,25 +25,25 @@ define(
             template: _.template(NotepadTemplate),
 
             events: {
-                'click .item': 'activate',
+                'click .item': 'open',
                 'click .edit': 'showModal',
                 'click .del': 'showModal'
             },
 
             initialize: function () {
                 this.listenTo(this.model, 'change:title', this.rename);
-                this.listenTo(this.model, 'change:active', this.onActivate);
+                this.listenTo(this.model, 'change:active', this.onOpen);
                 this.listenTo(this.model, 'destroy', this.remove);
                 this.render();
             },
 
-            // Run activation
-            activate: function () {
-                this.model.activate();
+            // Open notepad
+            open: function () {
+                this.model.open();
             },
 
             // Change view when element activated/deactivated
-            onActivate: function () {
+            onOpen: function () {
                 this.$el.toggleClass('active');
             },
 

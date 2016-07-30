@@ -1,12 +1,10 @@
 define(
     [
-        'underscore', 'backbone',
-        'app',
+        'underscore', 'backbone', 'app',
         'views/EditorHeadView', 'views/EditorContentView'
     ],
     function (
-        _, Backbone,
-        App,
+        _, Backbone, App,
         EditorHeadView, EditorContentView
     ) {
         var Note = Backbone.Model.extend({
@@ -44,13 +42,11 @@ define(
             },
 
             displayError: function (model, error) {
-                App.displayError(error);
+                App.AppView.displayError(error);
             },
 
             // Load from server or activate if already loaded
             open: function () {
-                if (this.get('active')) { return; }
-
                 var that = this;
 
                 // Model is already opened - make it's tab active
@@ -62,6 +58,11 @@ define(
                     that.fetch({
                         success: function () {
                             App.editorsCollection.openOne(that);
+                        },
+                        error: function () {
+                            App.AppView.displayError('Request timeout. Try again later.');
+                        },
+                        complete: function () {
                             App.AppView.hideLoadIcon();
                         }
                     });

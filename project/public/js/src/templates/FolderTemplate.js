@@ -7,10 +7,10 @@ define(
                     <i class="glyphicon glyphicon-folder-close"></i><span><%= title %></span>
                 </a>
                 <span class="add">
-                    <i class="glyphicon glyphicon-plus text-primary"></i>
+                    <i class="glyphicon glyphicon-plus"></i>
                 </span>
                 <span class="edit">
-                    <i class="glyphicon glyphicon-pencil text-primary"></i>
+                    <i class="glyphicon glyphicon-pencil"></i>
                 </span>
                 <span class="del">
                     <i class="glyphicon glyphicon-remove text-danger"></i>

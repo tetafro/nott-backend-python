@@ -188,6 +188,10 @@ class NoteView(ListableView):
             response = {'error': 'No notepad id provided'}
             return JsonResponse(response, status=400)
 
+        # TODO: Remove after testing timeouts
+        # import time
+        # time.sleep(5000)
+
         notes = Note.objects. \
             filter(notepad_id=notepad_id). \
             order_by('title'). \

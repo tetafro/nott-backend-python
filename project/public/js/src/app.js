@@ -35,11 +35,10 @@ define(
                     return oldSync(method, model, options);
                 };
 
-                return this;
-            },
+                // Set timeout for all ajax requests
+                $.ajaxSetup({timeout: 1000});
 
-            displayError: function (msg) {
-                console.log(msg);
+                return this;
             }
         };
 

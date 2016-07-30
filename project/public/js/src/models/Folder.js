@@ -1,11 +1,9 @@
 define(
     [
-        'backbone',
-        'app'
+        'backbone', 'app'
     ],
     function (
-        Backbone,
-        App
+        Backbone, App
     ) {
         var Folder = Backbone.Model.extend({
             defaults: {
@@ -18,7 +16,14 @@ define(
             idAttribute: 'id',
             urlRoot: '/ajax/folders/',
 
-            initialize: function () {
+            events: {
+                'error': 'displayError'
+            },
+
+            initialize: function () {},
+
+            displayError: function (model, error) {
+                App.AppView.displayError(error);
             },
 
             validate: function (attributes) {

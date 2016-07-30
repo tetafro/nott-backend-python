@@ -2,6 +2,16 @@
 /* Main                                   */
 /* ---------------------------------------*/
 
+body {
+    color: #666;
+    /*font-family: "Droid Sans Mono";*/
+}
+
+@font-face {
+    font-family: "Droid Sans Mono";
+    src: url("/public/fonts/droid_sans_mono.ttf") format("truetype");
+}
+
 /* Top navbar */
 .navbar-inverse {
     border-radius: 0;
@@ -35,22 +45,22 @@
     z-index: 10;
 }
 
-/* Close button for flash message */
-#flash-message .label {
-    padding-right: 35px;
+/* Flash message */
+#flash-message {
+    background-color: #222;
+    color: #ddd;
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
 }
 
-.flash-close {
-    position: absolute;
-    padding: 7px 0px 6px 6px;
-    top: 21px;
-    right: 6px;
-    border-left: 1px solid #fff;
-    color: #fff;
+#flash-message .header {
+    font-size: 26px;
 }
 
-.flash-close:hover {
-    cursor: pointer;
+#flash-message .message {
+    font-size: 18px;
 }
 
 /* Modal dialogs */
@@ -165,7 +175,6 @@ option[disabled] {
 .nav-sidebar .item:hover,
 .nav-sidebar .item.active {
     background-color: #eee;
-    color: #333;
 }
 
 .nav-sidebar .active > .item,
@@ -212,6 +221,7 @@ option[disabled] {
 span.add,
 span.edit,
 span.del {
+    color: #666;
     float: right;
     position: absolute;
     padding: 0px;
@@ -219,6 +229,7 @@ span.del {
 }
 
 span.search {
+    color: #666;
     float: right;
     position: absolute;
     padding: 0px;
@@ -301,17 +312,13 @@ span.del {
     background-color: #f3f3f3;
 }
 
-@font-face {
-    font-family: "Droid Sans Mono";
-    src: url("/public/fonts/droid_sans_mono.ttf") format("truetype");
-}
-
 .editor {
     height: -moz-calc(100% - 70px);
     height: -webkit-calc(100% - 70px);
     height: calc(100% - 70px);
     font-family: "Droid Sans Mono";
     font-size: 12px;
+    color: #333;
 }
 
 .trumbowyg-box {
@@ -334,7 +341,7 @@ span.del {
 
 .content {
     padding: 50px 100px;
-    color: #333;
+    color: #666;
 }
 
 /* ---------------------------------------*/
@@ -361,7 +368,7 @@ span.del {
 }
 
 .map h3 {
-    position: absolute; color: red;
+    position: absolute;
     top: 173px;
     left: 163px;
     color: #aaa;

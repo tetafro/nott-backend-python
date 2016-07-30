@@ -1,13 +1,11 @@
 define(
     [
-        'backbone',
-        'app',
+        'backbone', 'app',
         'collections/NotesCollection',
         'views/NotesCollectionView'
     ],
     function (
-        Backbone,
-        App,
+        Backbone, App,
         NotesCollection,
         NotesCollectionView
     ) {
@@ -42,13 +40,10 @@ define(
             },
 
             displayError: function (model, error) {
-                App.displayError(error);
+                App.AppView.displayError(error);
             },
 
-            activate: function () {
-                // Click on already active model - do nothing
-                if (this.get('active')) { return; }
-
+            open: function () {
                 this.collection.setActive(this);
                 App.notesCollection.switchNotepad(this);
             },

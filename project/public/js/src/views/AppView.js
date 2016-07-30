@@ -37,7 +37,7 @@ define(
                 this.render();
             },
 
-            onNotepadActivate: function () {
+            onNotepadOpen: function () {
                 this.$('#new-note').show();
             },
 
@@ -57,7 +57,17 @@ define(
                 }
             },
 
+            // This method is used for all errors over the app
             displayError: function (msg) {
+                var $errorBlock = this.$('#flash-message');
+
+                $errorBlock.find('.message').text(msg);
+
+                $errorBlock.fadeIn(300);
+                setTimeout(function () {
+                    $errorBlock.fadeOut(300);
+                }, 2000);
+
                 console.log('ERROR: ' + msg);
             },
 
@@ -71,6 +81,7 @@ define(
 
             render: function () {
                 // Fetch and render all folders and notepads
+                App.AppView.showLoadIcon();
                 App.foldersCollection.fetch({
                     success: function () {
                         new FoldersCollectionView({
@@ -84,6 +95,12 @@ define(
                                 });
                             }
                         });
+                    },
+                    error: function () {
+                        App.AppView.displayError('Request timeout. Try again later.');
+                    },
+                    complete: function () {
+                        App.AppView.hideLoadIcon();
                     }
                 });
 

@@ -19,7 +19,7 @@ define(
             },
             template: _.template('<div id="editor-<%= id %>" class="editor"></div>'),
             templateSaveButton: `
-                <button type="button" class="btn btn-sm btn-primary btn-save" title="Save">
+                <button type="button" class="btn btn-sm btn-save" title="Save">
                     <i class="glyphicon glyphicon-ok-circle"></i>
                 </button>`,
 
