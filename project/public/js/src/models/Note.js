@@ -58,9 +58,11 @@ define(
                     App.editorsCollection.openOne(that);
                 // Fetch model and open it in new tab
                 } else {
+                    App.AppView.showLoadIcon();
                     that.fetch({
                         success: function () {
                             App.editorsCollection.openOne(that);
+                            App.AppView.hideLoadIcon();
                         }
                     });
                 }

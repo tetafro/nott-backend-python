@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load filters %}
 
 {% block nav_notes %}
@@ -43,11 +44,25 @@
         </form>
     </div>
 
-
     <!-- Main block -->
     <div id="editor-block">
         <ul class="nav nav-tabs" role="tablist"></ul>
         <div class="tab-content"></div>
+    </div>
+
+    <!-- Error/info message -->
+    <div id="flash-message" class="overlay">
+        <h3>
+            <span class="label"></span>
+            <small>
+                <i class="glyphicon glyphicon-remove flash-close" ></i>
+            </small>
+        </h3>
+    </div>
+
+    <!-- AJAX load icon -->
+    <div id="loading-icon" class="overlay">
+        <img src="{% static 'images/loading.gif' %}">
     </div>
 
 </div>

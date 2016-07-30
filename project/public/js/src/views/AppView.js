@@ -61,6 +61,14 @@ define(
                 console.log('ERROR: ' + msg);
             },
 
+            showLoadIcon: function () {
+                this.$('#loading-icon').show();
+            },
+
+            hideLoadIcon: function () {
+                this.$('#loading-icon').hide();
+            },
+
             render: function () {
                 // Fetch and render all folders and notepads
                 App.foldersCollection.fetch({

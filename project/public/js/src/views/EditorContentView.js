@@ -55,13 +55,13 @@ define(
             },
 
             saveModel: function (event) {
-                this.$('button').addClass('loading');
+                App.AppView.showLoadIcon();
                 var text = this.$('#editor-' + this.model.get('id')).trumbowyg('html');
                 this.model.save({text: text});
             },
 
             saveComplete: function () {
-                this.$('button').removeClass('loading');
+                App.AppView.hideLoadIcon();
             },
 
             saveError: function (note, response) {

@@ -1,12 +1,10 @@
 define(
     [
-        'backbone',
-        'app',
+        'backbone', 'app',
         'models/Note'
     ],
     function (
-        Backbone,
-        App,
+        Backbone, App,
         Note
     ) {
         var NotesCollection = Backbone.Collection.extend({
@@ -25,6 +23,7 @@ define(
 
                 that.notepad = notepad;
                 that.url = '/ajax/notes?notepad-id=' + notepad.get('id');
+                App.AppView.showLoadIcon();
                 that.fetch({
                     reset: true,
                     // Synchronize models with EditorsCollection
@@ -42,6 +41,8 @@ define(
 
                         // Event to render view
                         that.trigger('rerender');
+
+                        App.AppView.hideLoadIcon();
                     }
                 });
             },

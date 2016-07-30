@@ -328,16 +328,6 @@ span.del {
     line-height: 18px;
 }
 
-.trumbowyg-button-pane .btn-save.loading {
-    background-image: url("/public/images/loading.gif");
-    background-position: 5px 5px;
-    background-repeat: no-repeat;
-}
-
-.trumbowyg-button-pane .btn-save.loading > i {
-    display: none;
-}
-
 /* ---------------------------------------*/
 /* Userlist                               */
 /* ---------------------------------------*/
