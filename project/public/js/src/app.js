@@ -36,7 +36,7 @@ define(
                 };
 
                 // Set timeout for all ajax requests
-                $.ajaxSetup({timeout: 1000});
+                $.ajaxSetup({timeout: 5000});
 
                 return this;
             }

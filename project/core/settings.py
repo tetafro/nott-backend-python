@@ -7,7 +7,7 @@ if os.environ.get('SERVER_MODE') == 'dev':
     DEBUG = True
 else:
     DEBUG = False
-    ALLOWED_HOSTS = ['nott.tk']
+    ALLOWED_HOSTS = ['nott.tk', '185.120.20.7:15205']
 
 
 # Application definition
