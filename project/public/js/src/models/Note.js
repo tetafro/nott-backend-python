@@ -28,10 +28,6 @@ define(
             idAttribute: 'id',
             urlRoot: '/ajax/notes/',
 
-            events: {
-                'error': 'displayError'
-            },
-
             validate: function (attributes) {
                 if (!attributes.title) {
                     return 'Title cannot be empty';
@@ -39,10 +35,6 @@ define(
                 if (attributes.title.length > 80) {
                     return 'Title is too long';
                 }
-            },
-
-            displayError: function (model, error) {
-                App.AppView.displayError(error);
             },
 
             // Load from server or activate if already loaded
@@ -54,16 +46,9 @@ define(
                     App.editorsCollection.openOne(that);
                 // Fetch model and open it in new tab
                 } else {
-                    App.AppView.showLoadIcon();
                     that.fetch({
                         success: function () {
                             App.editorsCollection.openOne(that);
-                        },
-                        error: function () {
-                            App.AppView.displayError('Request timeout. Try again later.');
-                        },
-                        complete: function () {
-                            App.AppView.hideLoadIcon();
                         }
                     });
                 }

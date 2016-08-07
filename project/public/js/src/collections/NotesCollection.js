@@ -23,7 +23,6 @@ define(
 
                 that.notepad = notepad;
                 that.url = '/ajax/notes?notepad-id=' + notepad.get('id');
-                App.AppView.showLoadIcon();
                 that.fetch({
                     reset: true,
                     // Synchronize models with EditorsCollection
@@ -41,12 +40,6 @@ define(
 
                         // Event to render view
                         that.trigger('rerender');
-                    },
-                    error: function () {
-                        App.AppView.displayError('Request timeout. Try again later.');
-                    },
-                    complete: function () {
-                        App.AppView.hideLoadIcon();
                     }
                 });
             },

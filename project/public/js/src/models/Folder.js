@@ -17,12 +17,21 @@ define(
             urlRoot: '/ajax/folders/',
 
             events: {
+                'request': this.ajaxStart,
+                'sync': this.ajaxComplete,
                 'error': 'displayError'
             },
 
-            initialize: function () {},
+            ajaxStart: function () {
+                App.AppView.showLoadIcon();
+            },
+
+            ajaxComplete: function () {
+                App.AppView.hideLoadIcon();
+            },
 
             displayError: function (model, error) {
+                App.AppView.hideLoadIcon();
                 App.AppView.displayError(error);
             },
 

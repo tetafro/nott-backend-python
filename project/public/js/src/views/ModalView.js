@@ -31,7 +31,6 @@ define(
             initialize: function (options) {
                 this.options = options;
                 this.listenTo(this.model, 'sync', this.hide);
-                this.listenTo(this.model, 'error', this.displayError);
                 this.render();
             },
 
@@ -99,9 +98,20 @@ define(
                 }
             },
 
-            displayError: function (model, response) {
-                var msg = $.parseJSON(response.responseText).error;
-                this.$('.error-message').html(msg);
+            displayError: function (model, msg) {
+                var $errorBlock = this.$('.error-message');
+
+                // Text to show
+                text = 'Something went wrong';
+                if (typeof msg == 'string') {
+                    text = msg;
+                } else if (typeof msg == 'object') {
+                    if (msg.responseJSON) {
+                        text = msg.responseJSON.error;
+                    }
+                }
+
+                this.$('.error-message').html(text);
             },
 
             render: function () {

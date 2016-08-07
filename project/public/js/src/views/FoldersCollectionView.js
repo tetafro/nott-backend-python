@@ -1,11 +1,11 @@
 define(
     [
-        'jquery', 'backbone',
+        'jquery', 'backbone', 'app',
         'collections/FoldersCollection',
         'views/FolderView'
     ],
     function (
-        $, Backbone,
+        $, Backbone, App,
         FoldersCollection,
         FolderView
     ) {
@@ -16,7 +16,24 @@ define(
             initialize: function () {
                 this.listenTo(this.collection, 'add', this.onAdd);
                 this.listenTo(this.collection, 'change:parent_id', this.onMove);
+                this.listenTo(this.collection, 'request', this.onAjaxStart);
+                this.listenTo(this.collection, 'sync', this.onAjaxComplete);
+                this.listenTo(this.collection, 'error', this.onError);
+
                 this.render();
+            },
+
+            ajaxStart: function () {
+                App.AppView.showLoadIcon();
+            },
+
+            ajaxComplete: function () {
+                App.AppView.hideLoadIcon();
+            },
+
+            displayError: function (collection, error) {
+                App.AppView.hideLoadIcon();
+                App.AppView.displayError(error);
             },
 
             onAdd: function (folder) {

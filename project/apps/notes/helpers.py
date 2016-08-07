@@ -15,8 +15,8 @@ def object_required(ObjectClass):
                 return JsonResponse(response, status=400)
 
             if not ObjectClass.objects.filter(id=obj_id).exists():
-                response = {'error': 'Not found'}
-                return JsonResponse(response, status=400)
+                response = {'error': 'Object not found'}
+                return JsonResponse(response, status=404)
 
             return fn(self, request, *args, **kwargs)
 

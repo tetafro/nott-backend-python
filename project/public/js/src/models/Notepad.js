@@ -27,6 +27,8 @@ define(
             urlRoot: '/ajax/notepads/',
 
             events: {
+                'request': this.ajaxStart,
+                'sync': this.ajaxComplete,
                 'error': 'displayError'
             },
 
@@ -39,7 +41,16 @@ define(
                 }
             },
 
+            ajaxStart: function () {
+                App.AppView.showLoadIcon();
+            },
+
+            ajaxComplete: function () {
+                App.AppView.hideLoadIcon();
+            },
+
             displayError: function (model, error) {
+                App.AppView.hideLoadIcon();
                 App.AppView.displayError(error);
             },
 

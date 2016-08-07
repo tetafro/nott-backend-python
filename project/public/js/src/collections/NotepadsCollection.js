@@ -1,12 +1,10 @@
 define(
     [
-        'backbone',
-        'app',
+        'backbone', 'app',
         'models/Notepad'
     ],
     function (
-        Backbone,
-        App,
+        Backbone, App,
         Notepad
     ) {
         var NotepadsCollection = Backbone.Collection.extend({

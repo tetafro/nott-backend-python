@@ -43,8 +43,6 @@ define(
                 // Initially opened == true
                 this.listenTo(this.model, 'change:opened', this.remove);
                 this.listenTo(this.model, 'change:active', this.onChangeActive);
-                this.listenTo(this.model, 'sync', this.saveComplete);
-                this.listenTo(this.model, 'error', this.saveError);
                 this.listenTo(this.model, 'destroy', this.remove);
                 this.render();
             },
@@ -55,23 +53,8 @@ define(
             },
 
             saveModel: function (event) {
-                App.AppView.showLoadIcon();
                 var text = this.$('#editor-' + this.model.get('id')).trumbowyg('html');
                 this.model.save({text: text});
-            },
-
-            saveComplete: function () {
-                App.AppView.hideLoadIcon();
-            },
-
-            saveError: function (note, response) {
-                var msg;
-                if (response.status == 502) {
-                    msg = 'Server is currently unavailable. Please try later.';
-                } else {
-                    msg = $.parseJSON(response.responseText).error;
-                }
-                App.AppView.displayError(msg);
             },
 
             // This code is not in the render method, because tab for the editor

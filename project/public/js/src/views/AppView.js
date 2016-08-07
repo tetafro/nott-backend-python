@@ -17,11 +17,12 @@ define(
     ) {
         var AppView = Backbone.View.extend({
             el: '#app',
+            modal: null, // link to modal window
 
             events: {
                 'click #show-search': 'toggleSearchMode',
-                'click .sidebar-first > h4 > .pull-right': 'showModal',
-                'click .sidebar-second > h4 > .pull-right': 'showModal'
+                'click .sidebar-first > h4 > .pull-right': 'callModal',
+                'click .sidebar-second > h4 > .pull-right': 'callModal'
             },
 
             initialize: function () {
@@ -41,34 +42,52 @@ define(
                 this.$('#new-note').show();
             },
 
-            showModal: function (event) {
+            callModal: function (event) {
+                var objectType;
+
                 // Create folder/notepad from link at the top of the list
                 if ($(event.currentTarget).attr('id') == 'new-folder-notepad') {
-                    new ModalView({
-                        action: 'create',
-                        type: 'folder'
-                    });
+                    objectType = 'folder'
                 // Create note
                 } else if ($(event.currentTarget).attr('id') == 'new-note') {
-                    new ModalView({
-                        action: 'create',
-                        type: 'note'
-                    });
+                    objectType = 'note'
                 }
+
+                this.showModal({
+                    action: 'create',
+                    type: objectType
+                });
+            },
+
+            showModal: function (options) {
+                this.modal = new ModalView(options);
             },
 
             // This method is used for all errors over the app
             displayError: function (msg) {
+                // If modal window is visible, show error in it
+                if (this.modal) {
+                    this.modal.displayError(null, msg);
+                    return;
+                }
+
                 var $errorBlock = this.$('#flash-message');
 
-                $errorBlock.find('.message').text(msg);
+                // Text to show
+                text = 'Something went wrong';
+                if (typeof msg == 'string') {
+                    text = msg;
+                } else if (typeof msg == 'object') {
+                    if (msg.responseJSON) {
+                        text = msg.responseJSON.error;
+                    }
+                }
 
+                $errorBlock.find('.message').text(text);
                 $errorBlock.fadeIn(300);
                 setTimeout(function () {
                     $errorBlock.fadeOut(300);
                 }, 2000);
-
-                console.log('ERROR: ' + msg);
             },
 
             showLoadIcon: function () {
@@ -81,7 +100,6 @@ define(
 
             render: function () {
                 // Fetch and render all folders and notepads
-                App.AppView.showLoadIcon();
                 App.foldersCollection.fetch({
                     success: function () {
                         new FoldersCollectionView({
@@ -95,12 +113,6 @@ define(
                                 });
                             }
                         });
-                    },
-                    error: function () {
-                        App.AppView.displayError('Request timeout. Try again later.');
-                    },
-                    complete: function () {
-                        App.AppView.hideLoadIcon();
                     }
                 });
 
