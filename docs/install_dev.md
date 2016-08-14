@@ -1,25 +1,30 @@
 #### 1. Install software
 ```
-sudo apt-get install python3-pip python3-dev gcc
-sudo apt-get install libjpeg-dev zlib1g-dev  # for Pillow
 sudo apt-get install nginx
 sudo apt-get install postgresql libpq-dev
-sudo apt-get install git
-sudo pip3 install virtualenv
 ```
 
-#### 2. Clone the repository
+#### 2. Install dependencies
+```
+sudo apt-get install python3-pip python3-dev gcc
+sudo apt-get install libjpeg-dev zlib1g-dev # for Pillow
+sudo pip3 install virtualenv
+sudo pip3 install dropbox # for DB backup
+sudo apt-get install git
+```
+
+#### 3. Clone the repository
 ```
 git clone https://github.com/tetafro/notes.git
 ```
 
-#### 3. Environment variables
+#### 4. Environment variables
 ```
 export SERVER_MODE=dev
 sudo sh -c 'echo SERVER_MODE=dev >> /etc/environment'
 ```
 
-#### 4. Make virtualenv
+#### 5. Make virtualenv
 ```
 cd notes
 virtualenv -p python3 venv

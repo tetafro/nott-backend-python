@@ -1,23 +1,22 @@
-#### 1. Install software
+#### 1. Install servers
 ```
-sudo apt-get install python3-pip python3-dev gcc
-sudo apt-get install libjpeg-dev zlib1g-dev # for Pillow
 sudo apt-get install nginx
 sudo apt-get install uwsgi uwsgi-plugin-python3
 sudo apt-get install postgresql libpq-dev
-sudo apt-get install git
+```
+
+#### 2. Install dependencies
+```
+sudo apt-get install python3-pip python3-dev gcc
+sudo apt-get install libjpeg-dev zlib1g-dev # for Pillow
 sudo pip3 install virtualenv
 sudo pip3 install dropbox # for DB backup
 ```
 
-#### 2. Clone the repository
+#### 3. Copy project to server
 ```
-git clone https://github.com/tetafro/notes.git
-```
-
-#### 3. Run deploy script for production mode
-```
-scripts/deploy.sh pro
+scp -P 22 project.tar user@example.com:/home/user/
+sudo cp /home/user/project.tar /var/www/notes/
 ```
 
 #### 4. Make virtualenv
@@ -71,4 +70,5 @@ chmod 0600 .pgpass
 crontab -e
 1 4 * * * ~/db_backup.sh
 ```
+
 Get OAuth2 token for dropbox_upload.py here: https://www.dropbox.com/developers/apps/
