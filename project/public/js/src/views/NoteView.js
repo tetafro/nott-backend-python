@@ -31,6 +31,7 @@ define(
             initialize: function () {
                 this.listenTo(this.model, 'change:title', this.rename);
                 this.listenTo(this.model, 'change:active', this.onChangeActive);
+                this.listenTo(this.model, 'change:notepad_id', this.onMove);
                 this.listenTo(this.model, 'request', this.onAjaxStart);
                 this.listenTo(this.model, 'sync', this.onAjaxComplete);
                 this.listenTo(this.model, 'error', this.onError);
@@ -50,6 +51,13 @@ define(
             onError: function (model, error) {
                 App.AppView.hideLoadIcon();
                 App.AppView.displayError(error);
+            },
+
+            // Remove note view when moving, because only one notepad
+            // can be opened ata a time so there is no place to move
+            // this view
+            onMove: function () {
+                this.remove();
             },
 
             onDestroy: function () {
