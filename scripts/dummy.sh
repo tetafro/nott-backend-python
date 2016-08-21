@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #
 # Switch to "under construction" dummy
 #

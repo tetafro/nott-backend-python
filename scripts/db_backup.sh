@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #
 # Backup project's DB to Dropbox
 #

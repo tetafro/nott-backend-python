@@ -21,7 +21,8 @@ __pycache__/
 
 # Builds
 /project/public/js/app.js
-/project.tar
+/install
+/notes.tar.gz
 
 # Secrets
 /pass.ini
