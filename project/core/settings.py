@@ -100,3 +100,42 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AVATARS_URL = '/media/avatars/'
 AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'default': {
+            'format': "---\n%(levelname)s %(asctime)s\nModule: %(module)s\n%(message)s"
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/www/notes/logs/debug.log',
+        },
+        'file_rotate': {
+            'filters': ['require_debug_false'],
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/var/www/notes/logs/debug.log',
+            'maxBytes': 1024*1024*1, # 1 MB
+            'backupCount': 5,
+            'formatter': 'default'
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+    },
+}

@@ -19,3 +19,5 @@ cp -R notes/* /var/www/notes/project/
 rm -rf ./notes/
 chown -R www-data:www-data /var/www/notes/project/
 service uwsgi reload
+
+echo 'Done'
