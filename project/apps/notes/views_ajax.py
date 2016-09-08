@@ -39,7 +39,8 @@ class FolderView(ListableView):
             response = {'id': folder.id}
             return JsonResponse(response, status=201)
         else:
-            return JsonResponse(*save_result)
+            response, status = save_result
+            return JsonResponse(response, status=status)
 
     @object_required(Folder)
     def get(self, request, *args, **kwargs):
@@ -71,7 +72,8 @@ class FolderView(ListableView):
         if save_result is True:
             return JsonResponse({}, status=204)
         else:
-            return JsonResponse(*save_result)
+            response, status = save_result
+            return JsonResponse(response, status=status)
 
     @object_required(Folder)
     def delete(self, request, *args, **kwargs):
@@ -103,7 +105,8 @@ class NotepadView(ListableView):
             response = {'id': notepad.id}
             return JsonResponse(response, status=201)
         else:
-            return JsonResponse(*save_result)
+            response, status = save_result
+            return JsonResponse(response, status=status)
 
     @object_required(Notepad)
     def get(self, request, *args, **kwargs):
@@ -139,7 +142,8 @@ class NotepadView(ListableView):
         if save_result is True:
             return JsonResponse({}, status=204)
         else:
-            return JsonResponse(*save_result)
+            response, status = save_result
+            return JsonResponse(response, status=status)
 
     @object_required(Notepad)
     def delete(self, request, *args, **kwargs):
@@ -171,7 +175,8 @@ class NoteView(ListableView):
             response = {'id': note.id}
             return JsonResponse(response, status=201)
         else:
-            return JsonResponse(*save_result)
+            response, status = save_result
+            return JsonResponse(response, status=status)
 
     @object_required(Note)
     def get(self, request, *args, **kwargs):
