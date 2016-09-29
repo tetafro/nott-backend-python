@@ -7,8 +7,11 @@ __pycache__/
 /.idea/
 .DS_Store
 
-# DB dumps
+# DB dump
 *dump*.sql
+
+# Text dump
+/export*.txt
 
 # Any logs
 *.log
