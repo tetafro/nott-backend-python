@@ -1,11 +1,13 @@
 define(
     [
-        'jquery', 'backbone', 'app',
+        'jquery', 'backbone',
+        'app',
         'collections/NotepadsCollection',
         'views/NotepadView'
     ],
     function (
-        $, Backbone, App,
+        $, Backbone,
+        App,
         NotepadsCollection,
         NotepadView
     ) {

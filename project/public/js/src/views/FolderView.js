@@ -1,12 +1,14 @@
 define(
     [
-        'underscore', 'backbone', 'app',
+        'underscore', 'backbone',
+        'app',
         'models/Folder',
         'views/ModalView',
         'templates/FolderTemplate'
     ],
     function (
-        _, Backbone, App,
+        _, Backbone,
+        App,
         Folder,
         ModalView,
         FolderTemplate

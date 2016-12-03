@@ -1,11 +1,13 @@
 define(
     [
-        'backbone', 'app',
+        'backbone',
+        'app',
         'collections/NotesCollection',
         'views/NotesCollectionView'
     ],
     function (
-        Backbone, App,
+        Backbone,
+        App,
         NotesCollection,
         NotesCollectionView
     ) {

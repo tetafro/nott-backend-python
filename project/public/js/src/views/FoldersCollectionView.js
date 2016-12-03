@@ -1,11 +1,13 @@
 define(
     [
-        'jquery', 'backbone', 'app', 'helpers',
+        'jquery', 'backbone',
+        'app', 'helpers',
         'collections/FoldersCollection',
         'views/FolderView'
     ],
     function (
-        $, Backbone, App, Helpers,
+        $, Backbone,
+        App, Helpers,
         FoldersCollection,
         FolderView
     ) {
@@ -59,8 +61,6 @@ define(
 
                 // Clear list of folders and notepads
                 that.$el.empty();
-
-                that.collection.sortBy('title');
 
                 // Render folders from root
                 Helpers.processTree(that.collection, 'parent_id', function (folder) {

@@ -1,10 +1,12 @@
 define(
     [
-        'underscore', 'backbone', 'app',
+        'underscore', 'backbone',
+        'app',
         'models/Note'
     ],
     function (
-        _, Backbone, App,
+        _, Backbone,
+        App,
         Note
     ) {
         var EditorContentView = Backbone.View.extend({

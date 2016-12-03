@@ -1,10 +1,12 @@
 define(
     [
-        'backbone', 'app',
+        'backbone',
+        'app',
         'models/Note'
     ],
     function (
-        Backbone, App,
+        Backbone,
+        App,
         Note
     ) {
         var NotesCollection = Backbone.Collection.extend({

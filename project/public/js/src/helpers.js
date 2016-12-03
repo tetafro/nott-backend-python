@@ -26,27 +26,20 @@ define(
             // Make a tree from plain array and
             // do something with each element
             processTree: function (collection, parentIdField, process) {
-                var len = collection.length;
-
-                var processChildren = function (parentElement) {
-                    process(parentElement);
-
-                    var element;
-                    for (var i = 0; i < len; i++) {
-                        element = collection.at(i);
-                        if (parentElement.get('id') == element.get(parentIdField)) {
-                            processChildren(element);
+                var processChildren = function (element, lvl) {
+                    process(element, lvl);
+                    collection.each(function (el) {
+                        if (element.get('id') == el.get(parentIdField)) {
+                            processChildren(el, lvl+1);
                         }
-                    };
+                    })
                 };
 
-                var element;
-                for (var i = 0; i < len; i++) {
-                    element = collection.at(i);
+                collection.each(function (element) {
                     if (!element.get(parentIdField)) {
-                        processChildren(element);
+                        processChildren(element, 0);
                     }
-                };
+                });
             }
         };
 

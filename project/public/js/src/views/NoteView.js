@@ -1,12 +1,14 @@
 define(
     [
-        'underscore', 'backbone', 'app',
+        'underscore', 'backbone',
+        'app',
         'models/Note',
         'views/ModalView',
         'templates/NoteTemplate'
     ],
     function (
-        _, Backbone, App,
+        _, Backbone,
+        App,
         Note,
         ModalView,
         NoteTemplate

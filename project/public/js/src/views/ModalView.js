@@ -1,12 +1,12 @@
 define(
     [
         'underscore', 'backbone',
-        'app',
+        'app', 'helpers',
         'templates/ModalTemplate'
     ],
     function (
         _, Backbone,
-        App,
+        App, Helpers,
         ModalTemplate
     ) {
         var ModalView = Backbone.View.extend({
@@ -114,66 +114,84 @@ define(
                 this.$('.error-message').html(text);
             },
 
-            render: function () {
+            getElementsList: function (elementType) {
                 var that = this;
-                var windowTitle;
-                var elementType;
-
-                if (that.options.action == 'create') {
-                    elementType = that.options.type;
-                    windowTitle = 'Create ' + elementType;
-                } else if (that.options.action == 'edit') {
-                    elementType = that.model.type;
-                    windowTitle = 'Edit ' + elementType;
-                } else if (that.options.action == 'delete') {
-                    elementType = that.model.type;
-                    windowTitle = 'Delete ' + elementType;
+                var parentIdField = 'parent_id';
+                var parentId;
+                switch (elementType) {
+                    case 'folder':
+                        parentId = that.model ? that.model.get('parent_id') : null;
+                        break;
+                    case 'notepad':
+                        parentId = that.model ? that.model.get('folder_id') : null;
+                        break;
+                    case 'note':
+                        parentId = App.notepadsCollection.active.get('id');
+                        break;
                 }
 
-                // Get list of all folders
-                var selected;
-                var parentId;
-                var elementsList = '<option></option>'; // empty element for root
-
+                // Rewrite parentId if it's defined in options
                 if (that.options.parentId) {
                     parentId = that.options.parentId;
-                } else if (elementType == 'folder') {
-                    parentId = that.model ? that.model.get('parent_id') : null;
-                } else if (elementType == 'notepad') {
-                    parentId = that.model ? that.model.get('folder_id') : null;
-                } else if (elementType == 'note') {
-                    parentId = App.notepadsCollection.active.get('id');
                 }
 
-                var collection;
-                if (elementType == 'folder' || elementType == 'notepad') {
-                    collection = App.foldersCollection;
-                } else {
-                    collection = App.notepadsCollection;
-                }
-
-                var prevParentId;
-                collection.each(function (element) {
-                    // TODO: Skip not only current model, but all it's children
-                    // to avoid loops.
-                    if (that.model && (
-                            element.get('id') == that.model.get('id') ||  // skip current model
-                            element.get('id') == prevParentId // skip all children of current model
-                        )
-                    ) {
-                        prevParentId = element.get('id');
-                        return true;
-                    } else if (element.get('id') == parentId) {
+                // TODO: Skip current model and all of it's children to avoid loops.
+                var $elementsList = $('<select name="move" class="form-control"></select>')
+                $elementsList.append('<option></option>'); // empty element for root
+                Helpers.processTree(App.foldersCollection, parentIdField, function (folder, lvl) {
+                    var text = '--'.repeat(lvl) + ' ' + folder.get('title');
+                    var selected = '';
+                    if (elementType != 'note' && folder.get('id') == parentId) {
                         selected = 'selected';
-                    } else {
-                        selected = '';
                     }
+                    var $folder = $(`
+                        <option value=${folder.get('id')} ${selected}>
+                            ${text}
+                        </option>
+                    `);
+                    $elementsList.append($folder);
 
-                    elementsList +=
-                        '<option value=' + element.get('id') + ' ' + selected + '>' +
-                            element.get('title') +
-                        '</option>';
+                    // Add notepads to the tree
+                    if (elementType == 'note') {
+                        $folder.prop('disabled', true);
+                        App.notepadsCollection.each(function (notepad) {
+                            if (notepad.get('folder_id') == folder.get('id')) {
+                                selected = notepad.get('id') == parentId ? 'selected' : '';
+                                text = '--'.repeat(lvl+1) + ' ' + notepad.get('title');
+                                $folder.append(`
+                                    <option value=${notepad.get('id')} ${selected}>
+                                        ${text}
+                                    </option>
+                                `);
+                            }
+                        });
+                    }
                 });
+
+                return $elementsList.html();
+            },
+
+            render: function () {
+                var that = this;
+
+                var windowTitle;
+                var elementType;
+                switch (that.options.action) {
+                    case 'create':
+                        elementType = that.options.type;
+                        windowTitle = 'Create ' + elementType;
+                        break;
+                    case 'edit':
+                        elementType = that.model.type;
+                        windowTitle = 'Edit ' + elementType;
+                        break;
+                    case 'delete':
+                        elementType = that.model.type;
+                        windowTitle = 'Delete ' + elementType;
+                        break;
+                }
+
+                var elementsList = that.getElementsList(elementType);
 
                 that.$el.html(that.template({
                     action: that.options.action,

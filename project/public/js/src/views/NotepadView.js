@@ -1,13 +1,15 @@
 define(
     [
-        'underscore', 'backbone', 'app',
+        'underscore', 'backbone',
+        'app',
         'models/Notepad',
         'collections/NotesCollection',
         'views/NotesCollectionView', 'views/ModalView',
         'templates/NotepadTemplate'
     ],
     function (
-        _, Backbone, App,
+        _, Backbone,
+        App,
         Notepad,
         NotesCollection,
         NotesCollectionView, ModalView,

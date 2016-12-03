@@ -1,6 +1,7 @@
 define(
     [
-        'jquery', 'underscore', 'backbone', 'app',
+        'jquery', 'underscore', 'backbone',
+        'app',
         'models/Folder',
         'collections/FoldersCollection', 'collections/NotepadsCollection',
         'collections/NotesCollection', 'collections/EditorsCollection',
@@ -8,7 +9,8 @@ define(
         'views/NotesCollectionView', 'views/EditorsCollectionView', 'views/ModalView'
     ],
     function (
-        $, _, Backbone, App,
+        $, _, Backbone,
+        App,
         Folder,
         FoldersCollection, NotepadsCollection,
         NotesCollection, EditorsCollection,

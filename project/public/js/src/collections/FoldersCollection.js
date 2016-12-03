@@ -1,10 +1,12 @@
 define(
     [
-        'backbone', 'app',
+        'backbone',
+        'app',
         'models/Folder'
     ],
     function (
-        Backbone, App,
+        Backbone,
+        App,
         Folder
     ) {
         var FoldersCollection = Backbone.Collection.extend({
