@@ -1,30 +1,13 @@
 define(
     [
-        'jquery', 'underscore', 'backbone', 'bootstrap', 'trumbowyg', 'trumbowygColors'
+        'jquery', 'underscore', 'backbone', 'helpers', 'bootstrap', 'trumbowyg', 'trumbowygColors'
     ],
     function (
-        $, _, Backbone
+        $, _, Backbone, Helpers
     ) {
-        // Get CSRF token for making AJAX requests
-        var getCSRF = function () {
-            var token = null;
-            if (document.cookie) {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = $.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, 10) == 'csrftoken=') {
-                        token = decodeURIComponent(cookie.substring(10));
-                        break;
-                    }
-                }
-            }
-            return token;
-        };
-
         var App = {
             init: function () {
-                var token = getCSRF();
+                var token = Helpers.getCSRF();
 
                 // Set CSRF token for all Backbone's requests
                 var oldSync = Backbone.sync;
