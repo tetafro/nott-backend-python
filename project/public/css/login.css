@@ -1,0 +1,15 @@
+/* Login/register page */
+.page {
+    padding: 100px;
+}
+
+.page .tab-content {
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.auth-errors {
+    margin: 15px;
+}

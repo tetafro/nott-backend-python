@@ -1,0 +1,71 @@
+/* WYSIWYG editor */
+#editor-block > .nav-tabs {
+    border-bottom: none;
+}
+
+#editor-block > .nav-tabs > li > a {
+    padding: 5px 18px 5px 10px;
+}
+
+#editor-block > .nav-tabs > li > a > .tab-close {
+    display: inline;
+    position: absolute;
+    top: 0px;
+    right: 5px;
+    cursor: pointer;
+}
+
+#editor-block {
+    position: fixed;
+    top: 52px;
+    left: 500px;
+    bottom: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    height: auto;
+    width: auto;
+}
+
+.tab-content {
+    height: 100%;
+}
+
+.tab-pane {
+    height: 100%;
+}
+
+.nav-tabs > li > a {
+    border: 1px solid #ddd;
+    border-radius: 4px 4px 0 0;
+    background-color: #ecf0f1;
+    color: #aaa;
+}
+
+.nav-tabs > li > a:hover {
+    border: 1px solid #ddd; /* override Bootstrap style */
+    background-color: #f3f3f3;
+}
+
+.editor {
+    height: -moz-calc(100% - 70px);
+    height: -webkit-calc(100% - 70px);
+    height: calc(100% - 70px);
+    font-family: "Droid Sans Mono";
+    font-size: 12px;
+    color: #333;
+}
+
+.trumbowyg-box {
+    width: 100%;
+    margin: 0px;
+}
+
+.trumbowyg-button-pane .btn-save {
+    position: absolute;
+    top: 1px;
+    right: 2px;
+    color: #337ab7;
+    font-size: 18px;
+    line-height: 18px;
+}
