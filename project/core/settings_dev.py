@@ -1,12 +1,10 @@
 import os
 
 
-DEBUG = False
+DEBUG = True
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = ',cgi6&g]({g&9$4>g=nj:s2n3!]xh6rk{$oz#r$f|el(m|@6@n'
-
-ALLOWED_HOSTS = ['nott.tk']
 
 
 # Application definition
@@ -72,8 +70,8 @@ DATABASES = {
         'NAME': 'db_notes',
         'USER': 'pguser',
         'PASSWORD': '123',
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': '172.20.0.11',
+        'PORT': '5432',
     }
 }
 
@@ -115,24 +113,14 @@ LOGGING = {
         }
     },
     'handlers': {
-        'file': {
+        'console': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': '/var/www/notes/logs/debug.log',
-        },
-        'file_rotate': {
-            'filters': ['require_debug_false'],
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/www/notes/logs/debug.log',
-            'maxBytes': 1024*1024*1, # 1 MB
-            'backupCount': 5,
-            'formatter': 'default'
+            'class': 'logging.StreamHandler',
         },
     },
     'loggers': {
         'django.request': {
-            'handlers': ['file'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True
         },
