@@ -4,18 +4,10 @@ require.config({
         underscore: '../libs/underscore.min',
         backbone: '../libs/backbone.min',
         bootstrap: '../libs/bootstrap.min',
-        trumbowyg: '../libs/trumbowyg.min',
-        trumbowygColors: '../libs/trumbowyg-colors.min'
     },
     shim: {
         bootstrap: {
             deps: ['jquery']
-        },
-        trumbowyg: {
-            deps: ['jquery']
-        },
-        trumbowygColors: {
-            deps: ['jquery', 'trumbowyg']
         }
     }
 });

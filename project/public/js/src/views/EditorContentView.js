@@ -2,12 +2,14 @@ define(
     [
         'underscore', 'backbone',
         'app',
-        'models/Note'
+        'models/Note',
+        'templates/EditorContentTemplate'
     ],
     function (
         _, Backbone,
         App,
-        Note
+        Note,
+        EditorContentTemplate
     ) {
         var EditorContentView = Backbone.View.extend({
             model: Note,
@@ -19,23 +21,7 @@ define(
             attributes: {
                 role: 'tabpanel'
             },
-            template: _.template('<div id="editor-<%= id %>" class="editor"></div>'),
-            templateSaveButton: `
-                <button type="button" class="btn btn-sm btn-save" title="Save">
-                    <i class="glyphicon glyphicon-ok-circle"></i>
-                </button>`,
-
-            // Trumbowyg
-            editorOptions: {
-                btns: [
-                    'viewHTML',
-                    ['bold', 'italic'],
-                    ['foreColor']
-                ],
-                removeformatPasted: true,
-                fullscreenable: false,
-                svgPath: '/public/images/trumbowyg-icons.svg'
-            },
+            template: _.template(EditorContentTemplate),
 
             events: {
                 'click .btn-save': 'saveModel'
@@ -55,28 +41,10 @@ define(
             },
 
             saveModel: function (event) {
-                var text = this.$('#editor-' + this.model.get('id')).trumbowyg('html');
+                var text = this
+                    .$('#editor-' + this.model.get('id') + ' textarea')
+                    .val();
                 this.model.save({text: text});
-            },
-
-            // This code is not in the render method, because tab for the editor
-            // must be already on the page before editor renders so it can
-            // calculate it's height
-            initEditor: function () {
-                var that = this;
-                var modelId = that.model.get('id');
-
-                // Load WYSIWYG editor
-                that.$('.editor')
-                    .attr('spellcheck', 'false') // TODO: move to template string above
-                    .trumbowyg(that.editorOptions)
-                    .trumbowyg('empty'); // explicitly clear editor
-
-                that.$('.editor')
-                    .trumbowyg('html', this.model.get('text'));
-
-                // Append self-made save button
-                that.$('.trumbowyg-button-pane').append(this.templateSaveButton);
             },
 
             render: function () {

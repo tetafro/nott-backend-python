@@ -9,4 +9,3 @@ Requirements
 * PostgreSQL (9.4)
 * Twitter Bootstrap (3.3.5)
 * jQuery (1.11.3)
-* Trumbowyg (2.0.0-beta.4)

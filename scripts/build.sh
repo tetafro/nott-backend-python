@@ -56,8 +56,6 @@ show_progress 76 'Removing javascript sources'
 rm -rf $install_dir/notes/public/js/libs/backbone.min.js \
     $install_dir/notes/public/js/libs/bootstrap.min.js \
     $install_dir/notes/public/js/libs/jquery.min.js \
-    $install_dir/notes/public/js/libs/trumbowyg-colors.min.js \
-    $install_dir/notes/public/js/libs/trumbowyg.min.js \
     $install_dir/notes/public/js/libs/underscore.min.js \
     $install_dir/notes/public/js/src \
     $install_dir/notes/public/js/build.js \

@@ -1,6 +1,6 @@
 define(
     [
-        'jquery', 'underscore', 'backbone', 'helpers', 'bootstrap', 'trumbowyg', 'trumbowygColors'
+        'jquery', 'underscore', 'backbone', 'helpers', 'bootstrap'
     ],
     function (
         $, _, Backbone, Helpers

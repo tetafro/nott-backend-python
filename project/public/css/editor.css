@@ -1,13 +1,13 @@
-/* WYSIWYG editor */
-#editor-block > .nav-tabs {
+/* Note editor */
+.editor-block > .nav-tabs {
     border-bottom: none;
 }
 
-#editor-block > .nav-tabs > li > a {
+.editor-block > .nav-tabs > li > a {
     padding: 5px 18px 5px 10px;
 }
 
-#editor-block > .nav-tabs > li > a > .tab-close {
+.editor-block > .nav-tabs > li > a > .tab-close {
     display: inline;
     position: absolute;
     top: 0px;
@@ -15,7 +15,7 @@
     cursor: pointer;
 }
 
-#editor-block {
+.editor-block {
     position: fixed;
     top: 52px;
     left: 500px;
@@ -47,25 +47,26 @@
     background-color: #f3f3f3;
 }
 
+.editor-panel {
+    border: 1px solid #ddd;
+    height: 40px;
+    padding: 5px;
+}
+
 .editor {
+    color: #333;
+    font-family: "Droid Sans Mono";
+    font-size: 12px;
     height: -moz-calc(100% - 70px);
     height: -webkit-calc(100% - 70px);
     height: calc(100% - 70px);
-    font-family: "Droid Sans Mono";
-    font-size: 12px;
-    color: #333;
 }
 
-.trumbowyg-box {
+.editor > textarea {
+    border: none;
+    height: 100%;
+    line-height: 1.75;
+    overflow-y: scroll;
+    padding: 5px 10px;
     width: 100%;
-    margin: 0px;
-}
-
-.trumbowyg-button-pane .btn-save {
-    position: absolute;
-    top: 1px;
-    right: 2px;
-    color: #337ab7;
-    font-size: 18px;
-    line-height: 18px;
 }
