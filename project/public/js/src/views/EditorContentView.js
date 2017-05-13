@@ -50,12 +50,26 @@ define(
                     success: function (model, response) {
                         model.fetch({
                             success: function () {
+                                // Update rendered content
                                 that.$('div.editor-content')
                                     .html(model.get('html'));
+                                // Open view tab
+                                that.switchMode('view');
                             }
                         })
                     }
                 });
+            },
+
+            // Open view or edit tab of the note
+            switchMode: function (mode) {
+                var viewTab = '#editor-' + this.model.get('id');
+                if (mode == 'edit') {
+                    viewTab += '-edit';
+                } else {
+                    viewTab += '-view';
+                }
+                this.$('.nav-pills a[href="' + viewTab + '"]').tab('show');
             },
 
             render: function () {
