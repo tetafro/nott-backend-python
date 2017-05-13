@@ -67,7 +67,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db_notes',
+        'NAME': 'db_nott',
         'USER': 'pguser',
         'PASSWORD': '123',
         'HOST': '172.20.0.11',

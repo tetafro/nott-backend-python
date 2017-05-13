@@ -4,7 +4,7 @@
 #
 
 # Config file
-pro_config='/etc/nginx/sites-available/notes'
+pro_config='/etc/nginx/sites-available/nott'
 dummy_config='/etc/nginx/sites-available/dummy'
 
 # Check if all files are on their places
@@ -31,13 +31,13 @@ else
         # Switch to production site
         pro)
             rm -f /etc/nginx/sites-enabled/dummy
-            ln -s /etc/nginx/sites-available/notes /etc/nginx/sites-enabled/
+            ln -s /etc/nginx/sites-available/nott /etc/nginx/sites-enabled/
             service nginx reload
 
             echo 'The site is now in production mode' ;;
         # Switch to dummy
         dummy)
-            rm -f /etc/nginx/sites-enabled/notes
+            rm -f /etc/nginx/sites-enabled/nott
             ln -s /etc/nginx/sites-available/dummy /etc/nginx/sites-enabled/
             service nginx reload
 

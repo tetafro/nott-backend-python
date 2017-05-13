@@ -31,7 +31,7 @@ if [ ! -d ./project ]; then
 fi
 
 install_dir=./install
-django_settings=$install_dir/notes/core/settings.py
+django_settings=$install_dir/nott/core/settings.py
 pass_ini=./pass.ini
 
 show_progress 0 'Cleaning previous runs'
@@ -44,7 +44,7 @@ cd ../../..
 
 show_progress 44 'Copying project'
 mkdir -p $install_dir
-cp -R ./project $install_dir/notes
+cp -R ./project $install_dir/nott
 
 show_progress 72 'Removing python cache'
 find $install_dir \
@@ -53,13 +53,13 @@ find $install_dir \
     -exec rm -rf {} \; 2>/dev/null
 
 show_progress 76 'Removing javascript sources'
-rm -rf $install_dir/notes/public/js/libs/backbone.min.js \
-    $install_dir/notes/public/js/libs/bootstrap.min.js \
-    $install_dir/notes/public/js/libs/jquery.min.js \
-    $install_dir/notes/public/js/libs/underscore.min.js \
-    $install_dir/notes/public/js/src \
-    $install_dir/notes/public/js/build.js \
-    $install_dir/notes/public/js/script.js
+rm -rf $install_dir/nott/public/js/libs/backbone.min.js \
+    $install_dir/nott/public/js/libs/bootstrap.min.js \
+    $install_dir/nott/public/js/libs/jquery.min.js \
+    $install_dir/nott/public/js/libs/underscore.min.js \
+    $install_dir/nott/public/js/src \
+    $install_dir/nott/public/js/build.js \
+    $install_dir/nott/public/js/script.js
 
 show_progress 80 'Setting passwords from file'
 # Parse passwords file
@@ -82,10 +82,10 @@ sed -i 's/^        '\''USER'\'': '\''.*'\'',/        '\''USER'\'': '\'$db_user\'
 sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$db_pass\'',/' $django_settings
 
 show_progress 84 'Compressing'
-tar -zcf $install_dir/notes.tar.gz -C $install_dir notes
+tar -zcf $install_dir/nott.tar.gz -C $install_dir nott
 
 show_progress 96 'Cleaning'
-rm -rf $install_dir/notes
+rm -rf $install_dir/nott
 
 show_progress 100 'Complete'
 

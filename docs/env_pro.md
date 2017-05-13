@@ -22,7 +22,7 @@
 4. Make virtualenv
 
     ``` bash
-    cd notes
+    cd nott
     virtualenv -p python3 venv
     source venv/bin/activate
     pip3 install -r requirements.txt
@@ -35,10 +35,10 @@
     sudo cp configs/uwsgi/apps-available/* /etc/uwsgi/apps-available/
 
     cd /etc/nginx/sites-enabled/
-    sudo ln -s ../sites-available/notes .
+    sudo ln -s ../sites-available/nott.conf .
 
     cd /etc/uwsgi/apps-enabled/
-    sudo ln -s ../apps-available/notes.ini .
+    sudo ln -s ../apps-available/nott.ini .
     sudo service nginx reload
     ```
 
@@ -46,10 +46,10 @@
 
     ``` bash
     sudo su - postgres
-    createdb db_notes
+    createdb db_nott
     createuser --no-createdb pguser
     psql
     \password pguser
-    GRANT ALL PRIVILEGES ON DATABASE db_notes TO pguser;
-    psql db_notes < db_notes_dump.sql
+    GRANT ALL PRIVILEGES ON DATABASE db_nott TO pguser;
+    psql db_nott < db_nott_dump.sql
     ```

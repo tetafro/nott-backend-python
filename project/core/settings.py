@@ -69,7 +69,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db_notes',
+        'NAME': 'db_nott',
         'USER': 'pguser',
         'PASSWORD': '123',
         'HOST': 'localhost',
@@ -118,13 +118,13 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/var/www/notes/logs/debug.log',
+            'filename': '/var/www/nott/logs/debug.log',
         },
         'file_rotate': {
             'filters': ['require_debug_false'],
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/www/notes/logs/debug.log',
+            'filename': '/var/www/nott/logs/debug.log',
             'maxBytes': 1024*1024*1, # 1 MB
             'backupCount': 5,
             'formatter': 'default'
