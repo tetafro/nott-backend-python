@@ -1,11 +1,13 @@
 define(
     [
         'jquery', 'backbone',
-        'models/Note'
+        'models/Note',
+        'templates/EditorHeadTemplate'
     ],
     function (
         $, Backbone,
-        Note
+        Note,
+        EditorHeadTemplate
     ) {
         var EditorHeadView = Backbone.View.extend({
             model: Note,
@@ -15,12 +17,7 @@ define(
                     'data-id': this.model.get('id')
                 };
             },
-            template: _.template(
-                `<a href="#tab-<%= id %>" role="tab" data-toggle="tab">
-                    <span><%= title %></span>
-                    <div class="tab-close">&times;</div>
-                </a>`
-            ),
+            template: _.template(EditorHeadTemplate),
 
             events: {
                 'click': 'open',
