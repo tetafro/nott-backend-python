@@ -1,3 +1,5 @@
+from markdown2 import markdown
+
 from django.db import models
 from django.core.exceptions import ValidationError
 
@@ -48,7 +50,7 @@ class Notepad(models.Model):
 
 class Note(models.Model):
     title = models.CharField(max_length=80)
-    text = models.TextField(blank=True)
+    text = models.TextField(blank=True)  # source text in markdown
     notepad = models.ForeignKey(Notepad, related_name='notes')
 
     def clean(self):
@@ -59,3 +61,8 @@ class Note(models.Model):
 
     def __repr__(self):
         return 'Note ID%d' % self.id
+
+    @property
+    def html(self):
+        """Convert text in mardown to HTML"""
+        return markdown(self.text, extras=['fenced-code-blocks'])

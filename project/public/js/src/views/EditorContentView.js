@@ -40,11 +40,22 @@ define(
                 this.$el.toggleClass('active');
             },
 
+            // Save and re-read rendered HTML from server
             saveModel: function (event) {
-                var text = this
-                    .$('#editor-' + this.model.get('id') + ' textarea')
+                var that = this,
+                    text = that
+                    .$('#editor-' + that.model.get('id') + ' textarea')
                     .val();
-                this.model.save({text: text});
+                that.model.save({text: text}, {
+                    success: function (model, response) {
+                        model.fetch({
+                            success: function () {
+                                that.$('div.editor-content')
+                                    .html(model.get('html'));
+                            }
+                        })
+                    }
+                });
             },
 
             render: function () {

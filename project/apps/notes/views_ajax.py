@@ -183,7 +183,7 @@ class NoteView(ListableView):
         note_id = kwargs['id']
         note = Note.objects.get(id=note_id)
 
-        response = {'text': note.text}
+        response = {'text': note.text, 'html': note.html}
         return JsonResponse(response, status=200)
 
     def list(self, request, *args, **kwargs):

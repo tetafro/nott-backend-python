@@ -20,7 +20,7 @@ define(
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" id="editor-<%= id %>-view" class="tab-pane active">
-                        <div class="editor-content">RENDERED VIEW</div>
+                        <div class="editor-content"><%= html %></div>
                     </div>
                     <div role="tabpanel" id="editor-<%= id %>-edit" class="tab-pane">
                         <textarea class="editor-content" spellcheck="false"><%= text %></textarea>

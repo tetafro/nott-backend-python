@@ -14,6 +14,7 @@ define(
                 id: null,
                 title: null,
                 text: null,
+                html: null,
                 notepad_id: null,
 
                 opened: false, // tab is opened,
@@ -22,6 +23,7 @@ define(
             },
             // Interface fields, not stored in DB
             dontSync: [
+                'html',
                 'opened',
                 'active'
             ],
