@@ -2,10 +2,10 @@ Description
 ===========
 Online notes service.
 
-Requirements
+Tech Stack
 ============
-* Python (3.4.2)
-* Django (1.8.3)
-* PostgreSQL (9.4)
-* Twitter Bootstrap (3.3.5)
-* jQuery (1.11.3)
+* Python 3
+* Django
+* PostgreSQL
+* BackboneJS
+* Twitter Bootstrap
