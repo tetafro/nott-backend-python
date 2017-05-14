@@ -65,4 +65,4 @@ class Note(models.Model):
     @property
     def html(self):
         """Convert text in mardown to HTML"""
-        return markdown(self.text, extras=['fenced-code-blocks'])
+        return markdown(self.text, extras=['fenced-code-blocks', 'tables'])
