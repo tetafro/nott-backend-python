@@ -64,9 +64,9 @@
     color: #333;
     font-family: "Droid Sans Mono";
     font-size: 12px;
-    height: -moz-calc(100% - 70px);
-    height: -webkit-calc(100% - 70px);
-    height: calc(100% - 70px);
+    height: -moz-calc(100% - 90px);
+    height: -webkit-calc(100% - 90px);
+    height: calc(100% - 90px);
 }
 
 .editor-content {
