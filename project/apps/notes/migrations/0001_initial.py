@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, auto_created=True, verbose_name='ID')),
                 ('title', models.CharField(max_length=80)),
-                ('parent', models.ForeignKey(null=True, to='notes.Folder', blank=True, related_name='subfolders')),
+                ('parent', models.ForeignKey(null=True, blank=True, to='notes.Folder', related_name='subfolders')),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='folders')),
             ],
         ),
