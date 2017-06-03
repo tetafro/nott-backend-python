@@ -1,18 +1,6 @@
 FROM ubuntu:16.10
 MAINTAINER Denis Ivanov
 
-# Build:
-# docker pull ubuntu:16.10
-# docker build -t nott .
-# Create container:
-# docker create \
-#     --name nott-app \
-#     --net docknet \
-#     --ip 172.20.0.10 \
-#     --volume /home/tetafro/IT/projects/pet/nott:/srv \
-#     --tty \
-#     nott
-
 # Quiet apt-get
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -38,13 +26,14 @@ RUN pip3 install --upgrade pip
 COPY requirements.txt /tmp/
 RUN pip3 install -r /tmp/requirements.txt
 
+# Project
+RUN mkdir -p /srv
+
 # Cleaning
 RUN rm -f /tmp/requirements.txt
 RUN apt-get -y autoremove
 RUN apt-get -y clean
 
-# Mount point
-RUN mkdir -p /srv/
-WORKDIR /srv/project/
+WORKDIR /srv/
 
-ENTRYPOINT ["python3", "/srv/project/manage.py", "runserver", "0.0.0.0:80"]
+ENTRYPOINT ["python3", "/srv/manage.py", "runserver", "0.0.0.0:80"]
