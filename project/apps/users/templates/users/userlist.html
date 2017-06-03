@@ -28,7 +28,6 @@
             {% for user in users %}
             <tr>
                 <td><a href="{% url 'profile' user_id=user.id %}">{{ user.username }}</a></td>
-                <td class="text-center"><img src="{{ user.geo_info.country_flag }}"></td>
                 <td class="text-center">{{ user.folders_count }}</td>
                 <td class="text-center">{{ user.notepads_count }}</td>
                 <td class="text-center">{{ user.notes_count }}</td>

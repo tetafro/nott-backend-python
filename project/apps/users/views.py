@@ -13,9 +13,6 @@ from .models import User
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserForm, RegistrationForm
 
-# Helpers
-from .helpers import get_ip
-
 
 def user_auth(request):
     """
@@ -52,9 +49,6 @@ def user_auth(request):
             login_form = AuthenticationForm(data=request.POST)
             if login_form.is_valid():
                 login(request, login_form.get_user())
-                # Fetch geo info and save it
-                ip = get_ip(request)
-                request.user.geo_info.update_geo(ip)
             else:
                 errors = True
 

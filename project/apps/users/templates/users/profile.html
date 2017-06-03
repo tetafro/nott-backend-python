@@ -71,19 +71,6 @@
             </div>
             {% endif %}
         </div>
-        {% if usercard.geo_info.str_coordinates %}
-        <div class="col-md-5">
-            <div class="map">
-                <h3>Loading...</h3>
-                {% easy_map usercard.geo_info.str_coordinates 400 400 2 %}
-            </div>
-            <p>
-                Location: {{ usercard.geo_info.str_short }}
-                <br>
-                Time: {{ usercard.geo_info.local_time }}
-            </p>
-        </div>
-        {% endif %}
     </form>
 </div>
 
