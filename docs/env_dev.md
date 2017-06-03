@@ -1,45 +1,58 @@
 # Prepare environment for development server
 
-1. Network
+1. Install Docker
 
-    ``` bash
+2. Make network
+
+    ```sh
     docker network create --subnet=172.20.0.0/16 docknet
     ```
 
-2. Database
+3. DB server container
 
-    ``` bash
-    docker pull postgres:9.6
+    ```sh
     docker volume create --name=nott-db
+    docker build -t nott-db -f configs/dockerfiles/db .
     docker create \
         --name nott-db \
         --net docknet \
         --ip 172.20.0.11 \
         --volume nott-db:/var/lib/postgresql/data \
         --env POSTGRES_PASSWORD=postgres \
-        postgres:9.6
-    docker start nott-db
-
-    docker exec -it nott-db psql -U postgres -c "CREATE ROLE pguser LOGIN PASSWORD '123';"
-    docker exec -it nott-db psql -U postgres -c "CREATE DATABASE db_nott;"
-    docker exec -it nott-db psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE db_nott TO pguser;"
-
-    cat backup.sql | docker exec -i nott-db psql -U postgres db_nott
+        nott-db
     ```
 
-3. Application
+4. App container
 
-    ``` bash
-    docker pull ubuntu:16.10
-    docker build -t nott .
+    ```sh
+    docker build -f configs/dockerfiles/app_dev -t nott-app:dev .
     docker create \
         --name nott-app \
         --net docknet \
         --ip 172.20.0.10 \
-        --volume /home/user/nott:/srv \
+        --volume /home/tetafro/IT/projects/pet/nott/project:/srv \
         --tty \
-        nott
-    docker start -a nott-app
+        nott-app:dev
+    ```
 
-    docker exec -it nott-app /srv/project/manage.py migrate
+5. Start everything
+
+    ```sh
+    docker start nott-db
+    docker start -a nott-app
+    ```
+
+6. Populate
+
+    ```sh
+    docker exec \
+        --tty \
+        --interactive \
+        nott-app \
+        python3 /srv/manage.py migrate
+    docker exec \
+        --tty \
+        --interactive \
+        nott-app \
+        python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
     ```

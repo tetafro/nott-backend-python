@@ -1,55 +1,70 @@
 # Prepare environment for production server
 
-1. Install servers
+1. Install Docker
 
-    ``` bash
-    sudo apt-get install nginx
-    sudo apt-get install uwsgi uwsgi-plugin-python3
-    sudo apt-get install postgresql libpq-dev
+2. Make network
+
+    ```sh
+    docker network create --subnet=172.20.0.0/16 docknet
     ```
 
-2. Install dependencies
+3. DB server container
 
-    ``` bash
-    sudo apt-get install python3-pip python3-dev gcc
-    sudo apt-get install libjpeg-dev zlib1g-dev # for Pillow
-    sudo pip3 install virtualenv
-    sudo pip3 install dropbox # for DB backup
+    ```sh
+    docker volume create --name=nott-db
+    docker build -t nott-db -f configs/dockerfiles/db .
+    docker create \
+        --name nott-db \
+        --net docknet \
+        --ip 172.20.0.11 \
+        --volume nott-db:/var/lib/postgresql/data \
+        --env POSTGRES_PASSWORD=postgres \
+        nott-db
     ```
 
-3. Copy project to server
+4. Nginx container
 
-4. Make virtualenv
-
-    ``` bash
-    cd nott
-    virtualenv -p python3 venv
-    source venv/bin/activate
-    pip3 install -r requirements.txt
+    ```sh
+    docker build -t nott-web -f configs/dockerfiles/web .
+    docker create \
+        --name nott-web \
+        --net docknet \
+        --ip 172.20.0.12 \
+        --volume /home/tetafro/IT/projects/pet/nott/project:/srv \
+        nott-web
     ```
 
-5. Copy configs
+5. App container
 
-    ``` bash
-    sudo cp configs/nginx/sites-avaliable/* /etc/nginx/sites-available/
-    sudo cp configs/uwsgi/apps-available/* /etc/uwsgi/apps-available/
-
-    cd /etc/nginx/sites-enabled/
-    sudo ln -s ../sites-available/nott.conf .
-
-    cd /etc/uwsgi/apps-enabled/
-    sudo ln -s ../apps-available/nott.ini .
-    sudo service nginx reload
+    ```sh
+    docker build -f configs/dockerfiles/app_prod -t nott-app:prod .
+    docker create \
+        --name nott-app \
+        --net docknet \
+        --ip 172.20.0.10 \
+        --volume /home/tetafro/IT/projects/pet/nott/project:/srv \
+        nott-app:prod
     ```
 
-6. DB setup
+6. Start everything
 
-    ``` bash
-    sudo su - postgres
-    createdb db_nott
-    createuser --no-createdb pguser
-    psql
-    \password pguser
-    GRANT ALL PRIVILEGES ON DATABASE db_nott TO pguser;
-    psql db_nott < db_nott_dump.sql
+    ```sh
+    docker start nott-db
+    docker start nott-web
+    docker start nott-app
+    ```
+
+7. Populate
+
+    ```sh
+    docker exec \
+        --tty \
+        --interactive \
+        nott-app \
+        python3 /srv/manage.py migrate
+    docker exec \
+        --tty \
+        --interactive \
+        nott-app \
+        python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
     ```
