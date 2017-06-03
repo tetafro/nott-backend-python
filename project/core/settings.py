@@ -1,12 +1,21 @@
 import os
 
+server_mode = os.environ.get('SERVER_MODE')
+if server_mode == 'prod':
+    DEBUG = False
+elif server_mode == 'dev':
+    DEBUG = True
+else:
+    raise EnvironmentError('Server mode is not set!')
 
-DEBUG = False
+# Add either dev or production settings
+if DEBUG:
+    from .settings_dev import *
+else:
+    from .settings_prod import *
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = ',cgi6&g]({g&9$4>g=nj:s2n3!]xh6rk{$oz#r$f|el(m|@6@n'
-
-ALLOWED_HOSTS = ['nott.tk']
 
 
 # Application definition
@@ -16,7 +25,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'easy_maps',
     'widget_tweaks',
     'apps.users',
     'apps.notes'
@@ -65,19 +73,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db_nott',
-        'USER': 'pguser',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
-
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Moscow'
@@ -101,6 +96,7 @@ AVATARS_URL = '/media/avatars/'
 AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')
 
 
+LOGFILE = os.path.join(BASE_DIR, 'logs', 'django.log')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -115,26 +111,24 @@ LOGGING = {
         }
     },
     'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/var/www/nott/logs/debug.log',
+            'filename': LOGFILE,
         },
         'file_rotate': {
             'filters': ['require_debug_false'],
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/www/nott/logs/debug.log',
+            'filename': LOGFILE,
             'maxBytes': 1024*1024*1, # 1 MB
             'backupCount': 5,
             'formatter': 'default'
         },
     },
-    'loggers': {
-        'django.request': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-    },
+    'loggers': LOGGERS
 }

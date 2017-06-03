@@ -1,4 +1,6 @@
-"""Dev-only settings"""
+"""Prod-only settings"""
+
+ALLOWED_HOSTS = ['nott.tk']
 
 SECRET_KEY = ',cgi6&g]({g&9$4>g=nj:s2n3!]xh6rk{$oz#r$f|el(m|@6@n'
 
@@ -15,8 +17,8 @@ DATABASES = {
 
 LOGGERS = {
     'django.request': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
+        'handlers': ['file'],
+        'level': 'WARNING',
         'propagate': True
-    }
+    },
 }
