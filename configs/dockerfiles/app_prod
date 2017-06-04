@@ -29,7 +29,7 @@ RUN pip3 install gunicorn
 
 # Project
 RUN mkdir -p /srv
-# COPY project /srv
+COPY project /srv
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
 RUN mkdir -p /srv/logs
 
@@ -39,5 +39,7 @@ RUN apt-get -y autoremove
 RUN apt-get -y clean
 
 WORKDIR /srv/
+
+VOLUME ["/srv"]
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

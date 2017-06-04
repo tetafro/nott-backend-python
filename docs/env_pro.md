@@ -8,11 +8,24 @@
     docker network create --subnet=172.20.0.0/16 docknet
     ```
 
-3. DB server container
+3. Make volumes
 
     ```sh
     docker volume create --name=nott-db
+    docker volume create --name=nott-media
+    ```
+
+4. Build images
+
+    ```sh
     docker build -t nott-db -f configs/dockerfiles/db .
+    docker build -t nott-web -f configs/dockerfiles/web .
+    docker build -t nott-app:prod -f configs/dockerfiles/app_prod .
+    ```
+
+3. Create containers
+
+    ```sh
     docker create \
         --name nott-db \
         --net docknet \
@@ -20,33 +33,20 @@
         --volume nott-db:/var/lib/postgresql/data \
         --env POSTGRES_PASSWORD=postgres \
         nott-db
-    ```
-
-4. Nginx container
-
-    ```sh
-    docker build -t nott-web -f configs/dockerfiles/web .
-    docker create \
-        --name nott-web \
-        --net docknet \
-        --ip 172.20.0.12 \
-        --volume /home/tetafro/IT/projects/pet/nott/project:/srv \
-        nott-web
-    ```
-
-5. App container
-
-    ```sh
-    docker build -f configs/dockerfiles/app_prod -t nott-app:prod .
     docker create \
         --name nott-app \
         --net docknet \
         --ip 172.20.0.10 \
-        --volume /home/tetafro/IT/projects/pet/nott/project:/srv \
         nott-app:prod
+    docker create \
+        --name nott-web \
+        --net docknet \
+        --ip 172.20.0.12 \
+        --volumes-from nott-app \
+        nott-web
     ```
 
-6. Start everything
+6. Start containers
 
     ```sh
     docker start nott-db
