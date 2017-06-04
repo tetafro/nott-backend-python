@@ -2,20 +2,26 @@
 
 1. Install Docker
 
-2. Make network
+2. Build project
+
+    ```sh
+    ./scripts/build.sh
+    ```
+
+3. Make network
 
     ```sh
     docker network create --subnet=172.20.0.0/16 docknet
     ```
 
-3. Make volumes
+4. Make volumes
 
     ```sh
     docker volume create --name=nott-db
     docker volume create --name=nott-media
     ```
 
-4. Build images
+5. Build images
 
     ```sh
     docker build -t nott-db -f configs/dockerfiles/db .
@@ -23,7 +29,7 @@
     docker build -t nott-app:prod -f configs/dockerfiles/app_prod .
     ```
 
-3. Create containers
+6. Create containers
 
     ```sh
     docker create \
@@ -46,7 +52,7 @@
         nott-web
     ```
 
-6. Start containers
+7. Start containers
 
     ```sh
     docker start nott-db
@@ -54,7 +60,7 @@
     docker start nott-app
     ```
 
-7. Populate
+8. Populate
 
     ```sh
     docker exec \

@@ -29,7 +29,8 @@ RUN pip3 install gunicorn
 
 # Project
 RUN mkdir -p /srv
-COPY project /srv
+COPY install/nott.tar.gz /tmp
+RUN tar -C /srv -xzf /tmp/nott.tar.gz
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
 RUN mkdir -p /srv/logs
 
@@ -37,6 +38,7 @@ RUN mkdir -p /srv/logs
 RUN rm -f /tmp/requirements.txt
 RUN apt-get -y autoremove
 RUN apt-get -y clean
+RUN rm -f /tmp/nott.tar.gz
 
 WORKDIR /srv/
 

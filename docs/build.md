@@ -11,9 +11,7 @@ r.js -o build.js
 ## Run
 
 ```
-Build:
 docker build -f configs/docker/build -t nott-build .
-Run
 docker run \
     --rm \
     --volume /home/tetafro/IT/projects/pet/nott:/srv \
