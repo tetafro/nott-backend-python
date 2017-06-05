@@ -8,7 +8,7 @@ DATABASES = {
         'NAME': 'db_nott',
         'USER': 'pguser',
         'PASSWORD': '123',
-        'HOST': '172.20.0.11',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }

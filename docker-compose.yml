@@ -1,0 +1,31 @@
+version: '3'
+
+volumes:
+  db:
+  project:
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: configs/dockerfiles/db
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+  app:
+    build:
+      context: .
+      dockerfile: configs/dockerfiles/app_prod
+    volumes:
+      - project:/srv
+    depends_on:
+      - db
+  web:
+    build:
+      context: .
+      dockerfile: configs/dockerfiles/web
+    volumes:
+      - project:/srv
+    depends_on:
+      - app
