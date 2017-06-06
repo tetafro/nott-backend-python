@@ -10,6 +10,11 @@ Online notes service.
 * BackboneJS
 * Twitter Bootstrap
 
+# Instructions
+
+* [Development server](/docs/dev.md)
+* [Production server](/docs/prod.md)
+
 # Screenshot
 
 ![Screenshot](/docs/screenshot.png)

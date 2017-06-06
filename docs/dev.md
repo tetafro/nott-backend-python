@@ -1,12 +1,8 @@
-# Prepare environment for production server
+# Install for development
 
-1. Install Docker
+1. Clone repository
 
-2. Build project
-
-    ```sh
-    ./scripts/build.sh
-    ```
+2. Install Docker
 
 3. Make network
 
@@ -14,24 +10,11 @@
     docker network create --subnet=172.20.0.0/16 docknet
     ```
 
-4. Make volumes
+4. DB server container
 
     ```sh
     docker volume create --name=nott-db
-    docker volume create --name=nott-media
-    ```
-
-5. Build images
-
-    ```sh
     docker build -t nott-db -f configs/dockerfiles/db .
-    docker build -t nott-web -f configs/dockerfiles/web .
-    docker build -t nott-app:prod -f configs/dockerfiles/app_prod .
-    ```
-
-6. Create containers
-
-    ```sh
     docker create \
         --name nott-db \
         --net docknet \
@@ -39,38 +22,39 @@
         --volume nott-db:/var/lib/postgresql/data \
         --env POSTGRES_PASSWORD=postgres \
         nott-db
+    ```
+
+5. App container
+
+    ```sh
+    docker build -f configs/dockerfiles/app_dev -t nott-app:dev .
     docker create \
         --name nott-app \
         --net docknet \
         --ip 172.20.0.10 \
-        nott-app:prod
-    docker create \
-        --name nott-web \
-        --net docknet \
-        --ip 172.20.0.12 \
-        --volumes-from nott-app \
-        nott-web
+        --volume /home/tetafro/IT/projects/pet/nott/project:/srv \
+        --tty \
+        nott-app:dev
     ```
 
-7. Start containers
+6. Start everything
 
     ```sh
     docker start nott-db
-    docker start nott-web
-    docker start nott-app
+    docker start -a nott-app
     ```
 
-8. Populate
+7. Populate
 
     ```sh
     docker exec \
         --tty \
         --interactive \
-        nott_app_1 \
+        nott-app \
         python3 /srv/manage.py migrate
     docker exec \
         --tty \
         --interactive \
-        nott_app_1 \
+        nott-app \
         python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
     ```
