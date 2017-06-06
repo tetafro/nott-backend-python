@@ -1,6 +1,6 @@
 """Prod-only settings"""
 
-ALLOWED_HOSTS = ['nott.tk']
+ALLOWED_HOSTS = ['nott.tk', 'nott.doc']
 
 SECRET_KEY = ',cgi6&g]({g&9$4>g=nj:s2n3!]xh6rk{$oz#r$f|el(m|@6@n'
 

@@ -6,6 +6,7 @@ volumes:
 
 services:
   db:
+    image: nott_db
     build:
       context: .
       dockerfile: configs/dockerfiles/db
@@ -14,6 +15,7 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
   app:
+    image: nott_app
     build:
       context: .
       dockerfile: configs/dockerfiles/app_prod
@@ -22,10 +24,13 @@ services:
     depends_on:
       - db
   web:
+    image: nott_web
     build:
       context: .
       dockerfile: configs/dockerfiles/web
     volumes:
       - project:/srv
+    ports:
+      - "80:80"
     depends_on:
       - app

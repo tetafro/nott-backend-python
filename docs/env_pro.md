@@ -66,11 +66,11 @@
     docker exec \
         --tty \
         --interactive \
-        nott-app \
+        nott_app_1 \
         python3 /srv/manage.py migrate
     docker exec \
         --tty \
         --interactive \
-        nott-app \
+        nott_app_1 \
         python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
     ```

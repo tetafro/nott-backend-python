@@ -13,13 +13,13 @@ ENV LC_ALL en_US.UTF-8
 # Install tools
 RUN apt-get -y update && \
     apt-get -y install \
-    gcc \
-    python3-dev \
-    python3-pip \
-    nodejs \
-    npm \
-    curl \
-    bc
+        gcc \
+        python3-dev \
+        python3-pip \
+        nodejs \
+        npm \
+        curl \
+        bc
 RUN pip3 install --upgrade pip
 RUN pip3 install pep8 flake8
 RUN ln -s /usr/bin/nodejs /usr/bin/node
