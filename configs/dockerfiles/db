@@ -1,4 +1,4 @@
 FROM postgres:9.6
 MAINTAINER Denis Ivanov
 
-ADD scripts/init.sql /docker-entrypoint-initdb.d/
+ADD scripts/db_init.sql /docker-entrypoint-initdb.d/
