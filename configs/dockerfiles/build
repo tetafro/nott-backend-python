@@ -21,7 +21,6 @@ RUN apt-get -y update && \
         curl \
         bc
 RUN pip3 install --upgrade pip
-RUN pip3 install pep8 flake8
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash -
 RUN npm install -g requirejs
