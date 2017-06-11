@@ -1,82 +1,72 @@
-define(
-    [
-        'jquery', 'backbone',
-        'app', 'helpers',
-        'collections/FoldersCollection',
-        'views/FolderView'
-    ],
-    function (
-        $, Backbone,
-        App, Helpers,
-        FoldersCollection,
-        FolderView
-    ) {
-        var FoldersCollectionView = Backbone.View.extend({
-            collection: FoldersCollection,
-            el: $('.sidebar-first .nav-sidebar'),
+var $ = require('jquery');
+var Backbone = require('backbone');
+var App = require('../app');
+var Helpers = require('../helpers');
+var FoldersCollection = require('../collections/FoldersCollection');
+var FolderView = require('../views/FolderView');
 
-            initialize: function () {
-                this.listenTo(this.collection, 'add', this.onAdd);
-                this.listenTo(this.collection, 'change:parent_id', this.onMove);
-                this.listenTo(this.collection, 'request', this.onAjaxStart);
-                this.listenTo(this.collection, 'sync', this.onAjaxComplete);
-                this.listenTo(this.collection, 'error', this.onError);
+module.exports = Backbone.View.extend({
+    collection: FoldersCollection,
+    el: $('.sidebar-first .nav-sidebar'),
 
-                this.render();
-            },
+    initialize: function () {
+        this.listenTo(this.collection, 'add', this.onAdd);
+        this.listenTo(this.collection, 'change:parent_id', this.onMove);
+        this.listenTo(this.collection, 'request', this.onAjaxStart);
+        this.listenTo(this.collection, 'sync', this.onAjaxComplete);
+        this.listenTo(this.collection, 'error', this.onError);
 
-            ajaxStart: function () {
-                App.AppView.showLoadIcon();
-            },
+        this.render();
+    },
 
-            ajaxComplete: function () {
-                App.AppView.hideLoadIcon();
-            },
+    ajaxStart: function () {
+        App.AppView.showLoadIcon();
+    },
 
-            displayError: function (collection, error) {
-                App.AppView.hideLoadIcon();
-                App.AppView.displayError(error);
-            },
+    ajaxComplete: function () {
+        App.AppView.hideLoadIcon();
+    },
 
-            onAdd: function (folder) {
-                var folderView = new FolderView({model: folder});
-                var parentId = folder.get('parent_id');
+    displayError: function (collection, error) {
+        App.AppView.hideLoadIcon();
+        App.AppView.displayError(error);
+    },
 
-                if (parentId) {
-                    this.$('#folder-' + parentId + '.children-block')
-                        .append(folderView.$el);
-                } else {
-                    this.$el.append(folderView.$el);
-                }
-            },
+    onAdd: function (folder) {
+        var folderView = new FolderView({model: folder});
+        var parentId = folder.get('parent_id');
 
-            onMove: function (folder) {
-                var $element = $('[data-type="folder"][data-id="' + folder.get('id') + '"]');
-                var $parent = $('#folder-' + folder.get('parent_id'));
-                $element.appendTo($parent);
-            },
+        if (parentId) {
+            this.$('#folder-' + parentId + '.children-block')
+                .append(folderView.$el);
+        } else {
+            this.$el.append(folderView.$el);
+        }
+    },
 
-            render: function () {
-                var that = this;
+    onMove: function (folder) {
+        var $element = $('[data-type="folder"][data-id="' + folder.get('id') + '"]');
+        var $parent = $('#folder-' + folder.get('parent_id'));
+        $element.appendTo($parent);
+    },
 
-                // Clear list of folders and notepads
-                that.$el.empty();
+    render: function () {
+        var that = this;
 
-                // Render folders from root
-                Helpers.processTree(that.collection, 'parent_id', function (folder) {
-                    var folderParentId = folder.get('parent_id');
-                    var folderView = new FolderView({model: folder});
+        // Clear list of folders and notepads
+        that.$el.empty();
 
-                    if (folderParentId == null) {
-                        that.$el.append(folderView.$el);
-                    } else {
-                        that.$('#folder-' + folderParentId + '.children-block')
-                            .append(folderView.$el);
-                    }
-                });
+        // Render folders from root
+        Helpers.processTree(that.collection, 'parent_id', function (folder) {
+            var folderParentId = folder.get('parent_id');
+            var folderView = new FolderView({model: folder});
+
+            if (folderParentId == null) {
+                that.$el.append(folderView.$el);
+            } else {
+                that.$('#folder-' + folderParentId + '.children-block')
+                    .append(folderView.$el);
             }
         });
-
-        return FoldersCollectionView;
     }
-);
+});

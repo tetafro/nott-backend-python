@@ -1,107 +1,96 @@
-define(
-    [
-        'underscore', 'backbone',
-        'app',
-        'models/Folder',
-        'views/ModalView',
-        'templates/FolderTemplate'
-    ],
-    function (
-        _, Backbone,
-        App,
-        Folder,
-        ModalView,
-        FolderTemplate
-    ) {
-        var FolderView = Backbone.View.extend({
-            model: Folder,
-            tagName: 'li',
-            attributes: function () {
-                return {
-                    'data-type': 'folder',
-                    'data-id': this.model.get('id')
-                };
-            },
-            template: _.template(FolderTemplate),
+var _ = require('underscore');
+var $ = require('jquery');
+var Backbone = require('backbone');
+var App = require('../app');
+var Folder = require('../models/Folder');
+var ModalView = require('../views/ModalView');
+var FolderTemplate = require('../templates/FolderTemplate');
 
-            events: {
-                'click .expand': 'expand',
-                'click .add': 'showModal',
-                'click .edit': 'showModal',
-                'click .del': 'showModal'
-            },
+module.exports = Backbone.View.extend({
+    model: Folder,
+    tagName: 'li',
+    attributes: function () {
+        return {
+            'data-type': 'folder',
+            'data-id': this.model.get('id')
+        };
+    },
+    template: _.template(FolderTemplate),
 
-            initialize: function () {
-                this.listenTo(this.model, 'change:title', this.rename);
-                this.listenTo(this.model, 'request', this.onAjaxStart);
-                this.listenTo(this.model, 'sync', this.onAjaxComplete);
-                this.listenTo(this.model, 'error', this.onError);
-                this.listenTo(this.model, 'destroy', this.onDestroy);
+    events: {
+        'click .expand': 'expand',
+        'click .add': 'showModal',
+        'click .edit': 'showModal',
+        'click .del': 'showModal'
+    },
 
-                this.render();
-            },
+    initialize: function () {
+        this.listenTo(this.model, 'change:title', this.rename);
+        this.listenTo(this.model, 'request', this.onAjaxStart);
+        this.listenTo(this.model, 'sync', this.onAjaxComplete);
+        this.listenTo(this.model, 'error', this.onError);
+        this.listenTo(this.model, 'destroy', this.onDestroy);
 
-            onAjaxStart: function () {
-                App.AppView.showLoadIcon();
-            },
+        this.render();
+    },
 
-            onAjaxComplete: function () {
-                App.AppView.hideLoadIcon();
-            },
+    onAjaxStart: function () {
+        App.AppView.showLoadIcon();
+    },
 
-            onError: function (model, error) {
-                App.AppView.hideLoadIcon();
-                App.AppView.displayError(error);
-            },
+    onAjaxComplete: function () {
+        App.AppView.hideLoadIcon();
+    },
 
-            onDestroy: function () {
-                App.AppView.hideLoadIcon();
-                this.remove();
-            },
+    onError: function (model, error) {
+        App.AppView.hideLoadIcon();
+        App.AppView.displayError(error);
+    },
 
-            // Open folder: show subfolder and change icon
-            expand: function (event) {
-                event.stopPropagation();
-                this.$('> ul').collapse('toggle');
-                this.$('> div > a > i')
-                    .toggleClass('glyphicon-folder-open')
-                    .toggleClass('glyphicon-folder-close');
-            },
+    onDestroy: function () {
+        App.AppView.hideLoadIcon();
+        this.remove();
+    },
 
-            // Modal window with details for CRUD operation
-            showModal: function (event) {
-                // Since lists are nested, clicking on child element
-                // is propagating to all parents. It shouldn't happen.
-                event.stopPropagation();
+    // Open folder: show subfolder and change icon
+    expand: function (event) {
+        event.stopPropagation();
+        this.$('> ul').collapse('toggle');
+        this.$('> div > a > i')
+            .toggleClass('glyphicon-folder-open')
+            .toggleClass('glyphicon-folder-close');
+    },
 
-                if ($(event.currentTarget).hasClass('add')) {
-                    App.AppView.showModal({
-                        action: 'create',
-                        parentId: this.model.get('id'),
-                        type: 'folder'
-                    });
-                } else if ($(event.currentTarget).hasClass('edit')) {
-                    App.AppView.showModal({
-                        model: this.model,
-                        action: 'edit'
-                    });
-                } else if ($(event.currentTarget).hasClass('del')) {
-                    App.AppView.showModal({
-                        model: this.model,
-                        action: 'delete'
-                    });
-                }
-            },
+    // Modal window with details for CRUD operation
+    showModal: function (event) {
+        // Since lists are nested, clicking on child element
+        // is propagating to all parents. It shouldn't happen.
+        event.stopPropagation();
 
-            rename: function () {
-                this.$('> div > a > span').html(this.model.get('title'));
-            },
+        if ($(event.currentTarget).hasClass('add')) {
+            App.AppView.showModal({
+                action: 'create',
+                parentId: this.model.get('id'),
+                type: 'folder'
+            });
+        } else if ($(event.currentTarget).hasClass('edit')) {
+            App.AppView.showModal({
+                model: this.model,
+                action: 'edit'
+            });
+        } else if ($(event.currentTarget).hasClass('del')) {
+            App.AppView.showModal({
+                model: this.model,
+                action: 'delete'
+            });
+        }
+    },
 
-            render: function () {
-                this.$el.html(this.template(this.model.toJSON()));
-            }
-        });
+    rename: function () {
+        this.$('> div > a > span').html(this.model.get('title'));
+    },
 
-        return FolderView;
+    render: function () {
+        this.$el.html(this.template(this.model.toJSON()));
     }
-);
+});

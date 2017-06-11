@@ -1,83 +1,72 @@
-define(
-    [
-        'backbone',
-        'app',
-        'models/Note'
-    ],
-    function (
-        Backbone,
-        App,
-        Note
-    ) {
-        var NotesCollection = Backbone.Collection.extend({
-            model: Note,
-            url: function () {
-                return '/ajax/notes';
-            },
-            notepad: null,
+var Backbone = require('backbone');
+var App = require('../app');
+var Note = require('../models/Note');
 
-            parse: function (response) {
-                return response.notes;
-            },
+module.exports = Backbone.Collection.extend({
+    model: Note,
+    url: function () {
+        return '/ajax/notes';
+    },
+    notepad: null,
 
-            switchNotepad: function (notepad) {
-                var that = this;
+    parse: function (response) {
+        return response.notes;
+    },
 
-                that.notepad = notepad;
-                that.url = '/ajax/notes?notepad-id=' + notepad.get('id');
-                that.fetch({
-                    reset: true,
-                    // Synchronize models with EditorsCollection
-                    success: function () {
-                        var note;
-                        var openedNote;
+    switchNotepad: function (notepad) {
+        var that = this;
 
-                        for (var i = 0; i < that.length; i++) {
-                            note = that.at(i);
-                            openedNote = App.editorsCollection.get(note.get('id'));
-                            if (openedNote) {
-                                that.models[i] = openedNote;
-                            }
-                        };
+        that.notepad = notepad;
+        that.url = '/ajax/notes?notepad-id=' + notepad.get('id');
+        that.fetch({
+            reset: true,
+            // Synchronize models with EditorsCollection
+            success: function () {
+                var note;
+                var openedNote;
 
-                        // Event to render view
-                        that.trigger('rerender');
+                for (var i = 0; i < that.length; i++) {
+                    note = that.at(i);
+                    openedNote = App.editorsCollection.get(note.get('id'));
+                    if (openedNote) {
+                        that.models[i] = openedNote;
                     }
-                });
-            },
+                };
 
-            createOne: function (title, notepadId) {
-                var that = this;
-                var notepadId = this.notepad.get('id');
-
-                var note = new Note();
-                note.save(
-                    {
-                        title: title,
-                        notepad_id: notepadId
-                    },
-                    {
-                        success: function (model, response) {
-                            that.add(model);
-                        }
-                    }
-                );
-
-                return note;
-            },
-
-            editOne: function (note, title, notepadId) {
-                note.save({
-                    title: title,
-                    notepad_id: notepadId
-                });
-            },
-
-            deleteOne: function (note) {
-                note.destroy({wait: true});
+                // Event to render view
+                that.trigger('rerender');
             }
         });
+    },
 
-        return NotesCollection;
+    createOne: function (title, notepadId) {
+        var that = this;
+        var notepadId = this.notepad.get('id');
+
+        var note = new Note();
+        note.save(
+            {
+                title: title,
+                notepad_id: notepadId
+            },
+            {
+                success: function (model, response) {
+                    that.add(model);
+                }
+            }
+        );
+
+        return note;
+    },
+
+    editOne: function (note, title, notepadId) {
+        note.save({
+            title: title,
+            notepad_id: notepadId
+        });
+    },
+
+    deleteOne: function (note) {
+        note.destroy({wait: true});
     }
-);
+});

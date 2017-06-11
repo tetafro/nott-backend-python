@@ -1,61 +1,51 @@
-define(
-    [
-        'jquery', 'backbone',
-        'models/Note',
-        'templates/EditorHeadTemplate'
-    ],
-    function (
-        $, Backbone,
-        Note,
-        EditorHeadTemplate
-    ) {
-        var EditorHeadView = Backbone.View.extend({
-            model: Note,
-            tagName: 'li',
-            attributes: function () {
-                return {
-                    'data-id': this.model.get('id')
-                };
-            },
-            template: _.template(EditorHeadTemplate),
+var $ = require('jquery');
+var Backbone = require('backbone');
+var Note = require('../models/Note');
+var EditorHeadTemplate = require('../templates/EditorHeadTemplate');
 
-            events: {
-                'click': 'open',
-                'click .tab-close': 'close'
-            },
+module.exports = Backbone.View.extend({
+    model: Note,
+    tagName: 'li',
+    attributes: function () {
+        return {
+            'data-id': this.model.get('id')
+        };
+    },
+    template: _.template(EditorHeadTemplate),
 
-            initialize: function () {
-                // Initially opened == true
-                this.listenTo(this.model, 'change:opened', this.remove);
-                this.listenTo(this.model, 'change:active', this.onChangeActive);
-                this.listenTo(this.model, 'change:title', this.rename);
-                this.listenTo(this.model, 'destroy', this.remove);
-                this.render();
-            },
+    events: {
+        'click': 'open',
+        'click .tab-close': 'close'
+    },
 
-            open: function (event) {
-                this.model.open();
-            },
+    initialize: function () {
+        // Initially opened == true
+        this.listenTo(this.model, 'change:opened', this.remove);
+        this.listenTo(this.model, 'change:active', this.onChangeActive);
+        this.listenTo(this.model, 'change:title', this.rename);
+        this.listenTo(this.model, 'destroy', this.remove);
+        this.render();
+    },
 
-            rename: function () {
-                this.$('> a > span').text(this.model.get('title'));
-            },
+    open: function (event) {
+        this.model.open();
+    },
 
-            close: function (event) {
-                event.stopPropagation();
-                this.model.close();
-            },
+    rename: function () {
+        this.$('> a > span').text(this.model.get('title'));
+    },
 
-            onChangeActive: function () {
-                this.$el.toggleClass('active');
-            },
+    close: function (event) {
+        event.stopPropagation();
+        this.model.close();
+    },
 
-            render: function () {
-                this.$el.html(this.template(this.model.toJSON()));
-                this.$el.addClass('active');
-            }
-        });
+    onChangeActive: function () {
+        this.$el.toggleClass('active');
+    },
 
-        return EditorHeadView;
+    render: function () {
+        this.$el.html(this.template(this.model.toJSON()));
+        this.$el.addClass('active');
     }
-);
+});

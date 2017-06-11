@@ -1,52 +1,42 @@
-define(
-    [
-        'backbone',
-        'app'
-    ],
-    function (
-        Backbone,
-        App
-    ) {
-        var Folder = Backbone.Model.extend({
-            defaults: {
-                id: null,
-                title: null,
-                parent_id: null
-            },
-            // To be able to determine what object type is current model
-            type: 'folder',
-            idAttribute: 'id',
-            urlRoot: '/ajax/folders/',
+var Backbone = require('backbone');
+var App = require('../app');
 
-            events: {
-                'request': this.ajaxStart,
-                'sync': this.ajaxComplete,
-                'error': 'displayError'
-            },
+module.exports = Backbone.Model.extend({
+    defaults: {
+        id: null,
+        title: null,
+        parent_id: null
+    },
+    // To be able to determine what object type is current model
+    type: 'folder',
+    idAttribute: 'id',
+    urlRoot: '/ajax/folders/',
 
-            ajaxStart: function () {
-                App.AppView.showLoadIcon();
-            },
+    events: {
+        'request': this.ajaxStart,
+        'sync': this.ajaxComplete,
+        'error': 'displayError'
+    },
 
-            ajaxComplete: function () {
-                App.AppView.hideLoadIcon();
-            },
+    ajaxStart: function () {
+        App.AppView.showLoadIcon();
+    },
 
-            displayError: function (model, error) {
-                App.AppView.hideLoadIcon();
-                App.AppView.displayError(error);
-            },
+    ajaxComplete: function () {
+        App.AppView.hideLoadIcon();
+    },
 
-            validate: function (attributes) {
-                if (!attributes.title) {
-                    return 'Title cannot be empty';
-                }
-                if (attributes.title.length > 80) {
-                    return 'Title is too long';
-                }
-            }
-        });
+    displayError: function (model, error) {
+        App.AppView.hideLoadIcon();
+        App.AppView.displayError(error);
+    },
 
-        return Folder;
+    validate: function (attributes) {
+        if (!attributes.title) {
+            return 'Title cannot be empty';
+        }
+        if (attributes.title.length > 80) {
+            return 'Title is too long';
+        }
     }
-);
+});

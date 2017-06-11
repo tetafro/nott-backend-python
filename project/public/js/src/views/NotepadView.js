@@ -1,104 +1,92 @@
-define(
-    [
-        'underscore', 'backbone',
-        'app',
-        'models/Notepad',
-        'collections/NotesCollection',
-        'views/NotesCollectionView', 'views/ModalView',
-        'templates/NotepadTemplate'
-    ],
-    function (
-        _, Backbone,
-        App,
-        Notepad,
-        NotesCollection,
-        NotesCollectionView, ModalView,
-        NotepadTemplate
-    ) {
-        var NotepadView = Backbone.View.extend({
-            model: Notepad,
-            tagName: 'li',
-            attributes: function () {
-                return {
-                    'data-type': 'notepad',
-                    'data-id': this.model.get('id')
-                };
-            },
-            template: _.template(NotepadTemplate),
+var _ = require('underscore');
+var Backbone = require('backbone');
+var App = require('../app');
+var Notepad = require('../models/Notepad');
+var NotesCollection = require('../collections/NotesCollection');
+var NotesCollectionView = require('../views/NotesCollectionView');
+var ModalView = require('../views/ModalView');
+var NotepadTemplate = require('../templates/NotepadTemplate');
 
-            events: {
-                'click .item': 'open',
-                'click .edit': 'showModal',
-                'click .del': 'showModal'
-            },
+module.exports = Backbone.View.extend({
+    model: Notepad,
+    tagName: 'li',
+    attributes: function () {
+        return {
+            'data-type': 'notepad',
+            'data-id': this.model.get('id')
+        };
+    },
+    template: _.template(NotepadTemplate),
 
-            initialize: function () {
-                this.listenTo(this.model, 'change:title', this.rename);
-                this.listenTo(this.model, 'change:active', this.onOpen);
-                this.listenTo(this.model, 'request', this.onAjaxStart);
-                this.listenTo(this.model, 'sync', this.onAjaxComplete);
-                this.listenTo(this.model, 'error', this.onError);
-                this.listenTo(this.model, 'destroy', this.onDestroy);
+    events: {
+        'click .item': 'open',
+        'click .edit': 'showModal',
+        'click .del': 'showModal'
+    },
 
-                this.render();
-            },
+    initialize: function () {
+        this.listenTo(this.model, 'change:title', this.rename);
+        this.listenTo(this.model, 'change:active', this.onOpen);
+        this.listenTo(this.model, 'request', this.onAjaxStart);
+        this.listenTo(this.model, 'sync', this.onAjaxComplete);
+        this.listenTo(this.model, 'error', this.onError);
+        this.listenTo(this.model, 'destroy', this.onDestroy);
 
-            onAjaxStart: function () {
-                App.AppView.showLoadIcon();
-            },
+        this.render();
+    },
 
-            onAjaxComplete: function () {
-                App.AppView.hideLoadIcon();
-            },
+    onAjaxStart: function () {
+        App.AppView.showLoadIcon();
+    },
 
-            onError: function (model, error) {
-                App.AppView.hideLoadIcon();
-                App.AppView.displayError(error);
-            },
+    onAjaxComplete: function () {
+        App.AppView.hideLoadIcon();
+    },
 
-            onDestroy: function () {
-                App.AppView.hideLoadIcon();
-                this.remove();
-            },
+    onError: function (model, error) {
+        App.AppView.hideLoadIcon();
+        App.AppView.displayError(error);
+    },
 
-            // Open notepad
-            open: function () {
-                this.model.open();
-            },
+    onDestroy: function () {
+        App.AppView.hideLoadIcon();
+        this.remove();
+    },
 
-            // Change view when element activated/deactivated
-            onOpen: function () {
-                this.$el.toggleClass('active');
-            },
+    // Open notepad
+    open: function () {
+        this.model.open();
+    },
 
-            // Modal window with details for CRUD operation
-            showModal: function (event) {
-                // Since lists are nested, clicking on child element
-                // is propagating to all parents. It shouldn't happen.
-                event.stopPropagation();
+    // Change view when element activated/deactivated
+    onOpen: function () {
+        this.$el.toggleClass('active');
+    },
 
-                if ($(event.currentTarget).hasClass('edit')) {
-                    App.AppView.showModal({
-                        model: this.model,
-                        action: 'edit'
-                    });
-                } else if ($(event.currentTarget).hasClass('del')) {
-                    App.AppView.showModal({
-                        model: this.model,
-                        action: 'delete'
-                    });
-                }
-            },
+    // Modal window with details for CRUD operation
+    showModal: function (event) {
+        // Since lists are nested, clicking on child element
+        // is propagating to all parents. It shouldn't happen.
+        event.stopPropagation();
 
-            rename: function () {
-                this.$('> div > a > span').html(this.model.get('title'));
-            },
+        if ($(event.currentTarget).hasClass('edit')) {
+            App.AppView.showModal({
+                model: this.model,
+                action: 'edit'
+            });
+        } else if ($(event.currentTarget).hasClass('del')) {
+            App.AppView.showModal({
+                model: this.model,
+                action: 'delete'
+            });
+        }
+    },
 
-            render: function () {
-                this.$el.html(this.template(this.model.toJSON()));
-            }
-        });
+    rename: function () {
+        this.$('> div > a > span').html(this.model.get('title'));
+    },
 
-        return NotepadView;
+    render: function () {
+        this.$el.html(this.template(this.model.toJSON()));
     }
-);
+});

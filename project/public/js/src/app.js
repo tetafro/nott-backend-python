@@ -1,30 +1,25 @@
-define(
-    [
-        'jquery', 'underscore', 'backbone', 'helpers', 'bootstrap'
-    ],
-    function (
-        $, _, Backbone, Helpers
-    ) {
-        var App = {
-            init: function () {
-                var token = Helpers.getCSRF();
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Bootstrap = require('bootstrap');
+var Helpers = require('./helpers');
 
-                // Set CSRF token for all Backbone's requests
-                var oldSync = Backbone.sync;
-                Backbone.sync = function (method, model, options) {
-                    options.beforeSend = function (xhr) {
-                        xhr.setRequestHeader('X-CSRFToken', token);
-                    };
-                    return oldSync(method, model, options);
-                };
+module.exports = {
+    init: function () {
+        var token = Helpers.getCSRF();
 
-                // Set timeout for all ajax requests
-                $.ajaxSetup({timeout: 5000});
-
-                return this;
-            }
+        // Set CSRF token for all Backbone's requests
+        var oldSync = Backbone.sync;
+        Backbone.sync = function (method, model, options) {
+            options.beforeSend = function (xhr) {
+                xhr.setRequestHeader('X-CSRFToken', token);
+            };
+            return oldSync(method, model, options);
         };
 
-        return App;
+        // Set timeout for all ajax requests
+        $.ajaxSetup({timeout: 5000});
+
+        return this;
     }
-);
+};

@@ -1,49 +1,38 @@
-define(
-    [
-        'backbone',
-        'app',
-        'models/Note'
-    ],
-    function (
-        Backbone,
-        App,
-        Note
-    ) {
-        var EditorsCollection = Backbone.Collection.extend({
-            model: Note,
+var Backbone = require('backbone');
+var App = require('../app');
+var Note = require('../models/Note');
 
-            initialize: function () {
-                this.listenTo(this, 'remove', this.onRemove);
-            },
+module.exports = Backbone.Collection.extend({
+    model: Note,
 
-            // This fires when tab is closed and when model is destroyed
-            onRemove: function (note) {
-                // Make active first of remaining opened notes
-                if (this.length && note.get('active')) {
-                    this.at(0).set('active', true);
-                }
+    initialize: function () {
+        this.listenTo(this, 'remove', this.onRemove);
+    },
 
-                note.set({active: false, opened: false});
-            },
+    // This fires when tab is closed and when model is destroyed
+    onRemove: function (note) {
+        // Make active first of remaining opened notes
+        if (this.length && note.get('active')) {
+            this.at(0).set('active', true);
+        }
 
-            openOne: function (note) {
-                var eachNote;
-                this.each(function (eachNote) {
-                    eachNote.set('active', false);
-                });
-                note.set({active: true, opened: true});
+        note.set({active: false, opened: false});
+    },
 
-                if (!this.contains(note)) {
-                    App.editorsCollection.add(note);
-                }
-            },
-
-            closeOne: function (note) {
-                // Remove from opened
-                this.remove(note);
-            }
+    openOne: function (note) {
+        var eachNote;
+        this.each(function (eachNote) {
+            eachNote.set('active', false);
         });
+        note.set({active: true, opened: true});
 
-        return EditorsCollection;
+        if (!this.contains(note)) {
+            App.editorsCollection.add(note);
+        }
+    },
+
+    closeOne: function (note) {
+        // Remove from opened
+        this.remove(note);
     }
-);
+});
