@@ -3,6 +3,9 @@
 __pycache__/
 *.pyc
 
+# JavaScript
+project/public/js/node_modules/
+
 # OS, tools
 /.idea/
 .DS_Store
@@ -10,28 +13,18 @@ __pycache__/
 # DB dump
 *dump*.sql
 
-# Text dump
-/export*.txt
-
 # Any logs
 *.log
 
 # Static, media
 /project/media/
 
-# Old JS project
-/project/public/js/script.js
-
 # Builds
 /project/public/js/app.js
 /install
-/notes.tar.gz
 
 # Secrets
 /pass.ini
 
 # Some thougths
 /etc/
-
-# JSCS linter is install with NPM
-node_modules/
