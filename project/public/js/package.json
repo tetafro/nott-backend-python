@@ -1,13 +1,6 @@
 {
-  "name": "js",
-  "version": "1.0.0",
-  "description": "",
+  "name": "app",
   "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "backbone": "^1.3.3",
     "bootstrap": "^3.3.7",

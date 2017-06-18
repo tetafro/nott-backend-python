@@ -61,18 +61,6 @@
         </div>
     </div>
 
-    {% if DEBUG %}
-        <script data-main="public/js/src/main" src="{% static 'js/libs/require.min.js' %}"></script>
-    {% else %}
-        <script src="public/js/libs/require.min.js"></script>
-        <script>
-            require.config({
-                paths: {
-                    'app': 'public/js/app'
-                }
-            });
-            require(['app']);
-        </script>
-    {% endif %}
+    <script src="public/js/app.min.js"></script>
 </body>
 </html>
