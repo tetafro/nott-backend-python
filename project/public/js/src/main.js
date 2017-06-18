@@ -1,5 +1,5 @@
 var App = require('./app');
-var App = require('./views/AppView');
+var AppView = require('./views/AppView');
 
 App.init();
 

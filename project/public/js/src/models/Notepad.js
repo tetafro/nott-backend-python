@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var Backbone = require('backbone');
 var App = require('../app');
 var NotesCollection = require('../collections/NotesCollection');

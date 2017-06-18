@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var _ = require('underscore');
 var Backbone = require('backbone');
 var Note = require('../models/Note');
 var EditorHeadTemplate = require('../templates/EditorHeadTemplate');
