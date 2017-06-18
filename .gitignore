@@ -4,7 +4,8 @@ __pycache__/
 *.pyc
 
 # JavaScript
-project/public/js/node_modules/
+node_modules/
+package-lock.json
 
 # OS, tools
 /.idea/
@@ -21,6 +22,7 @@ project/public/js/node_modules/
 
 # Builds
 /project/public/js/app.js
+/project/public/js/app.min.js
 /install
 
 # Secrets
