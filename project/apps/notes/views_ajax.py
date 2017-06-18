@@ -196,7 +196,7 @@ class NoteView(ListableView):
         notes = Note.objects. \
             filter(notepad_id=notepad_id). \
             order_by('title'). \
-            values('id', 'title')
+            values('id', 'title', 'notepad_id')
 
         response = {'notes': list(notes)}
         return JsonResponse(response)
