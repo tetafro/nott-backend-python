@@ -13,9 +13,13 @@ ENV LC_ALL en_US.UTF-8
 # Server mode
 ENV SERVER_MODE=dev
 
+# Project directory
+RUN mkdir -p /srv/
+
 # Install deps
 RUN apt-get -y update && \
     apt-get -y install \
+    curl \
     gcc \
     libjpeg-dev \
     libpq-dev \
@@ -25,15 +29,14 @@ RUN apt-get -y update && \
 RUN pip3 install --upgrade pip
 COPY requirements.txt /tmp/
 RUN pip3 install -r /tmp/requirements.txt
-
-# Project
-RUN mkdir -p /srv
+RUN rm -f /tmp/requirements.txt
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN apt-get -y install nodejs
+RUN npm install --silent -g webpack
 
 # Cleaning
-RUN rm -f /tmp/requirements.txt
 RUN apt-get -y autoremove
 RUN apt-get -y clean
+RUN npm cache --force clean
 
 WORKDIR /srv/
-
-ENTRYPOINT ["python3", "/srv/manage.py", "runserver", "0.0.0.0:80"]

@@ -1,0 +1,27 @@
+version: '3'
+
+volumes:
+  db:
+
+services:
+  db:
+    image: nott_db
+    build:
+      context: .
+      dockerfile: configs/dockerfiles/db
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+  app:
+    image: nott_app
+    build:
+      context: .
+      dockerfile: configs/dockerfiles/app_dev
+    command: python3 /srv/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - /home/tetafro/IT/projects/pet/nott/project:/srv
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - db
