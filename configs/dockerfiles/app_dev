@@ -19,6 +19,7 @@ RUN mkdir -p /srv/
 # Install deps
 RUN apt-get -y update && \
     apt-get -y install \
+    bc \
     curl \
     gcc \
     libjpeg-dev \

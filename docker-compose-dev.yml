@@ -5,7 +5,7 @@ volumes:
 
 services:
   db:
-    image: nott_db
+    image: nott_dev_db
     build:
       context: .
       dockerfile: configs/dockerfiles/db
@@ -14,7 +14,7 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
   app:
-    image: nott_app
+    image: nott_dev_app
     build:
       context: .
       dockerfile: configs/dockerfiles/app_dev

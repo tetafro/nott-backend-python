@@ -45,5 +45,3 @@ RUN rm -f /tmp/nott.tar.gz
 WORKDIR /srv/
 
 VOLUME ["/srv"]
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
