@@ -7,12 +7,8 @@ __pycache__/
 node_modules/
 package-lock.json
 
-# OS, tools
-/.idea/
-.DS_Store
-
 # DB dump
-*dump*.sql
+*.backup
 
 # Any logs
 *.log
