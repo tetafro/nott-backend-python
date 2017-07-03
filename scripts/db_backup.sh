@@ -4,21 +4,20 @@
 #
 
 DATE=$(date '+%Y%m%d')
-DIR="/var/backups/postgresql/db_nott/"
+DIR="/var/backups/nott"
 FILE="$DATE.dump"
-LOG="/var/logs/nott/db_backup.log"
+LOGDIR="/var/log/nott"
+LOG="$LOGDIR/db_backup.log"
+
+mkdir -p $DIR $LOGDIR
 
 TIME=$(date '+%H:%M:%S %d.%m.%Y')
 echo -e "\nStart job: $TIME" >> $LOG
 echo "---" >> $LOG
 
-if [ ! -d "$DIR" ]; then
-    echo "$(date '+%H:%M:%S %d.%m.%Y') Error: backup directory not found: $DIR" >> $LOG
-    exit 1
-fi
-
 # PostgreSQL backup of db_nott base
-pg_dump db_nott -Fc -f "$DIR$FILE"
+docker exec nott_db_1 \
+    pg_dump -U postgres -Fc -C db_nott > "$DIR/$FILE"
 if [ $? -eq 0 ]; then
     echo "$(date '+%H:%M:%S %d.%m.%Y') Dump completed" >> $LOG
 else
@@ -28,10 +27,10 @@ fi
 
 # Send backup to Dropbox
 echo -n "$(date '+%H:%M:%S %d.%m.%Y') " >> $LOG
-/var/lib/postgresql/dropbox_upload.py $DIR$FILE >> $LOG
+/root/dropbox_upload.py $DIR/$FILE >> $LOG
 
 # Remove files older than 5 days
-find /var/backups/postgresql/db_nott/ -mtime +5 -exec rm -f {} \;
+find $DIR -mtime +5 -exec rm -f {} \;
 
 # Exit with success code
 exit 0
