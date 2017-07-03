@@ -1,14 +1,6 @@
 # Production
 
-1. [Build project](/docs/build.md)
-
-2. Build images
-
-    ```sh
-    docker-compose -f docker-compose-prod.yml build
-    ```
-
-    or pull from Docker Hub
+1. Pull images from Docker Hub
 
     ```sh
     docker pull tetafro/nott_web
@@ -16,7 +8,7 @@
     docker pull tetafro/nott_app
     ```
 
-3. Create containers
+2. Create containers
 
     ```sh
     docker-compose -f docker-compose-prod.yml --no-build create
@@ -29,13 +21,6 @@
         python3 /srv/manage.py migrate
     docker-compose -f docker-compose-prod.yml run --rm app \
         python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
-    ```
-
-    or restore backup
-
-    ```sh
-    docker-compose -f docker-compose-prod.yml up
-    docker exec -i nott_db_1 pg_restore -U postgres -d db_nott < ./20170624.dump
     ```
 
 4. Run app

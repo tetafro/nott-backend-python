@@ -1,30 +1,28 @@
-# TODO:
+# TODO
 
-* Сортировка по алфавиту при добавлении
-* Валидация в модальном окне
-* Поиск
-* Указание role для nav-tabs/nav-pills
-* Горячие клавиши
-* Тест создания блокнота для несуществующей папки
-* Подтверждение регистрации по почте
-* Восстановление пароля
-* Редирект при ошибках авторизации AJAX
-* Каскад на удаление пользователя из auth_user
-* Анимация списков при удалении/переносе блокнотов и заметок
-* Админка
-    * Закрытие регистраций
-    * Удаление/блокировка пользователей
-* Статические станицы 404 и 500 - nginx, не django
-* Подсчёт статистики посещений (IP, OS, браузер, разрешение, железо, etc)
-* Авторизация по OAuth от стронних сервисов
-* Логи в отдельный файл
-* Дизайн https://app.keeweb.info/
-* Докстринги по стандарту (описание, аргументы)
-* Автотестирование
-* Логи с ротацией
-* Перетаскивание мышкой для перемещения
+* Hokeys;
+* Move to ESLint from JSCS for JavaScript linting;
+* Search;
+* Sort list on any item creation;
+* Validation in modal window;
+* Test for making notepad for non-existing folder;
+* Email confirmation;
+* Password restore;
+* Redirect on AJAX auth errors;
+* Cascade delete for auth_user;
+* Lists animations on moving/removing items;
+* Admin panel:
+    * Open/close registrations;
+    * Remove/block users.
+* Custom error pages (404, 500, etc) using nginx;
+* Service usage statistics;
+* OAuth using external services;
+* Design [https://app.keeweb.info/](https://app.keeweb.info/);
+* Testing;
+* Log rotate;
+* Drag'n'drop for all items.
 
-# Баги
+# Bugs
 
-* При повторной отправке логина (сбой связи, например) не вызывается csrf_failure
-* Исчезают вкладки при удалении открытого блокнота
+* No csrf_failure on duplicate login send (for example on network errors);
+* Tabs are destroyed on removing opend notepad.
