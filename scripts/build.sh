@@ -39,7 +39,7 @@ rm -rf $install_dir
 
 show_progress 8 'Building javascript app'
 cd ./project/public/js/
-r.js -o build.js 1>/dev/null
+webpack > /dev/null
 cd ../../..
 
 show_progress 44 'Copying project'
@@ -53,13 +53,11 @@ find $install_dir \
     -exec rm -rf {} \; 2>/dev/null
 
 show_progress 76 'Removing javascript sources'
-rm -rf $install_dir/nott/public/js/libs/backbone.min.js \
-    $install_dir/nott/public/js/libs/bootstrap.min.js \
-    $install_dir/nott/public/js/libs/jquery.min.js \
-    $install_dir/nott/public/js/libs/underscore.min.js \
-    $install_dir/nott/public/js/src \
-    $install_dir/nott/public/js/build.js \
-    $install_dir/nott/public/js/script.js
+for name in $(ls $install_dir/nott/public/js/); do
+    if [ $name != "app.min.js" ]; then
+        rm -rf $name
+    fi
+done
 
 show_progress 80 'Setting passwords from file'
 # Parse passwords file
