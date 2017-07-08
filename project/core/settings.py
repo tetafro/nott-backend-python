@@ -102,7 +102,12 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'default': {
-            'format': "---\n%(levelname)s %(asctime)s\nModule: %(module)s\n%(message)s"
+            'format': (
+                '---\n'
+                '%(levelname)s %(asctime)s\n'
+                'Module: %(module)s\n'
+                '%(message)s'
+            )
         },
     },
     'filters': {
@@ -125,7 +130,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOGFILE,
-            'maxBytes': 1024*1024*1, # 1 MB
+            'maxBytes': 1024*1024*1,  # 1 MB
             'backupCount': 5,
             'formatter': 'default'
         },

@@ -42,7 +42,6 @@ module.exports = Backbone.Collection.extend({
     },
 
     setActive: function (activeNotepad) {
-        var notepad;
         this.each(function (notepad) {
             notepad.set('active', false);
         });

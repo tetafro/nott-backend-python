@@ -31,7 +31,7 @@ module.exports = Backbone.Collection.extend({
                     if (openedNote) {
                         that.models[i] = openedNote;
                     }
-                };
+                }
 
                 // Event to render view
                 that.trigger('rerender');

@@ -37,8 +37,8 @@ module.exports = Backbone.View.extend({
     saveModel: function (event) {
         var that = this,
             text = that
-            .$('#editor-' + that.model.get('id') + ' textarea')
-            .val();
+                .$('#editor-' + that.model.get('id') + ' textarea')
+                .val();
         that.model.save({text: text}, {
             success: function (model, response) {
                 model.fetch({
@@ -49,7 +49,7 @@ module.exports = Backbone.View.extend({
                         // Open view tab
                         that.switchMode('view');
                     }
-                })
+                });
             }
         });
     },

@@ -37,7 +37,8 @@ def user_auth(request):
                 reg_form.save()
                 user = authenticate(
                     username=reg_form.cleaned_data['username'],
-                    password=reg_form.cleaned_data['password1']  # password2 - confirmation
+                    # password1 - password itself, password2 - confirmation
+                    password=reg_form.cleaned_data['password1']
                 )
                 login(request, user)
             else:
@@ -74,10 +75,19 @@ def user_logout(request):
 def userlist(request):
     # Get users with stats
     users = User.objects.\
-                 annotate(folders_count=Count('folders', distinct=True)).\
-                 annotate(notepads_count=Count('folders__notepads', distinct=True)).\
-                 annotate(notes_count=Count('folders__notepads__notes', distinct=True)).\
-                 all()
+        annotate(folders_count=Count(
+            'folders',
+            distinct=True
+        )).\
+        annotate(notepads_count=Count(
+            'folders__notepads',
+            distinct=True
+        )).\
+        annotate(notes_count=Count(
+            'folders__notepads__notes',
+            distinct=True
+        )).\
+        all()
 
     context = {'users': users}
     return render(request, 'users/userlist.html', context)
@@ -92,10 +102,20 @@ def profile(request, user_id):
         is_me = False
 
     # Get user's stats
-    user = User.objects.annotate(folders_count=Count('folders', distinct=True)) \
-                       .annotate(notepads_count=Count('folders__notepads', distinct=True)) \
-                       .annotate(notes_count=Count('folders__notepads__notes', distinct=True)) \
-                       .get(id=user_id)
+    user = User.objects.\
+        annotate(folders_count=Count(
+            'folders',
+            distinct=True
+        )).\
+        annotate(notepads_count=Count(
+            'folders__notepads',
+            distinct=True
+        )).\
+        annotate(notes_count=Count(
+            'folders__notepads__notes',
+            distinct=True
+        )).\
+        get(id=user_id)
 
     context = {
         'is_me': is_me,
@@ -107,10 +127,20 @@ def profile(request, user_id):
 @login_required
 def profile_edit(request):
     # Get user's stats
-    user = User.objects.annotate(folders_count=Count('folders', distinct=True)) \
-                       .annotate(notepads_count=Count('folders__notepads', distinct=True)) \
-                       .annotate(notes_count=Count('folders__notepads__notes', distinct=True)) \
-                       .get(id=request.user.id)
+    user = User.objects.\
+        annotate(folders_count=Count(
+            'folders',
+            distinct=True
+        )).\
+        annotate(notepads_count=Count(
+            'folders__notepads',
+            distinct=True
+        )).\
+        annotate(notes_count=Count(
+            'folders__notepads__notes',
+            distinct=True
+        )).\
+        get(id=request.user.id)
 
     if request.method == 'POST':
         form_user = UserForm(request.POST, request.FILES, instance=user)

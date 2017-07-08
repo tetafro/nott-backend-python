@@ -12,8 +12,7 @@ module.exports = Backbone.Model.extend({
         html: null,
         notepad_id: null,
 
-        opened: false, // tab is opened,
-                       // need for view to fire close event
+        opened: false, // tab is opened (need for the view to fire close event)
         active: false // tab is active
     },
     // Interface fields, not stored in DB

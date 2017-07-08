@@ -27,7 +27,7 @@ module.exports = {
                 if (element.get('id') == el.get(parentIdField)) {
                     processChildren(el, lvl+1);
                 }
-            })
+            });
         };
 
         collection.each(function (element) {

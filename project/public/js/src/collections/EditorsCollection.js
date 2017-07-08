@@ -20,7 +20,6 @@ module.exports = Backbone.Collection.extend({
     },
 
     openOne: function (note) {
-        var eachNote;
         this.each(function (eachNote) {
             eachNote.set('active', false);
         });

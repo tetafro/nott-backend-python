@@ -11,7 +11,6 @@ var FoldersCollectionView = require('../views/FoldersCollectionView');
 var NotepadsCollectionView = require('../views/NotepadsCollectionView');
 var NotesCollectionView = require('../views/NotesCollectionView');
 var EditorsCollectionView = require('../views/EditorsCollectionView');
-var EditorsCollectionView = require('../views/EditorsCollectionView');
 var ModalView = require('../views/ModalView');
 
 module.exports = Backbone.View.extend({
@@ -46,10 +45,10 @@ module.exports = Backbone.View.extend({
 
         // Create folder/notepad from link at the top of the list
         if ($(event.currentTarget).attr('id') == 'new-folder-notepad') {
-            objectType = 'folder'
+            objectType = 'folder';
         // Create note
         } else if ($(event.currentTarget).attr('id') == 'new-note') {
-            objectType = 'note'
+            objectType = 'note';
         }
 
         this.showModal({
