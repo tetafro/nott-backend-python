@@ -7,9 +7,6 @@ volumes:
 services:
   db:
     image: tetafro/nott_db
-    build:
-      context: .
-      dockerfile: configs/dockerfiles/db
     environment:
       - POSTGRES_PASSWORD=postgres
     volumes:
@@ -17,9 +14,6 @@ services:
     restart: unless-stopped
   app:
     image: tetafro/nott_app
-    build:
-      context: .
-      dockerfile: configs/dockerfiles/app_prod
     command: /docker-entrypoint.sh
     volumes:
       - project:/srv
@@ -28,9 +22,6 @@ services:
       - db
   web:
     image: tetafro/nott_web
-    build:
-      context: .
-      dockerfile: configs/dockerfiles/web
     volumes:
       - project:/srv
     ports:

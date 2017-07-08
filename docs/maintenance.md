@@ -8,10 +8,12 @@ docker exec nott_db_1 \
 # DB restore
 
 ```sh
-docker exec -it nott_db_1 \
+docker exec -i nott_db_1 \
     dropdb -U postgres db_nott
-docker exec -it nott_db_1 \
+docker exec -i nott_db_1 \
+    createdb -U postgres db_nott
+docker exec -i nott_db_1 \
     psql -U postgres db_nott -c 'GRANT ALL PRIVILEGES ON DATABASE db_nott TO pguser;'
-docker exec -it nott_db_1 \
+docker exec -i nott_db_1 \
     pg_restore -U postgres -d db_nott < ./db_nott.backup
 ```
