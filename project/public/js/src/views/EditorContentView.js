@@ -17,7 +17,8 @@ module.exports = Backbone.View.extend({
     template: _.template(EditorContentTemplate),
 
     events: {
-        'click .btn-save': 'saveModel'
+        'click .btn-save': 'saveModel',
+        'keypress textarea.editor-content': 'checkHotkey'
     },
 
     initialize: function () {
@@ -52,6 +53,14 @@ module.exports = Backbone.View.extend({
                 });
             }
         });
+    },
+
+    // Handle hotkeys
+    checkHotkey: function (event) {
+        // Save note on CTRL+Enter
+        if (event.keyCode == 10 && event.ctrlKey) {
+            this.saveModel(event.keyCode);
+        }
     },
 
     // Open view or edit tab of the note
