@@ -83,7 +83,7 @@ class FolderView(ListableView):
         try:
             folder.delete()
         except IntegrityError as e:
-            response = {'error': 'Bad request'}
+            response = {'error': 'Failed to delete due to integrity error'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)
@@ -94,9 +94,14 @@ class NotepadView(ListableView):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        if not data.get('folder_id') or not data.get('title'):
-            response = {'error': 'Bad request'}
-            return JsonResponse(response, status=400)
+
+        error = None
+        if not data.get('folder_id'):
+            error = 'Can\'t make notepad outside folders'
+        elif not data.get('title'):
+            error = 'Notepad must have title'
+        if error:
+            return JsonResponse({'error': error}, status=400)
 
         notepad = Notepad(**data)
 
@@ -153,7 +158,7 @@ class NotepadView(ListableView):
         try:
             notepad.delete()
         except IntegrityError as e:
-            response = {'error': 'Bad request'}
+            response = {'error': 'Failed to delete due to integrity error'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)
@@ -164,9 +169,14 @@ class NoteView(ListableView):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        if not data.get('notepad_id') or not data.get('title'):
-            response = {'error': 'Bad request'}
-            return JsonResponse(response, status=400)
+
+        error = None
+        if not data.get('notepad_id'):
+            error = 'Can\'t make note outside notepads'
+        elif not data.get('title'):
+            error = 'Note must have title'
+        if error:
+            return JsonResponse({'error': error}, status=400)
 
         note = Note(**data)
 
@@ -224,7 +234,7 @@ class NoteView(ListableView):
         try:
             note.delete()
         except IntegrityError as e:
-            response = {'error': 'Bad request'}
+            response = {'error': 'Failed to delete due to integrity error'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)
