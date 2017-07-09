@@ -3,22 +3,22 @@
 1. Pull images from Docker Hub and create containers
 
     ```sh
-    docker-compose -f deploy/docker-compose/prod.yml create
+    docker-compose -f deploy/docker/docker-compose-prod.yml create
     ```
 
 2. Populate
 
     ```sh
-    docker-compose -f deploy/docker-compose/prod.yml run --rm app \
+    docker-compose -f deploy/docker/docker-compose-prod.yml run --rm app \
         python3 /srv/manage.py migrate
-    docker-compose -f deploy/docker-compose/prod.yml run --rm app \
+    docker-compose -f deploy/docker/docker-compose-prod.yml run --rm app \
         python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
     ```
 
 3. Run app
 
     ```sh
-    docker-compose -f deploy/docker-compose/prod.yml up -d
+    docker-compose -f deploy/docker/docker-compose-prod.yml up -d
     ```
 
 # Development
@@ -26,34 +26,34 @@
 1. Build images
 
     ```sh
-    docker-compose -f deploy/docker-compose/dev.yml build
-    docker-compose -f deploy/docker-compose/dev.yml run --rm app \
+    docker-compose -f deploy/docker/docker-compose-dev.yml build
+    docker-compose -f deploy/docker/docker-compose-dev.yml run --rm app \
         bash -c 'cd /srv/public/js/ && npm install'
     ```
 
 2. Populate
 
     ```sh
-    docker-compose -f deploy/docker-compose/dev.yml run --rm app \
+    docker-compose -f deploy/docker/docker-compose-dev.yml run --rm app \
         python3 /srv/manage.py migrate
-    docker-compose -f deploy/docker-compose/dev.yml run --rm app \
+    docker-compose -f deploy/docker/docker-compose-dev.yml run --rm app \
         python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
     ```
 
 3. Run app
 
     ```sh
-    docker-compose -f deploy/docker-compose/dev.yml up
+    docker-compose -f deploy/docker/docker-compose-dev.yml up
     ```
 
 # Build project
 
-Build production version using dev image
+Build production version using dev image (current dir is root of the repository)
 
-```
+```sh
 docker run \
     --rm \
-    --volume /home/tetafro/IT/projects/pet/nott:/srv \
+    --volume $(pwd):/srv \
     --workdir /srv/ \
     --tty \
     nott_dev_app \
