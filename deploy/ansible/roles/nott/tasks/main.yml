@@ -1,0 +1,81 @@
+- name: Make group for the user who runs Nott server
+  group:
+    name: nott
+    state: present
+
+- name: Make user to run Nott server
+  user:
+    name: nott
+    comment: "User to run Nott server"
+    group: nott
+
+- name: Add user {{ nott_user }} to docker group
+  user:
+    name: "{{ nott_user }}"
+    groups: docker
+    append: yes
+
+- name: Install Dropbox Python SDK
+  pip:
+    name: dropbox
+    state: present
+
+- name: Copy backup scripts
+  copy:
+    src: "{{ item }}"
+    dest: "/home/{{ nott_user }}/"
+    owner: "{{ nott_user }}"
+    group: "{{ nott_user }}"
+    mode: 0700
+  with_items:
+    - ../../scripts/db_backup.sh
+    - ../../scripts/dropbox_upload.py
+
+- name: Copy Docker Compose config
+  copy:
+    src: ../docker/docker-compose-prod.yml
+    dest: "/home/{{ nott_user }}/docker-compose.yml"
+    owner: "{{ nott_user }}"
+    group: "{{ nott_user }}"
+    mode: 0600
+
+- name: Make dirs for logs
+  file:
+    path: /var/log/nott/
+    state: directory
+    owner: "{{ nott_user }}"
+    group: "{{ nott_user }}"
+    mode: 0755
+
+- name: Make dirs for backups
+  file:
+    path: /var/backups/nott/
+    state: directory
+    owner: "{{ nott_user }}"
+    group: "{{ nott_user }}"
+    mode: 0755
+
+- name: Apply DB migrations
+  command: docker-compose run --rm app python3 /srv/manage.py migrate
+  args:
+    chdir: "/home/{{ nott_user }}/"
+  notify: restart nott
+
+- name: Populate DB
+  command: docker-compose run --rm app python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
+  args:
+    chdir: "/home/{{ nott_user }}/"
+  notify: restart nott
+
+- name: Run server
+  command: docker-compose up -d
+  args:
+    chdir: "/home/{{ nott_user }}/"
+
+- name: Make cron job to backup DB
+  cron:
+    name: backup db_nott
+    hour: "2"
+    job: "/home/{{ nott_user }}/db_backup.sh"
+    user: nott
+    state: present

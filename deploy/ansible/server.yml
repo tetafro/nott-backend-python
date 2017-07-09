@@ -1,0 +1,13 @@
+- hosts: all
+
+  vars:
+    nott_user: nott
+    remote_user: remote_user
+
+  remote_user: "{{ remote_user }}"
+  become: yes
+
+  roles:
+    - common
+    - docker
+    - nott

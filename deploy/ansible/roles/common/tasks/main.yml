@@ -1,0 +1,12 @@
+- name: Set timezone to Europe/Moscow
+  timezone:
+    name: Europe/Moscow
+
+- name: Update packages
+  apt:
+    update_cache: yes
+
+- name: Install Pip
+  apt:
+    name: "python3-pip"
+    state: present
