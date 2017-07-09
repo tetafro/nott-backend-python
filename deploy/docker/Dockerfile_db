@@ -1,0 +1,4 @@
+FROM postgres:9.6
+MAINTAINER Denis Ivanov
+
+COPY deploy/docker/db_init.sql /docker-entrypoint-initdb.d/

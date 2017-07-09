@@ -3,6 +3,6 @@ MAINTAINER Denis Ivanov
 
 RUN mkdir -p /etc/nginx/sites-avaliable
 RUN mkdir -p /etc/nginx/sites-enabled
-COPY configs/nginx/* /etc/nginx/sites-avaliable/
+COPY deploy/configs/nginx/nott.conf /etc/nginx/sites-avaliable/
 RUN ln -s /etc/nginx/sites-avaliable/nott.conf /etc/nginx/sites-enabled/
-COPY configs/nginx/nginx.conf /etc/nginx/
+COPY deploy/configs/nginx/nginx.conf /etc/nginx/

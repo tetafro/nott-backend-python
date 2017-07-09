@@ -8,6 +8,7 @@ TODO: get proper Dropbox token from pass.ini
 import dropbox
 import sys, os
 
+# Get token here: https://www.dropbox.com/developers/apps
 TOKEN = 'my-token'
 
 files = sys.argv[1:]

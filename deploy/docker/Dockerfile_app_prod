@@ -33,7 +33,7 @@ COPY install/nott.tar.gz /tmp
 RUN tar -C /srv -xzf /tmp/nott.tar.gz
 RUN mv /srv/nott/* /srv/
 RUN rm -rf /srv/nott/
-COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
+COPY deploy/docker/docker-entrypoint.sh /docker-entrypoint.sh
 RUN mkdir -p /srv/logs
 
 # Cleaning

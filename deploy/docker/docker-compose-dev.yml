@@ -5,22 +5,22 @@ volumes:
 
 services:
   db:
-    image: nott_dev_db
+    image: nott_db_dev
     build:
       context: .
-      dockerfile: configs/dockerfiles/db
+      dockerfile: deploy/docker/Dockerfile_db
     environment:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - db:/var/lib/postgresql/data
   app:
-    image: nott_dev_app
+    image: nott_app_dev
     build:
       context: .
-      dockerfile: configs/dockerfiles/app_dev
+      dockerfile: deploy/docker/Dockerfile_app_dev
     command: python3 /srv/manage.py runserver 0.0.0.0:8000
     volumes:
-      - /home/tetafro/IT/projects/pet/nott/project:/srv
+      - ./project:/srv
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:

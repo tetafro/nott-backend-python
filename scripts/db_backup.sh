@@ -27,7 +27,7 @@ fi
 
 # Send backup to Dropbox
 echo -n "$(date '+%H:%M:%S %d.%m.%Y') " >> $LOG
-/root/dropbox_upload.py $DIR/$FILE >> $LOG
+./dropbox_upload.py $DIR/$FILE >> $LOG
 
 # Remove files older than 5 days
 find $DIR -mtime +5 -exec rm -f {} \;
