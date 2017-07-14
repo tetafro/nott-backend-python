@@ -17,6 +17,7 @@ module.exports = Backbone.View.extend({
     template: _.template(EditorContentTemplate),
 
     events: {
+        'shown.bs.tab a.editor-edit': 'activateEditor',
         'click .btn-save': 'saveModel',
         'keypress textarea.editor-content': 'checkHotkey'
     },
@@ -32,6 +33,10 @@ module.exports = Backbone.View.extend({
     // Change view when element activated/deactivated
     onChangeActive: function () {
         this.$el.toggleClass('active');
+    },
+
+    activateEditor: function () {
+        this.$('textarea.editor-content').focus();
     },
 
     // Save and re-read rendered HTML from server

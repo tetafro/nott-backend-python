@@ -2,12 +2,12 @@ module.exports = `
     <div id="editor-<%= id %>" class="editor">
         <ul class="nav nav-pills editor-panel">
             <li class="active">
-                <a data-toggle="pill" href="#editor-<%= id %>-view">
+                <a data-toggle="pill" class="editor-view" href="#editor-<%= id %>-view">
                     View
                 </a>
             </li>
             <li>
-                <a data-toggle="pill" href="#editor-<%= id %>-edit">
+                <a data-toggle="pill" class="editor-edit" href="#editor-<%= id %>-edit">
                     Edit
                 </a>
             </li>
