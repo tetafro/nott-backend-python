@@ -20,6 +20,12 @@
     name: dropbox
     state: present
 
+- name: Update Python requests lib
+  pip:
+    name: requests
+    extra_args: "--upgrade"
+    state: latest
+
 - name: Copy backup scripts
   copy:
     src: "{{ item }}"
