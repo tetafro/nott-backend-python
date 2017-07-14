@@ -17,3 +17,37 @@ docker exec -i nott_db_1 \
 docker exec -i nott_db_1 \
     pg_restore -U postgres -d db_nott < ./db_nott.dump
 ```
+
+# Update server
+
+1. Build production version using dev image (current dir is root of the repository)
+
+    ```sh
+    docker run \
+        --rm \
+        --volume $(pwd):/srv \
+        --workdir /srv/ \
+        --tty \
+        nott_app_dev \
+        scripts/build.sh
+    ```
+
+2. Push to Docker Hub
+
+    ```sh
+    docker login
+    docker push tetafro/nott_app
+    ```
+
+3. Destroy server containers and remove project volume
+
+    ```sh
+    docker-compose down
+    docker volume rm nott_project
+    ```
+
+4. Run app again
+
+    ```sh
+    docker-compose up -d
+    ```
