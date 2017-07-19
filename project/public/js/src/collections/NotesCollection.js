@@ -9,8 +9,16 @@ module.exports = Backbone.Collection.extend({
     },
     notepad: null,
 
+    initialize: function () {
+        this.listenTo(this, 'add', this.onAdd);
+    },
+
     parse: function (response) {
         return response.notes;
+    },
+
+    onAdd: function (note) {
+        note.open();
     },
 
     switchNotepad: function (notepad) {
