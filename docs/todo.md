@@ -1,8 +1,9 @@
 # TODO
 
-* Hokeys;
-* Move to ESLint from JSCS for JavaScript linting;
+* Compare Docker images as a base images for the app;
 * Search;
+* Hotkey for edit mode;
+* Open note on creation;
 * Sort list on any item creation;
 * Validation in modal window;
 * Test for making notepad for non-existing folder;
@@ -11,6 +12,7 @@
 * Redirect on AJAX auth errors;
 * Cascade delete for auth_user;
 * Lists animations on moving/removing items;
+* Add folder names to tabs;
 * Admin panel:
     * Open/close registrations;
     * Remove/block users.
@@ -24,5 +26,7 @@
 
 # Bugs
 
+* Opened notes are not destroyed on removing notes;
+* Folders are not destoroyed when moving to the root;
 * No csrf_failure on duplicate login send (for example on network errors);
-* Tabs are destroyed on removing opend notepad.
+* Tabs are destroyed on removing opened notepad.

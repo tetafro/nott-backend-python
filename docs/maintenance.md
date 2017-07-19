@@ -30,12 +30,16 @@ docker exec -i nott_db_1 \
         --tty \
         nott_app_dev \
         scripts/build.sh
+    docker rmi tetafro/nott_web tetafro/nott_db tetafro/nott_app
+    docker-compose -f docker-compose-prod.yml build
     ```
 
 2. Push to Docker Hub
 
     ```sh
     docker login
+    docker push tetafro/nott_web
+    docker push tetafro/nott_db
     docker push tetafro/nott_app
     ```
 
@@ -44,6 +48,7 @@ docker exec -i nott_db_1 \
     ```sh
     docker-compose down
     docker volume rm nott_project
+    docker rmi tetafro/nott_web tetafro/nott_db tetafro/nott_app
     ```
 
 4. Run app again
