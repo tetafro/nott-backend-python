@@ -4,43 +4,37 @@ MAINTAINER Denis Ivanov
 # Quiet apt-get
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Make locales
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-
 # Server mode
 ENV SERVER_MODE=prod
 
 # Install deps
+COPY requirements.txt /tmp/
 RUN apt-get -y update && \
     apt-get -y install \
-    gcc \
-    libjpeg-dev \
-    libpq-dev \
-    python3-dev \
-    python3-pip \
-    zlib1g-dev
-RUN pip3 install --upgrade pip
-COPY requirements.txt /tmp/
-RUN pip3 install -r /tmp/requirements.txt
-RUN pip3 install gunicorn
+        gcc \
+        libjpeg-dev \
+        libpq-dev \
+        python3-dev \
+        python3-pip \
+        zlib1g-dev && \
+    pip3 install -r /tmp/requirements.txt && \
+    pip3 install gunicorn
 
 # Project
-RUN mkdir -p /srv
-COPY install/nott.tar.gz /tmp
-RUN tar -C /srv -xzf /tmp/nott.tar.gz
-RUN mv /srv/nott/* /srv/
-RUN rm -rf /srv/nott/
+COPY install/nott.tar.gz /tmp/
 COPY deploy/docker/docker-entrypoint.sh /docker-entrypoint.sh
-RUN mkdir -p /srv/logs
+RUN mkdir -p /srv/ && \
+    mkdir -p /srv/logs/ && \
+    tar -C /srv -xzf /tmp/nott.tar.gz && \
+    mv /srv/nott/* /srv/ && \
+    rm -rf /srv/nott/ && \
+    mkdir -p /srv/public/.well-known
 
 # Cleaning
-RUN rm -f /tmp/requirements.txt
-RUN apt-get -y autoremove
-RUN apt-get -y clean
-RUN rm -f /tmp/nott.tar.gz
+RUN rm -f /tmp/requirements.txt && \
+    rm -f /tmp/nott.tar.gz && \
+    apt-get -y autoremove && \
+    apt-get -y clean
 
 WORKDIR /srv/
 

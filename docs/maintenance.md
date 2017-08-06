@@ -30,7 +30,7 @@ docker exec -i nott_db_1 \
         --tty \
         nott_app_dev \
         scripts/build.sh
-    docker rmi tetafro/nott_web tetafro/nott_db tetafro/nott_app
+    docker-compose -f docker-compose-prod.yml down
     docker-compose -f docker-compose-prod.yml build
     ```
 
@@ -41,6 +41,7 @@ docker exec -i nott_db_1 \
     docker push tetafro/nott_web
     docker push tetafro/nott_db
     docker push tetafro/nott_app
+    docker push tetafro/nott_certbot
     ```
 
 3. Destroy server containers and remove project volume

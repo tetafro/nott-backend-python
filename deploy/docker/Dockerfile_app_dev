@@ -4,40 +4,33 @@ MAINTAINER Denis Ivanov
 # Quiet apt-get
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Make locales
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-
 # Server mode
 ENV SERVER_MODE=dev
 
-# Project directory
-RUN mkdir -p /srv/
-
 # Install deps
+COPY requirements.txt /tmp/
 RUN apt-get -y update && \
     apt-get -y install \
-    bc \
-    curl \
-    gcc \
-    libjpeg-dev \
-    libpq-dev \
-    python3-dev \
-    python3-pip \
-    zlib1g-dev
-RUN pip3 install --upgrade pip
-COPY requirements.txt /tmp/
-RUN pip3 install -r /tmp/requirements.txt
-RUN rm -f /tmp/requirements.txt
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt-get -y install nodejs
-RUN npm install --silent -g webpack
+        bc \
+        curl \
+        gcc \
+        libjpeg-dev \
+        libpq-dev \
+        python3-dev \
+        python3-pip \
+        zlib1g-dev && \
+    pip3 install -r /tmp/requirements.txt && \
+    curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
+    apt-get -y install nodejs && \
+    npm install --silent -g webpack
+
+# Project
+RUN mkdir -p /srv/
 
 # Cleaning
-RUN apt-get -y autoremove
-RUN apt-get -y clean
-RUN npm cache --force clean
+RUN rm -f /tmp/requirements.txt && \
+    apt-get -y autoremove && \
+    apt-get -y clean && \
+    npm cache --force clean
 
 WORKDIR /srv/

@@ -1,0 +1,9 @@
+FROM certbot/certbot
+MAINTAINER Denis Ivanov
+
+RUN touch crontab.tmp \
+    && echo '0 */12 * * * certbot renew --quiet' > crontab.tmp \
+    && crontab crontab.tmp \
+    && rm -rf crontab.tmp
+
+ENTRYPOINT [ "certbot" ]
