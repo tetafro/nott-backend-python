@@ -21,6 +21,16 @@
     docker-compose -f docker-compose-prod.yml up -d
     ```
 
+4. Get Let's Encrypt certificate
+
+    ```sh
+    docker exec -it nott_certbot_1 certbot certonly \
+        --webroot \
+        -w /srv/public/ \
+        -d knott.cf \
+        -d www.knott.cf
+    ```
+
 # Development
 
 1. Build images
