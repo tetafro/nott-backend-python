@@ -37,5 +37,3 @@ RUN rm -f /tmp/requirements.txt && \
     apt-get -y clean
 
 WORKDIR /srv/
-
-VOLUME ["/srv"]

@@ -6,7 +6,6 @@ module.exports = Backbone.Collection.extend({
     model: Folder,
     url: '/ajax/folders/',
 
-    // Sort folders after getting from server
     parse: function (response) {
         return response.folders;
     },

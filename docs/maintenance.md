@@ -49,11 +49,13 @@ docker exec -i nott_db_1 \
     ```sh
     docker-compose down
     docker volume rm nott_project
-    docker rmi tetafro/nott_web tetafro/nott_db tetafro/nott_app
+    docker rmi tetafro/nott_web tetafro/nott_db tetafro/nott_app tetafro/nott_certbot
     ```
 
-4. Run app again
+4. Update docker-compose.yml and run app again
 
     ```sh
+    wget -qO docker-compose.yml https://raw.githubusercontent.com/tetafro/nott/master/docker-compose-prod.yml
+    docker-compose pull
     docker-compose up -d
     ```

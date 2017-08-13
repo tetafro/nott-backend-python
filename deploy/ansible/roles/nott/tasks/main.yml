@@ -1,13 +1,13 @@
-- name: Make group for the user who runs Nott server
+- name: Make group for the user who runs server
   group:
-    name: nott
+    name: "{{ nott_user }}"
     state: present
 
-- name: Make user to run Nott server
+- name: Make user to run server
   user:
-    name: nott
-    comment: "User to run Nott server"
-    group: nott
+    name: "{{ nott_user }}"
+    comment: "User to run server"
+    group: "{{ nott_user }}"
 
 - name: Add user {{ nott_user }} to docker group
   user:
