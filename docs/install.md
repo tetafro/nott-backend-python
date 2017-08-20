@@ -3,7 +3,8 @@
 1. Prepare server
 
     ```sh
-    ansible -K deploy/ansible/server.yml
+    cd deploy/ansible
+    ansible-playbook -K server.yml
     ```
 
 2. Pull images from Docker Hub and create containers
