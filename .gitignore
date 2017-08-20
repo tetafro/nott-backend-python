@@ -21,6 +21,9 @@ package-lock.json
 /project/public/js/app.min.js
 /install
 
+# Deploy
+/deploy/ansible/*.retry
+
 # Secrets
 /pass.ini
 
