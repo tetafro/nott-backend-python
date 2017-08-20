@@ -26,7 +26,7 @@ module.exports = Backbone.View.extend({
         App.AppView.hideLoadIcon();
     },
 
-    displayError: function (collection, error) {
+    onError: function (collection, error) {
         App.AppView.hideLoadIcon();
         App.AppView.displayError(error);
     },
