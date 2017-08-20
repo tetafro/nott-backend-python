@@ -9,7 +9,6 @@
 * Test for making notepad for non-existing folder;
 * Email confirmation;
 * Password restore;
-* Redirect on AJAX auth errors;
 * Cascade delete for auth_user;
 * Lists animations on moving/removing items;
 * Add folder names to tabs;
