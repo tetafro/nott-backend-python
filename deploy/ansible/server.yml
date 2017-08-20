@@ -1,8 +1,7 @@
 - hosts: all
 
-  vars:
-    nott_user: nott
-    remote_user: remote_user
+  vars_files:
+    - vars/users.yml
 
   remote_user: "{{ remote_user }}"
   become: yes
