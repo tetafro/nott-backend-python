@@ -21,12 +21,6 @@ module.exports = Backbone.Model.extend({
     idAttribute: 'id',
     urlRoot: '/ajax/notepads/',
 
-    events: {
-        'request': this.ajaxStart,
-        'sync': this.ajaxComplete,
-        'error': 'displayError'
-    },
-
     validate: function (attributes) {
         if (!attributes.title) {
             return 'Title cannot be empty';
@@ -34,19 +28,6 @@ module.exports = Backbone.Model.extend({
         if (attributes.title.length > 80) {
             return 'Title is too long';
         }
-    },
-
-    ajaxStart: function () {
-        App.AppView.showLoadIcon();
-    },
-
-    ajaxComplete: function () {
-        App.AppView.hideLoadIcon();
-    },
-
-    displayError: function (model, error) {
-        App.AppView.hideLoadIcon();
-        App.AppView.displayError(error);
     },
 
     open: function () {

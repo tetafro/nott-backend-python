@@ -12,25 +12,6 @@ module.exports = Backbone.Model.extend({
     idAttribute: 'id',
     urlRoot: '/ajax/folders/',
 
-    events: {
-        'request': this.ajaxStart,
-        'sync': this.ajaxComplete,
-        'error': 'displayError'
-    },
-
-    ajaxStart: function () {
-        App.AppView.showLoadIcon();
-    },
-
-    ajaxComplete: function () {
-        App.AppView.hideLoadIcon();
-    },
-
-    displayError: function (model, error) {
-        App.AppView.hideLoadIcon();
-        App.AppView.displayError(error);
-    },
-
     validate: function (attributes) {
         if (!attributes.title) {
             return 'Title cannot be empty';
