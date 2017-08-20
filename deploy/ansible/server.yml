@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: server
 
   vars_files:
     - vars/users.yml
