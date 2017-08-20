@@ -44,18 +44,9 @@ docker exec -i nott_db_1 \
     docker push tetafro/nott_certbot
     ```
 
-3. Destroy server containers and remove project volume
+3. Update Nott on the server using Ansible
 
     ```sh
-    docker-compose down
-    docker volume rm nott_project
-    docker rmi tetafro/nott_web tetafro/nott_db tetafro/nott_app tetafro/nott_certbot
-    ```
-
-4. Update docker-compose.yml and run app again
-
-    ```sh
-    wget -qO docker-compose.yml https://raw.githubusercontent.com/tetafro/nott/master/docker-compose-prod.yml
-    docker-compose pull
-    docker-compose up -d
+    cd deploy/ansible
+    ansible-playbook -K nott-update.yml
     ```
