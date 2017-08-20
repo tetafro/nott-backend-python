@@ -1,12 +1,18 @@
 # Production
 
-1. Pull images from Docker Hub and create containers
+1. Prepare server
+
+    ```sh
+    ansible -K deploy/ansible/server.yml
+    ```
+
+2. Pull images from Docker Hub and create containers
 
     ```sh
     docker-compose -f docker-compose-prod.yml create
     ```
 
-2. Populate
+3. Populate
 
     ```sh
     docker-compose -f docker-compose-prod.yml run --rm app \
@@ -15,13 +21,13 @@
         python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
     ```
 
-3. Run app
+4. Run app
 
     ```sh
     docker-compose -f docker-compose-prod.yml up -d
     ```
 
-4. Get Let's Encrypt certificate
+5. Get Let's Encrypt certificate
 
     ```sh
     docker exec -it nott_certbot_1 certbot certonly \
