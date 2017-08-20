@@ -1,0 +1,12 @@
+- hosts: server
+
+  vars_files:
+    - vars/users.yml
+
+  remote_user: "{{ remote_user }}"
+  become: yes
+
+  roles:
+    - common
+    - docker
+    - nott

@@ -1,0 +1,24 @@
+- name: Stop and remove all containers
+  command: docker-compose down
+  args:
+    chdir: "/home/{{ nott_user }}/"
+
+- name: Remove project volume
+  command: docker volume rm nott_project
+  args:
+    chdir: "/home/{{ nott_user }}/"
+
+- name: Get last version of docker-compose config
+  get_url:
+    url: https://raw.githubusercontent.com/tetafro/nott/master/docker-compose-prod.yml
+    dest: "/home/{{ nott_user }}/docker-compose.yml"
+
+- name: Get last version of docker images
+  command: docker-compose pull
+  args:
+    chdir: "/home/{{ nott_user }}/"
+
+- name: Start service
+  command: docker-compose up -d
+  args:
+    chdir: "/home/{{ nott_user }}/"
