@@ -4,7 +4,7 @@ Prepare server and run the app
 
 ```sh
 cd deploy/ansible
-ansible-playbook -K server.yml
+ansible-playbook -K server-install.yml
 ```
 
 # Development

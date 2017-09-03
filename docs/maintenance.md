@@ -48,5 +48,5 @@ docker exec -i nott_db_1 \
 
     ```sh
     cd deploy/ansible
-    ansible-playbook -K nott-update.yml
+    ansible-playbook -K server-update.yml
     ```

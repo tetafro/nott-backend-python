@@ -7,6 +7,4 @@
   become: yes
 
   roles:
-    - common
-    - docker
-    - nott
+    - nott-update
