@@ -1,21 +1,11 @@
 # Production
 
-1. Prepare server and run the app
+Prepare server and run the app
 
-    ```sh
-    cd deploy/ansible
-    ansible-playbook -K server.yml
-    ```
-
-2. Get Let's Encrypt certificate
-
-    ```sh
-    docker exec -it nott_certbot_1 certbot certonly \
-        --webroot \
-        -w /srv/public/ \
-        -d knott.cf \
-        -d www.knott.cf
-    ```
+```sh
+cd deploy/ansible
+ansible-playbook -K server.yml
+```
 
 # Development
 
