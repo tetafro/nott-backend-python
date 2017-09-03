@@ -9,6 +9,8 @@ module.exports = Backbone.Model.extend({
         id: null,
         title: null,
         folder_id: null,
+        created: null,
+        updated: null,
 
         active: false
     },

@@ -5,7 +5,9 @@ module.exports = Backbone.Model.extend({
     defaults: {
         id: null,
         title: null,
-        parent_id: null
+        parent_id: null,
+        created: null,
+        updated: null
     },
     // To be able to determine what object type is current model
     type: 'folder',

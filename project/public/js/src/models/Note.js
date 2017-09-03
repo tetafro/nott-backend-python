@@ -11,6 +11,8 @@ module.exports = Backbone.Model.extend({
         text: null,
         html: null,
         notepad_id: null,
+        created: null,
+        updated: null,
 
         opened: false, // tab is opened (need for the view to fire close event)
         active: false // tab is active
