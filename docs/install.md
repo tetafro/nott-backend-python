@@ -1,34 +1,13 @@
 # Production
 
-1. Prepare server
+1. Prepare server and run the app
 
     ```sh
     cd deploy/ansible
     ansible-playbook -K server.yml
     ```
 
-2. Pull images from Docker Hub and create containers
-
-    ```sh
-    docker-compose -f docker-compose-prod.yml create
-    ```
-
-3. Populate
-
-    ```sh
-    docker-compose -f docker-compose-prod.yml run --rm app \
-        python3 /srv/manage.py migrate
-    docker-compose -f docker-compose-prod.yml run --rm app \
-        python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
-    ```
-
-4. Run app
-
-    ```sh
-    docker-compose -f docker-compose-prod.yml up -d
-    ```
-
-5. Get Let's Encrypt certificate
+2. Get Let's Encrypt certificate
 
     ```sh
     docker exec -it nott_certbot_1 certbot certonly \
