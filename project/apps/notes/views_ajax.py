@@ -47,14 +47,14 @@ class FolderView(ListableView):
         folder_id = kwargs['id']
         folder = Folder.objects.get(id=folder_id)
 
-        response = {'id': folder.id, 'title': folder.title}
+        response = {'id': folder.id, 'title': folder.title,
+                    'created': folder.created, 'updated': folder.updated}
         return JsonResponse(response, status=200)
 
     def list(self, request, *args, **kwargs):
         folders = Folder.objects.\
-                         all().\
-                         order_by('title').\
-                         values('id', 'title', 'parent_id')
+            order_by('title').\
+            values('id', 'title', 'parent_id', 'created', 'updated')
 
         response = {'folders': list(folders)}
         return JsonResponse(response)
@@ -118,15 +118,16 @@ class NotepadView(ListableView):
         notepad_id = kwargs['id']
         notepad = Notepad.objects.get(id=notepad_id)
 
-        response = {'id': notepad.id, 'title': notepad.title}
+        response = {'id': notepad.id, 'title': notepad.title,
+                    'created': notepad.created, 'updated': notepad.updated}
         return JsonResponse(response, status=200)
 
     def list(self, request, *args, **kwargs):
         folder_id = request.GET.get('folder-id')
 
         notepads = Notepad.objects.\
-                           order_by('title').\
-                           values('id', 'title', 'folder_id')
+            order_by('title').\
+            values('id', 'title', 'folder_id', 'created', 'updated')
 
         if folder_id:
             notepads = notepads.filter(folder_id=folder_id)
@@ -193,7 +194,8 @@ class NoteView(ListableView):
         note_id = kwargs['id']
         note = Note.objects.get(id=note_id)
 
-        response = {'text': note.text, 'html': note.html}
+        response = {'text': note.text, 'html': note.html,
+                    'created': note.created, 'updated': note.updated}
         return JsonResponse(response, status=200)
 
     def list(self, request, *args, **kwargs):
@@ -206,7 +208,7 @@ class NoteView(ListableView):
         notes = Note.objects. \
             filter(notepad_id=notepad_id). \
             order_by('title'). \
-            values('id', 'title', 'notepad_id')
+            values('id', 'title', 'notepad_id', 'created', 'updated')
 
         response = {'notes': list(notes)}
         return JsonResponse(response)
