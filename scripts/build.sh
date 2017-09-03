@@ -38,9 +38,13 @@ show_progress 0 'Cleaning previous runs'
 rm -rf $install_dir
 
 show_progress 8 'Building javascript app'
-cd ./project/public/js/
-webpack > /dev/null
-cd ../../..
+docker-compose \
+    -f docker-compose-dev.yml \
+    run \
+    --rm \
+    frontend \
+    webpack \
+    1> /dev/null
 
 show_progress 44 'Copying project'
 mkdir -p $install_dir

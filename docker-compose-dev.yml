@@ -13,7 +13,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - db:/var/lib/postgresql/data
-  app:
+  backend:
     image: nott_app_dev
     build:
       context: .
@@ -25,3 +25,11 @@ services:
       - "127.0.0.1:8000:8000"
     depends_on:
       - db
+  frontend:
+    image: nott_webpack
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile_webpack
+    command: webpack -w
+    volumes:
+      - ./project/public/js:/webapp
