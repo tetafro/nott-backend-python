@@ -1,7 +1,7 @@
 - hosts: server
 
   vars_files:
-    - vars/users.yml
+    - vars.yml
 
   remote_user: "{{ remote_user }}"
   become: yes
