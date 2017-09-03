@@ -1,5 +1,5 @@
 FROM node:8.4
-MAINTAINER Denis Ivanov
+LABEL maintainer="Denis Ivanov"
 
 RUN npm install webpack -g
 

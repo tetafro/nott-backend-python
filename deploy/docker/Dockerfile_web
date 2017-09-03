@@ -1,5 +1,5 @@
 FROM nginx:1.13
-MAINTAINER Denis Ivanov
+LABEL maintainer="Denis Ivanov"
 
 RUN mkdir -p /etc/nginx/sites-avaliable
 RUN mkdir -p /etc/nginx/sites-enabled

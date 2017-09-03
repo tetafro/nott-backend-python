@@ -1,5 +1,5 @@
 FROM ubuntu:16.10
-MAINTAINER Denis Ivanov
+LABEL maintainer="Denis Ivanov"
 
 # Quiet apt-get
 ARG DEBIAN_FRONTEND=noninteractive

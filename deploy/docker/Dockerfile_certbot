@@ -1,5 +1,5 @@
 FROM certbot/certbot
-MAINTAINER Denis Ivanov
+LABEL maintainer="Denis Ivanov"
 
 # Update certificate twice a day
 RUN touch crontab.tmp && \
