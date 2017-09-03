@@ -1,3 +1,4 @@
+from datetime import datetime
 from markdown2 import markdown
 
 from django.db import models
@@ -21,6 +22,8 @@ class Folder(models.Model):
         null=True,
         blank=True
     )
+    created = models.DateTimeField(auto_now_add=True, null=True)
+    updated = models.DateTimeField(auto_now=True, null=True)
 
     def clean(self):
         if self.title == '':
@@ -37,6 +40,8 @@ class Folder(models.Model):
 class Notepad(models.Model):
     title = models.CharField(max_length=80)
     folder = models.ForeignKey(Folder, related_name='notepads', null=True)
+    created = models.DateTimeField(auto_now_add=True, null=True)
+    updated = models.DateTimeField(auto_now=True, null=True)
 
     def clean(self):
         if self.title == '':
@@ -52,6 +57,8 @@ class Note(models.Model):
     title = models.CharField(max_length=80)
     text = models.TextField(blank=True)  # source text in markdown
     notepad = models.ForeignKey(Notepad, related_name='notes')
+    created = models.DateTimeField(auto_now_add=True, null=True)
+    updated = models.DateTimeField(auto_now=True, null=True)
 
     def clean(self):
         if self.title == '':
