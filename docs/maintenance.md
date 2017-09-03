@@ -18,6 +18,20 @@ docker exec -i nott_db_1 \
     pg_restore -U postgres -d db_nott < ./db_nott.dump
 ```
 
+# Migrations
+
+Make:
+```sh
+docker-compose -f docker-compose-dev.yml run --rm backend \
+        python3 /srv/manage.py makemigrations
+```
+
+Migrate:
+```sh
+docker-compose -f docker-compose-dev.yml run --rm backend \
+        python3 /srv/manage.py migrate
+```
+
 # Update server
 
 1. Build production version using dev image (current dir is root of the repository)
