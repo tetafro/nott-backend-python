@@ -37,13 +37,7 @@ docker-compose -f docker-compose-dev.yml run --rm backend \
 1. Build production version using dev image (current dir is root of the repository)
 
     ```sh
-    docker run \
-        --rm \
-        --volume $(pwd):/srv \
-        --workdir /srv/ \
-        --tty \
-        nott_app_dev \
-        scripts/build.sh
+    scripts/build.sh
     docker-compose -f docker-compose-prod.yml down
     docker-compose -f docker-compose-prod.yml build
     ```
