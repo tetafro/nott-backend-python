@@ -19,6 +19,7 @@ services:
       context: .
       dockerfile: deploy/docker/Dockerfile_app_dev
     command: python3 /srv/manage.py runserver 0.0.0.0:8000
+    tty: true
     volumes:
       - ./project:/srv
     ports:
