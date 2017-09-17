@@ -3,6 +3,14 @@
 # Make archive with the app ready for uploading to server
 #
 
+for tool in bc tar sed docker-compose; do
+    command -v $tool > /dev/null
+    if [ $? != 0 ]; then
+        echo "'$tool' command is required but not found in the system"
+        exit 1
+    fi
+done
+
 # Show progress bar
 function show_progress {
     end=$1
