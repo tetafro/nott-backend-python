@@ -103,7 +103,7 @@ class NotepadView(ListableView):
         if error:
             return JsonResponse({'error': error}, status=400)
 
-        notepad = Notepad(**data)
+        notepad = Notepad(user=request.user, **data)
 
         save_result = object_save(notepad)
         if save_result is True:
@@ -179,7 +179,7 @@ class NoteView(ListableView):
         if error:
             return JsonResponse({'error': error}, status=400)
 
-        note = Note(**data)
+        note = Note(user=request.user, **data)
 
         save_result = object_save(note)
         if save_result is True:
