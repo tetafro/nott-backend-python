@@ -22,7 +22,7 @@ class Folder(models.Model):
         null=True,
         blank=True
     )
-    created = models.DateTimeField(auto_now_add=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
     def clean(self):
@@ -39,9 +39,9 @@ class Folder(models.Model):
 
 class Notepad(models.Model):
     title = models.CharField(max_length=80)
-    user = models.ForeignKey(User, related_name='notepads', null=True)
+    user = models.ForeignKey(User, related_name='notepads')
     folder = models.ForeignKey(Folder, related_name='notepads', null=True)
-    created = models.DateTimeField(auto_now_add=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
     def clean(self):
@@ -56,10 +56,10 @@ class Notepad(models.Model):
 
 class Note(models.Model):
     title = models.CharField(max_length=80)
-    user = models.ForeignKey(User, related_name='notes', null=True)
+    user = models.ForeignKey(User, related_name='notes')
     text = models.TextField(blank=True)  # source text in markdown
     notepad = models.ForeignKey(Notepad, related_name='notes')
-    created = models.DateTimeField(auto_now_add=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
     def clean(self):
