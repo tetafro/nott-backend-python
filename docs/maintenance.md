@@ -23,13 +23,13 @@ docker exec -i nott_db_1 \
 Make:
 ```sh
 docker-compose -f docker-compose-dev.yml run --rm backend \
-        python3 /srv/manage.py makemigrations
+    python3 /srv/manage.py makemigrations
 ```
 
 Migrate:
 ```sh
 docker-compose -f docker-compose-dev.yml run --rm backend \
-        python3 /srv/manage.py migrate
+    python3 /srv/manage.py migrate
 ```
 
 # Update server
