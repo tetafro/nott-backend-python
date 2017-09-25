@@ -1,8 +1,21 @@
-FROM nginx:1.13
+FROM alpine:3.6 AS build
 LABEL maintainer="Denis Ivanov"
 
-RUN mkdir -p /etc/nginx/sites-avaliable
-RUN mkdir -p /etc/nginx/sites-enabled
-COPY deploy/configs/nginx/nott.conf /etc/nginx/sites-avaliable/
-RUN ln -s /etc/nginx/sites-avaliable/nott.conf /etc/nginx/sites-enabled/
-COPY deploy/configs/nginx/nginx.conf /etc/nginx/
+RUN apk add --no-cache wget ca-certificates && \
+    wget -q -O caddy.tar.gz https://caddyserver.com/download/linux/amd64?license=personal && \
+    tar -xzf caddy.tar.gz
+
+FROM alpine:3.6
+LABEL maintainer "Denis Ivanov"
+
+RUN apk add --no-cache ca-certificates && \
+    mkdir -p /srv/caddy && \
+    mkdir -p /srv/project
+
+WORKDIR /srv/caddy
+
+COPY --from=build /caddy .
+COPY deploy/configs/caddy/Caddyfile .
+RUN  chmod u+x caddy
+
+ENTRYPOINT ["/srv/caddy/caddy", "-email", "user@example.com"]

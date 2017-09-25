@@ -1,0 +1,9 @@
+knott.cf {
+    root /srv/project
+    proxy / app:8000 {
+        except /public
+        transparent
+    }
+    log stdout
+    errors stdout
+}

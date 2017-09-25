@@ -49,7 +49,6 @@ docker-compose -f docker-compose-dev.yml run --rm backend \
     docker push tetafro/nott_web
     docker push tetafro/nott_db
     docker push tetafro/nott_app
-    docker push tetafro/nott_certbot
     ```
 
 3. Update Nott on the server using Ansible

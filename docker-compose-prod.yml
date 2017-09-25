@@ -1,9 +1,9 @@
 version: '3'
 
 volumes:
+  cert:
   db:
   project:
-  cert:
 
 services:
   db:
@@ -33,22 +33,11 @@ services:
       context: .
       dockerfile: deploy/docker/Dockerfile_web
     volumes:
-      - project:/srv
-      - cert:/etc/letsencrypt
+      - cert:/root/.caddy
+      - project:/srv/project
     ports:
       - "80:80"
       - "443:443"
     restart: unless-stopped
     depends_on:
       - app
-  certbot:
-    image: tetafro/nott_certbot
-    build:
-      context: .
-      dockerfile: deploy/docker/Dockerfile_certbot
-    volumes:
-      - project:/srv
-      - cert:/etc/letsencrypt
-    restart: unless-stopped
-    depends_on:
-      - web
