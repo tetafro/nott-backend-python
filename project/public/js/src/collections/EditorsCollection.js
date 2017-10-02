@@ -30,6 +30,17 @@ module.exports = Backbone.Collection.extend({
         }
     },
 
+    sortByField: function(field) {
+        var oldComparator = this.comparator;
+
+        this.comparator = function(model) {
+            return model.get(field);
+        }
+        this.sort();
+
+        this.comparator = oldComparator;
+    },
+
     closeOne: function (note) {
         // Remove from opened
         this.remove(note);
