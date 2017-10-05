@@ -2,11 +2,27 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var Bootstrap = require('bootstrap');
-var Helpers = require('./helpers');
 
 module.exports = {
+    // Get CSRF token for making AJAX requests
+    getCSRF: function () {
+        var token = null;
+        if (document.cookie) {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = $.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, 10) == 'csrftoken=') {
+                    token = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return token;
+    },
+
     init: function () {
-        var token = Helpers.getCSRF();
+        var token = this.getCSRF();
 
         // Set CSRF token for all Backbone's requests
         var oldSync = Backbone.sync;
