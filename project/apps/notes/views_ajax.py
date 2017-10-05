@@ -53,7 +53,6 @@ class FolderView(ListableView):
 
     def list(self, request, *args, **kwargs):
         folders = Folder.objects.\
-            order_by('title').\
             values('id', 'title', 'parent_id', 'created', 'updated')
 
         response = {'folders': list(folders)}
@@ -126,7 +125,6 @@ class NotepadView(ListableView):
         folder_id = request.GET.get('folder-id')
 
         notepads = Notepad.objects.\
-            order_by('title').\
             values('id', 'title', 'folder_id', 'created', 'updated')
 
         if folder_id:
@@ -207,7 +205,6 @@ class NoteView(ListableView):
 
         notes = Note.objects. \
             filter(notepad_id=notepad_id). \
-            order_by('title'). \
             values('id', 'title', 'notepad_id', 'created', 'updated')
 
         response = {'notes': list(notes)}

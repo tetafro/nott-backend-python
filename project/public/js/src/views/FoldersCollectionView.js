@@ -1,7 +1,6 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var App = require('../app');
-var Helpers = require('../helpers');
 var FoldersCollection = require('../collections/FoldersCollection');
 var FolderView = require('../views/FolderView');
 
@@ -57,7 +56,8 @@ module.exports = Backbone.View.extend({
         that.$el.empty();
 
         // Render folders from root
-        Helpers.processTree(that.collection, 'parent_id', function (folder) {
+        that.collection.sortByField('title');
+        that.collection.processTree(function (folder, lvl) {
             var folderParentId = folder.get('parent_id');
             var folderView = new FolderView({model: folder});
 

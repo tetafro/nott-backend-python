@@ -49,5 +49,24 @@ module.exports = Backbone.Collection.extend({
 
     deleteOne: function (folder) {
         folder.destroy({wait: true});
+    },
+
+    // Make a tree from plain array and do something with each element
+    processTree: function (process) {
+        var that = this;
+
+        var processChildren = function (folder, level) {
+            process(folder, level);
+            that.each(function (f) {
+                if (folder.get('id') == f.get('parent_id')) {
+                    processChildren(f, level+1);
+                }
+            });
+        };
+
+        var roots = that.where({parent_id: null});
+        roots.forEach(function (folder) {
+            processChildren(folder, 0);
+        });
     }
 });

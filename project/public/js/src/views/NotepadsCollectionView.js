@@ -53,9 +53,10 @@ module.exports = Backbone.View.extend({
         // Clear previously rendered
         this.$('li[data-type="notepad"]').remove();
 
+        // Sort and render
+        this.collection.sortByField('title');
         this.collection.each(function (notepad) {
             var notepadView = new NotepadView({model: notepad});
-
             $('#folder-' + notepad.get('folder_id') + '.children-block')
                 .append(notepadView.$el);
         });

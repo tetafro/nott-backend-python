@@ -1,7 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var App = require('../app');
-var Helpers = require('../helpers');
 var ModalTemplate = require('../templates/ModalTemplate');
 
 module.exports = Backbone.View.extend({
@@ -131,9 +130,10 @@ module.exports = Backbone.View.extend({
         }
 
         // TODO: Skip current model and all of it's children to avoid loops.
+        App.foldersCollection.sortByField('title');
         var $elementsList = $('<select name="move" class="form-control"></select>')
         $elementsList.append('<option></option>'); // empty element for root
-        Helpers.processTree(App.foldersCollection, parentIdField, function (folder, lvl) {
+        App.foldersCollection.processTree(function (folder, lvl) {
             var text = '--'.repeat(lvl) + ' ' + folder.get('title');
             var selected = '';
             if (elementType != 'note' && folder.get('id') == parentId) {
