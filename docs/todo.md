@@ -1,10 +1,9 @@
 # TODO
 
-* Compare Docker images as a base images for the app;
+* Sort list on any item creation;
+* Add backup script to separate container;
 * Search;
 * Hotkey for edit mode;
-* Open note on creation;
-* Sort list on any item creation;
 * Validation in modal window;
 * Test for making notepad for non-existing folder;
 * Email confirmation;
@@ -15,7 +14,6 @@
 * Admin panel:
     * Open/close registrations;
     * Remove/block users.
-* Custom error pages (404, 500, etc) using nginx;
 * Service usage statistics;
 * OAuth using external services;
 * Design [https://app.keeweb.info/](https://app.keeweb.info/);
