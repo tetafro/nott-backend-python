@@ -1,3 +1,7 @@
+# OS, Tools
+/.vscode/
+/.idea/
+
 # Python
 /venv/
 __pycache__/
