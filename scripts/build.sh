@@ -71,26 +71,6 @@ for name in $(ls $install_dir/nott/public/js/); do
     fi
 done
 
-show_progress 80 'Setting passwords from file'
-# Parse passwords file
-function get_ini {
-    str=$(grep -o '^'$1':.*$' $pass_ini)
-    str=${str#*:}
-    printf -v str "%q" $str
-    echo $str
-}
-django_csrf=$(get_ini django_csrf)
-db_user=$(get_ini db_user)
-db_pass=$(get_ini db_pass)
-
-# Put parsed values to project files
-# Django CSRF key
-sed -i 's/^SECRET_KEY = '\''.*'\''/SECRET_KEY = '\'$django_csrf\''/' $django_settings
-# DB username
-sed -i 's/^        '\''USER'\'': '\''.*'\'',/        '\''USER'\'': '\'$db_user\'',/' $django_settings
-# DB password
-sed -i 's/^        '\''PASSWORD'\'': '\''.*'\'',/        '\''PASSWORD'\'': '\'$db_pass\'',/' $django_settings
-
 show_progress 84 'Compressing'
 tar -zcf $install_dir/nott.tar.gz -C $install_dir nott
 

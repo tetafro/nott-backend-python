@@ -9,8 +9,8 @@ services:
     build:
       context: .
       dockerfile: deploy/docker/Dockerfile_db
-    environment:
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - secrets/postgres.env
     volumes:
       - db:/var/lib/postgresql/data
   backend:
@@ -18,6 +18,11 @@ services:
     build:
       context: .
       dockerfile: deploy/docker/Dockerfile_app_dev
+    environment:
+      - SERVER_MODE=development
+    env_file:
+      - secrets/django.env
+      - secrets/postgres.env
     command: python3 /srv/manage.py runserver 0.0.0.0:8000
     tty: true
     volumes:

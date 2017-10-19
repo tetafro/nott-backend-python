@@ -1,9 +1,10 @@
 import os
 
-server_mode = os.environ.get('SERVER_MODE')
-if server_mode == 'prod':
+
+SERVER_MODE = os.environ.get('SERVER_MODE')
+if SERVER_MODE == 'production':
     DEBUG = False
-elif server_mode == 'dev':
+elif SERVER_MODE == 'development':
     DEBUG = True
 else:
     raise EnvironmentError('Server mode is not set!')
@@ -16,6 +17,11 @@ else:
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise EnvironmentError('Django secret key is not set!')
 
 
 # Application definition
@@ -41,6 +47,24 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'core.middleware.HttpErrorsMiddleware',
 )
+
+
+DB_USER = os.environ.get('POSTGRES_USER')
+DB_PASS = os.environ.get('POSTGRES_PASSWORD')
+if not DB_USER or not DB_PASS:
+    raise EnvironmentError('Database credentials are not set!')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'db_nott',
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
+        'HOST': 'db',
+        'PORT': '5432',
+    }
+}
+
 
 ROOT_URLCONF = 'core.urls'
 

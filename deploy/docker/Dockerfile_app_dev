@@ -4,9 +4,6 @@ LABEL maintainer="Denis Ivanov"
 # Quiet apt-get
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Server mode
-ENV SERVER_MODE=dev
-
 # Install deps
 COPY requirements.txt /tmp/
 RUN apt-get -y update && \

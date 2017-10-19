@@ -29,7 +29,7 @@ package-lock.json
 /deploy/ansible/*.retry
 
 # Secrets
-/pass.ini
+/secrets/*.env
 
 # Some thougths
 /etc/
