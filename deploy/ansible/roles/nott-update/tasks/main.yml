@@ -12,6 +12,7 @@
   get_url:
     url: https://raw.githubusercontent.com/tetafro/nott/master/docker-compose-prod.yml
     dest: "/home/{{ nott_user }}/docker-compose.yml"
+    force: yes
 
 - name: Get last version of docker images
   command: docker-compose pull
