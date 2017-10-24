@@ -8,11 +8,13 @@
   args:
     chdir: "/home/{{ nott_user }}/"
 
-- name: Get last version of docker-compose config
-  get_url:
-    url: https://raw.githubusercontent.com/tetafro/nott/master/docker-compose-prod.yml
+- name: Upload docker-compose config
+  copy:
+    src: "../../docker-compose-prod.yml"
     dest: "/home/{{ nott_user }}/docker-compose.yml"
-    force: yes
+    owner: "{{ nott_user }}"
+    group: "{{ nott_user }}"
+    mode: 0644
 
 - name: Get last version of docker images
   command: docker-compose pull
