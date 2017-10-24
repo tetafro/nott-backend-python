@@ -34,12 +34,10 @@ docker-compose -f docker-compose-dev.yml run --rm backend \
 
 # Update server
 
-1. Build production version using dev image (current dir is root of the repository)
+1. Build production images
 
     ```sh
-    scripts/build.sh
-    docker-compose -f docker-compose-prod.yml down
-    docker-compose -f docker-compose-prod.yml build
+    make build
     ```
 
 2. Push to Docker Hub
@@ -54,6 +52,5 @@ docker-compose -f docker-compose-dev.yml run --rm backend \
 3. Update Nott on the server using Ansible
 
     ```sh
-    cd deploy/ansible
-    ansible-playbook -K server-update.yml
+    make deploy
     ```

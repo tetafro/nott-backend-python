@@ -1,4 +1,4 @@
-version: '3'
+version: '2.1'
 
 volumes:
   db:
@@ -13,6 +13,17 @@ services:
       - secrets/postgres.env
     volumes:
       - db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 3s
+      timeout: 10s
+      retries: 3
+  # A hack to make app wait for db
+  db_proxy_dep:
+    image: busybox
+    depends_on:
+      db:
+        condition: service_healthy
   backend:
     image: nott_app_dev
     build:
@@ -30,12 +41,9 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
-      - db
+      - db_proxy_dep
   frontend:
-    image: nott_webpack
-    build:
-      context: .
-      dockerfile: deploy/docker/Dockerfile_webpack
+    image: tetafro/webpack:8
     command: webpack -w
     volumes:
-      - ./project/public/js:/webapp
+      - ./project/public/js:/app

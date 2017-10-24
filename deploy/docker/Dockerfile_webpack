@@ -1,6 +1,0 @@
-FROM node:8.4
-LABEL maintainer="Denis Ivanov"
-
-RUN npm install webpack -g
-
-WORKDIR /webapp/

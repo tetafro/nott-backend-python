@@ -10,6 +10,54 @@ Online notes service.
 * BackboneJS
 * Twitter Bootstrap
 
-# Install
+# Installation
 
-[Docs](/docs/install.md)
+Build docker images and run locally
+
+```sh
+make build
+make run
+```
+
+Stop
+```sh
+make stop
+```
+
+Teardown
+```sh
+make down
+```
+
+# Deployment
+
+Prerequirements:
+
+* Clean Ubuntu 16.04 or later
+* SSH access using key
+
+Deploy:
+
+1. Set server's SSH address:port in `deploy/ansible/hosts`.
+
+2. Set server's DNS name and remote user name in  `deploy/ansible/vars.yml`.
+
+3. Run the deploy
+
+    ```sh
+    make deploy
+    ```
+
+# Development (debug) version
+
+Build images and run the app locally in debug mode
+
+```sh
+make dev-build
+make dev-run
+```
+
+Teardown
+```sh
+make down
+```
