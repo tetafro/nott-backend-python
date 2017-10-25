@@ -12,7 +12,7 @@ Online notes service.
 
 # Installation
 
-Build docker images and run locally
+Build docker images and run the app locally
 
 ```sh
 make build
@@ -50,7 +50,7 @@ Deploy:
 
 # Development (debug) version
 
-Build images and run the app locally in debug mode
+Build docker images and run the app locally in debug mode
 
 ```sh
 make dev-build

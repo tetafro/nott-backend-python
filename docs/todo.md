@@ -2,6 +2,7 @@
 
 * Sort list on any item creation;
 * Add backup script to separate container;
+* Autoupdate version in app.min.js?v=1 link;
 * Search;
 * Hotkey for edit mode;
 * Validation in modal window;
