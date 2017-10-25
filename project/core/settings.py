@@ -19,6 +19,9 @@ else:
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+ALLOWED_HOSTS = os.environ.get('DJANDO_ALLOWED_HOSTS').split(',')
+
+
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 if not SECRET_KEY:
     raise EnvironmentError('Django secret key is not set!')
@@ -120,7 +123,8 @@ AVATARS_URL = '/media/avatars/'
 AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')
 
 
-LOGFILE = os.path.join(BASE_DIR, 'logs', 'django.log')
+log_level = 'DEBUG' if DEBUG else 'WARNING'
+log_file = os.path.join(BASE_DIR, 'logs', 'django.log')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -147,17 +151,23 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': LOGFILE,
+            'filename': log_file,
         },
         'file_rotate': {
             'filters': ['require_debug_false'],
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOGFILE,
+            'filename': log_file,
             'maxBytes': 1024*1024*1,  # 1 MB
             'backupCount': 5,
             'formatter': 'default'
         },
     },
-    'loggers': LOGGERS
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': log_level,
+            'propagate': True
+        },
+    }
 }
