@@ -3,5 +3,4 @@
 .gitignore
 *.pyc
 __pycache__
-/project/public/js/
-!/project/public/js/app.min.js
+/project/public/js/node_modules/

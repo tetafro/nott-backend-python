@@ -1,5 +1,4 @@
 FROM alpine:3.6 AS build
-LABEL maintainer="Denis Ivanov"
 
 RUN apk add --no-cache wget ca-certificates && \
     wget -q -O caddy.tar.gz https://caddyserver.com/download/linux/amd64?license=personal && \

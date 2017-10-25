@@ -2,10 +2,18 @@ version: 2
 jobs:
   build:
     docker:
-      - image: tetafro/webpack:8
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
+      - setup_remote_docker
       - run:
-          name: Install NPM dependencies
-          command: npm install
-          pwd: project/public/js
+          name: Install dependencies
+          command: |
+            apk add --no-cache py-pip=9.0.0-r1
+            pip install docker-compose==1.12.0
+      - run:
+          name: Build application Docker image
+          command: docker-compose -f ./docker-compose-prod.yml build
+      - run:
+          name: Check images
+          command: docker images

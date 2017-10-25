@@ -2,9 +2,6 @@
 
 .PHONY: build
 build:
-	# Build frontend app
-	docker run --rm -it -v $(CURDIR)/project/public/js:/app tetafro/webpack:8
-	# Build docker images
 	docker-compose -f docker-compose-prod.yml build
 
 .PHONY: run
