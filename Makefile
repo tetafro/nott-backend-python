@@ -1,4 +1,8 @@
+include secrets.env
+
+##
 # Production
+##
 
 .PHONY: build
 build:
@@ -21,7 +25,9 @@ down:
 deploy:
 	cd deploy/ansible && ansible-playbook -K server-update.yml
 
+##
 # Development
+##
 
 .PHONY: dev
 dev-build:

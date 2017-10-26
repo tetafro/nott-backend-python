@@ -11,6 +11,9 @@ __pycache__/
 node_modules/
 package-lock.json
 
+# Secrets
+/secrets.env
+
 # DB dump
 *.backup
 
@@ -23,13 +26,9 @@ package-lock.json
 # Builds
 /project/public/js/app.js
 /project/public/js/app.min.js
-/install
 
 # Deploy
 /deploy/ansible/*.retry
-
-# Secrets
-/secrets/*.env
 
 # Some thougths
 /etc/

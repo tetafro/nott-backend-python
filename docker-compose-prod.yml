@@ -11,8 +11,9 @@ services:
     build:
       context: .
       dockerfile: deploy/docker/Dockerfile_db
-    env_file:
-      - secrets/postgres.env
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
     volumes:
       - db:/var/lib/postgresql/data
     restart: unless-stopped
@@ -34,9 +35,10 @@ services:
       dockerfile: deploy/docker/Dockerfile_app_prod
     environment:
       - SERVER_MODE=production
-    env_file:
-      - secrets/django.env
-      - secrets/postgres.env
+      - DJANDO_ALLOWED_HOSTS
+      - DJANGO_SECRET_KEY
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
     command: /docker-entrypoint.sh
     volumes:
       - project:/srv
