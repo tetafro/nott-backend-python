@@ -9,12 +9,6 @@ elif SERVER_MODE == 'development':
 else:
     raise EnvironmentError('Server mode is not set!')
 
-# Add either dev or production settings
-if DEBUG:
-    from .settings_dev import *
-else:
-    from .settings_prod import *
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
