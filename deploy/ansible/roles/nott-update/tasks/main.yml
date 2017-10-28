@@ -1,32 +1,32 @@
 - name: Stop and remove all containers
   command: docker-compose down
   args:
-    chdir: "/home/{{ nott_user }}/"
+    chdir: "/home/{{ user }}/"
 
 - name: Remove project volume
   command: docker volume rm nott_project
   args:
-    chdir: "/home/{{ nott_user }}/"
+    chdir: "/home/{{ user }}/"
 
 - name: Upload docker-compose config
   copy:
     src: "../../docker-compose-prod.yml"
-    dest: "/home/{{ nott_user }}/docker-compose.yml"
-    owner: "{{ nott_user }}"
-    group: "{{ nott_user }}"
+    dest: "/home/{{ user }}/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
     mode: 0644
 
 - name: Get last version of docker images
   command: docker-compose pull
   args:
-    chdir: "/home/{{ nott_user }}/"
+    chdir: "/home/{{ user }}/"
 
 - name: Apply DB migrations
   command: docker-compose run --rm app python3 /srv/manage.py migrate
   args:
-    chdir: "/home/{{ nott_user }}/"
+    chdir: "/home/{{ user }}/"
 
 - name: Start service
   command: docker-compose up -d
   args:
-    chdir: "/home/{{ nott_user }}/"
+    chdir: "/home/{{ user }}/"

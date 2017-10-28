@@ -23,7 +23,7 @@ down:
 
 .PHONY: deploy
 deploy:
-	cd deploy/ansible && ansible-playbook -K server-update.yml
+	cd deploy/ansible && ansible-playbook server-update.yml
 
 ##
 # Development

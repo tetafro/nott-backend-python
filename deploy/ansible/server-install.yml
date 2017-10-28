@@ -1,11 +1,8 @@
 - hosts: server
-
   vars_files:
     - vars.yml
-
-  remote_user: "{{ server_user }}"
+  remote_user: "{{ user }}"
   become: yes
-
   roles:
     - common
     - docker

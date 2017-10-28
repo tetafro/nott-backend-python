@@ -1,10 +1,6 @@
 - hosts: server
-
   vars_files:
     - vars.yml
-
-  remote_user: "{{ server_user }}"
-  become: yes
-
+  remote_user: "{{ user }}"
   roles:
     - nott-update

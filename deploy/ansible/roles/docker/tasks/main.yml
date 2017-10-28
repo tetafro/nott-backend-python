@@ -34,9 +34,9 @@
   notify:
     - restart docker
 
-- name: Add user {{ remote_user }} to docker group
+- name: Add user {{ user }} to docker group
   user:
-    name: "{{ remote_user }}"
+    name: "{{ user }}"
     groups: docker
     append: yes
 

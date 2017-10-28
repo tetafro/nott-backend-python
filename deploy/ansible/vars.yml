@@ -1,3 +1,2 @@
-nott_user: nott
-server_user: remote_user
+user: nott
 domain: knott.cf
