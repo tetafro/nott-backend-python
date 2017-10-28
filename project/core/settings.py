@@ -13,7 +13,10 @@ else:
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-ALLOWED_HOSTS = os.environ.get('DJANDO_ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = os.environ.get('DJANDO_ALLOWED_HOSTS')
+if not ALLOWED_HOSTS:
+    raise EnvironmentError('Allowed hosts are not set!')
+ALLOWED_HOSTS = ALLOWED_HOSTS.split(',')
 
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
