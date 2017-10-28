@@ -8,17 +8,20 @@ jobs:
       - setup_remote_docker:
           version: 17.10.0-ce
       - run:
-          name: Check docker version
-          command: docker version
-      - run:
-          name: Install pip
-          command: apk add --quiet --no-cache py-pip
-      - run:
-          name: Install docker-compose
-          command: pip install --quiet docker-compose
+          name: Install deps
+          command: |
+            apk add --quiet --no-cache py-pip
+            pip install --quiet docker-compose
       - run:
           name: Build application Docker image
           command: docker-compose -f ./docker-compose-prod.yml build
       - run:
           name: Check images
           command: docker images
+      - run:
+          name: Update docker images
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push tetafro/nott_web
+            docker push tetafro/nott_db
+            docker push tetafro/nott_app
