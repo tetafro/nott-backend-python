@@ -11,7 +11,7 @@ jobs:
           name: Install deps
           command: |
             apk add --quiet --no-cache py-pip
-            pip install --quiet docker-compose
+            pip install --quiet docker-compose ansible
       - run:
           name: Build application Docker image
           command: docker-compose -f docker-compose-prod.yml build
