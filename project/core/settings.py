@@ -1,6 +1,8 @@
 import os
 
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 SERVER_MODE = os.environ.get('SERVER_MODE')
 if SERVER_MODE == 'production':
     DEBUG = False
@@ -9,15 +11,10 @@ elif SERVER_MODE == 'development':
 else:
     raise EnvironmentError('Server mode is not set!')
 
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
-ALLOWED_HOSTS = os.environ.get('DJANDO_ALLOWED_HOSTS')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS')
 if not ALLOWED_HOSTS:
     raise EnvironmentError('Allowed hosts are not set!')
 ALLOWED_HOSTS = ALLOWED_HOSTS.split(',')
-
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 if not SECRET_KEY:

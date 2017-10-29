@@ -35,7 +35,7 @@ services:
       dockerfile: deploy/docker/Dockerfile_app_prod
     environment:
       - SERVER_MODE=production
-      - DJANDO_ALLOWED_HOSTS
+      - DJANGO_ALLOWED_HOSTS
       - DJANGO_SECRET_KEY
       - POSTGRES_USER
       - POSTGRES_PASSWORD
