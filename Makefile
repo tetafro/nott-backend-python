@@ -1,12 +1,10 @@
-include secrets.env
-
 ##
 # Production
 ##
 
 .PHONY: build
 build:
-	source secrets.env && docker-compose -f docker-compose-prod.yml build
+	docker-compose -f docker-compose-prod.yml build
 
 .PHONY: run
 run:

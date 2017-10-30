@@ -16,7 +16,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN mkdir -p /srv/ /srv/public/.well-known
 COPY project /srv/
 COPY requirements.txt /srv/
-COPY deploy/docker/docker-entrypoint.sh /docker-entrypoint.sh
+COPY deploy/configs/gunicorn/gunicorn.py /srv/
 COPY --from=build /app/app.min.js /srv/project/public/js/
 
 # Install deps
@@ -36,3 +36,5 @@ RUN apt-get -y autoremove && \
     apt-get -y clean
 
 WORKDIR /srv/
+
+ENTRYPOINT [ "gunicorn", "--config", "/srv/gunicorn.py", "core.wsgi:application" ]

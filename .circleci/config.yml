@@ -12,6 +12,10 @@ jobs:
           command: |
             apk add --quiet --no-cache py-pip
             pip install --quiet docker-compose ansible
+      # TODO: Decide what to do with secrets
+      - run:
+          name: Create dummy config
+          command: touch config.env
       - run:
           name: Build application Docker image
           command: docker-compose -f docker-compose-prod.yml build

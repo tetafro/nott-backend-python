@@ -11,23 +11,11 @@ services:
     build:
       context: .
       dockerfile: deploy/docker/Dockerfile_db
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
+    env_file:
+      - config.env
     volumes:
       - db:/var/lib/postgresql/data
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      interval: 3s
-      timeout: 10s
-      retries: 3
-  # A hack to make app wait for db
-  db_proxy_dep:
-    image: busybox
-    depends_on:
-      db:
-        condition: service_healthy
   app:
     image: tetafro/nott_app
     build:
@@ -35,16 +23,13 @@ services:
       dockerfile: deploy/docker/Dockerfile_app_prod
     environment:
       - SERVER_MODE=production
-      - DJANGO_ALLOWED_HOSTS
-      - DJANGO_SECRET_KEY
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-    command: /docker-entrypoint.sh
+    env_file:
+      - config.env
     volumes:
       - project:/srv
     restart: unless-stopped
     depends_on:
-      - db_proxy_dep
+      - db
   web:
     image: tetafro/nott_web
     build:

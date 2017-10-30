@@ -2,6 +2,9 @@
 /.vscode/
 /.idea/
 
+# Main app config
+/config.env
+
 # Python
 /venv/
 __pycache__/
@@ -10,9 +13,6 @@ __pycache__/
 # JavaScript
 node_modules/
 package-lock.json
-
-# Secrets
-/secrets.env
 
 # DB dump
 *.backup
