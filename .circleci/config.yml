@@ -31,4 +31,6 @@ jobs:
             docker push tetafro/nott_app
       - run:
           name: Deploy
-          command: cd deploy/ansible && ansible-playbook server-update.yml
+          command: |
+            cd deploy/ansible &&
+            ansible-playbook --extra-vars "domain=$DOMAIN" --inventory="$DOMAIN" server-update.yml
