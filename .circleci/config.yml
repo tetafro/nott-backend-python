@@ -10,8 +10,8 @@ jobs:
       - run:
           name: Install deps
           command: |
-            apk add --quiet --no-cache py-pip
-            pip install --quiet docker-compose ansible
+            apk add --quiet --no-progress --no-cache py-pip ansible
+            pip install --quiet docker-compose
       # TODO: Decide what to do with secrets
       - run:
           name: Create dummy config
