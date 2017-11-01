@@ -15,7 +15,7 @@ jobs:
       # TODO: Decide what to do with secrets
       - run:
           name: Create dummy config
-          command: touch config.env
+          command: touch ./config.env
       - run:
           name: Build application Docker image
           command: docker-compose -f docker-compose-prod.yml build
@@ -33,4 +33,7 @@ jobs:
           name: Deploy
           command: |
             cd deploy/ansible &&
-            ansible-playbook --extra-vars "domain=$DOMAIN" --inventory="$DOMAIN" server-update.yml
+            ansible-playbook \
+                --inventory="$HOST," \
+                --extra-vars "domain=$DOMAIN user=$REMOTE_USER" \
+                server-update.yml

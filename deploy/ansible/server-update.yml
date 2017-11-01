@@ -1,4 +1,4 @@
-- hosts: server
+- hosts: all
   vars_files:
     - vars.yml
   remote_user: "{{ user }}"

@@ -1,3 +1,5 @@
+include config.env
+
 ##
 # Production
 ##
@@ -21,7 +23,11 @@ down:
 
 .PHONY: deploy
 deploy:
-	cd deploy/ansible && ansible-playbook server-update.yml
+	cd deploy/ansible && \
+	ansible-playbook \
+		--inventory="$(HOST)," \
+		--extra-vars "domain=$(DOMAIN) user=$(REMOTE_USER)" \
+		server-update.yml
 
 ##
 # Development
