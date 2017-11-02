@@ -118,7 +118,6 @@ AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')
 
 
 log_level = 'DEBUG' if DEBUG else 'WARNING'
-log_file = os.path.join(BASE_DIR, 'logs', 'django.log')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -141,21 +140,7 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-        },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': log_file,
-        },
-        'file_rotate': {
-            'filters': ['require_debug_false'],
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': log_file,
-            'maxBytes': 1024*1024*1,  # 1 MB
-            'backupCount': 5,
-            'formatter': 'default'
-        },
+        }
     },
     'loggers': {
         'django.request': {
