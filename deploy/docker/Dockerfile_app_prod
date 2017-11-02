@@ -37,4 +37,4 @@ RUN apt-get -y autoremove && \
 
 WORKDIR /srv/
 
-ENTRYPOINT [ "gunicorn", "--config", "/srv/gunicorn.py", "core.wsgi:application" ]
+CMD [ "gunicorn", "--config", "/srv/gunicorn.py", "core.wsgi:application" ]
