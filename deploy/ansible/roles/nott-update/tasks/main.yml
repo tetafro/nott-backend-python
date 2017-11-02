@@ -4,7 +4,7 @@
     chdir: "/home/{{ user }}/"
 
 - name: Remove project volume
-  command: docker volume rm nott_project
+  command: docker volume rm -f nott_project
   args:
     chdir: "/home/{{ user }}/"
 
