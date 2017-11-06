@@ -120,7 +120,7 @@ AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')
 log_level = 'DEBUG' if DEBUG else 'INFO'
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'formatters': {
         'default': {
             'format': (
