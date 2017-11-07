@@ -1,9 +1,8 @@
-FROM node:8 AS build
+FROM tetafro/webpack:8 AS build
 
-WORKDIR /app/
+WORKDIR /srv/
 COPY project/public/js .
-RUN npm install --silent webpack -g && \
-    npm install --silent && \
+RUN npm install --silent && \
     webpack
 
 FROM ubuntu:16.10
@@ -17,7 +16,7 @@ RUN mkdir -p /srv/ /srv/public/.well-known
 COPY project /srv/
 COPY requirements.txt /srv/
 COPY deploy/configs/gunicorn/gunicorn.py /srv/
-COPY --from=build /app/app.min.js /srv/project/public/js/
+COPY --from=build /srv/app.min.js /srv/public/js/
 
 # Install deps
 RUN apt-get -y update && \
