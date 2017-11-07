@@ -144,5 +144,9 @@ LOGGING = {
             'level': LOG_LEVEL,
             'propagate': True
         },
+        'django.security.DisallowedHost': {
+            'handlers': ['console'],
+            'propagate': True,
+        },
     }
 }
