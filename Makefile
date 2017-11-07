@@ -23,7 +23,6 @@ down:
 
 .PHONY: deploy
 deploy:
-	docker login
 	docker push tetafro/nott_web
 	docker push tetafro/nott_db
 	docker push tetafro/nott_app
