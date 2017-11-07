@@ -34,23 +34,9 @@ docker-compose -f docker-compose-dev.yml run --rm backend \
 
 # Update server
 
-1. Build production images
+Build production images and update the server using Ansible
 
-    ```sh
-    make build
-    ```
-
-2. Push to Docker Hub
-
-    ```sh
-    docker login
-    docker push tetafro/nott_web
-    docker push tetafro/nott_db
-    docker push tetafro/nott_app
-    ```
-
-3. Update Nott on the server using Ansible
-
-    ```sh
-    make deploy
+```sh
+make build
+make deploy
     ```

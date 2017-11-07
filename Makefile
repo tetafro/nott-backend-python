@@ -19,14 +19,18 @@ stop:
 .PHONY: down
 down:
 	docker-compose -f docker-compose-prod.yml down
-	docker volume rm nott_db
+	docker volume rm nott_cert nott_db nott_project
 
 .PHONY: deploy
 deploy:
+	docker login
+	docker push tetafro/nott_web
+	docker push tetafro/nott_db
+	docker push tetafro/nott_app
 	cd deploy/ansible && \
 	ansible-playbook \
-		--inventory="$(HOST)," \
-		--extra-vars "domain=$(DOMAIN) user=$(REMOTE_USER)" \
+		--inventory="$(SERVER_DNS):$(SERVER_SSH_PORT)," \
+		--extra-vars "domain=$(SERVER_DNS) user=$(REMOTE_USER)" \
 		server-update.yml
 
 ##

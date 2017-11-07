@@ -90,5 +90,5 @@
   command: docker exec -it nott_certbot_1 certbot certonly
     --webroot
     -w /srv/public/
-    -d {{ domain }}
-    -d www.{{ domain }}
+    -d {{ server_dns }}
+    -d www.{{ server_dns }}

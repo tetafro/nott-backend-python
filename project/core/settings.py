@@ -6,12 +6,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVER_MODE = os.environ.get('SERVER_MODE')
 if SERVER_MODE == 'production':
     DEBUG = False
+    LOG_LEVEL = 'INFO'
 elif SERVER_MODE == 'development':
+    LOG_LEVEL = 'DEBUG'
     DEBUG = True
 else:
     raise EnvironmentError('Server mode is not set!')
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS')
+ALLOWED_HOSTS = os.environ.get('SERVER_DNS')
 if not ALLOWED_HOSTS:
     raise EnvironmentError('Allowed hosts are not set!')
 ALLOWED_HOSTS = ALLOWED_HOSTS.split(',')
@@ -19,7 +21,6 @@ ALLOWED_HOSTS = ALLOWED_HOSTS.split(',')
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 if not SECRET_KEY:
     raise EnvironmentError('Django secret key is not set!')
-
 
 # Application definition
 INSTALLED_APPS = (
@@ -45,7 +46,6 @@ MIDDLEWARE_CLASSES = (
     'core.middleware.HttpErrorsMiddleware',
 )
 
-
 DB_USER = os.environ.get('POSTGRES_USER')
 DB_PASS = os.environ.get('POSTGRES_PASSWORD')
 if not DB_USER or not DB_PASS:
@@ -61,7 +61,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
 
 ROOT_URLCONF = 'core.urls'
 
@@ -93,7 +92,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Moscow'
@@ -116,8 +114,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AVATARS_URL = '/media/avatars/'
 AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')
 
-
-log_level = 'DEBUG' if DEBUG else 'INFO'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -145,7 +141,7 @@ LOGGING = {
     'loggers': {
         'django.request': {
             'handlers': ['console'],
-            'level': log_level,
+            'level': LOG_LEVEL,
             'propagate': True
         },
     }

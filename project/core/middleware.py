@@ -26,13 +26,14 @@ class HttpErrorsMiddleware(object):
     """
     def process_exception(self, request, exception):
         if isinstance(exception, Http400):
-            logger.exception('Bad request error')
+            logger.exception('Bad request error: '+str(exception))
             return render(request, '400.html', status=400)
         elif isinstance(exception, Http403):
-            logger.exception('Forbidden error')
+            logger.exception('Forbidden error: '+str(exception))
             return render(request, '403.html', status=403)
         elif isinstance(exception, Http500):
-            logger.exception('Internal server error')
+            logger.exception('Internal server error: '+str(exception))
             return render(request, '500.html', status=500)
         else:
-            return None
+            logger.exception('Unexpected exception: '+str(exception))
+            return render(request, '500.html', status=500)

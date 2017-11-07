@@ -5,7 +5,7 @@ RUN apk add --no-cache wget ca-certificates && \
     tar -xzf caddy.tar.gz
 
 FROM alpine:3.6
-LABEL maintainer "Denis Ivanov"
+LABEL maintainer="Denis Ivanov"
 
 RUN apk add --no-cache ca-certificates && \
     mkdir -p /srv/caddy && \
@@ -16,5 +16,7 @@ WORKDIR /srv/caddy
 COPY --from=build /caddy .
 COPY deploy/configs/caddy/Caddyfile .
 RUN  chmod u+x caddy
+
+EXPOSE 80 443 2015
 
 ENTRYPOINT ["/srv/caddy/caddy", "-email", "user@example.com"]
