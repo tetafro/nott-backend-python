@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVER_MODE = os.environ.get('SERVER_MODE')
 if SERVER_MODE == 'production':
     DEBUG = False
-    LOG_LEVEL = 'INFO'
+    LOG_LEVEL = 'WARNING'
 elif SERVER_MODE == 'development':
     LOG_LEVEL = 'DEBUG'
     DEBUG = True
@@ -118,13 +118,10 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'default': {
-            'format': (
-                '---\n'
-                '%(levelname)s %(asctime)s\n'
-                'Module: %(module)s\n'
-                '%(message)s'
-            )
+        'general': {
+            'format': '[%(asctime)s] [%(levelname)s] '
+                      '%(name)s - %(filename)s:%(lineno)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S %z'
         },
     },
     'filters': {
@@ -136,17 +133,14 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-        }
+            'formatter': 'general',
+        },
     },
     'loggers': {
-        'django.request': {
+        'django': {
             'handlers': ['console'],
             'level': LOG_LEVEL,
             'propagate': True
-        },
-        'django.security.DisallowedHost': {
-            'handlers': ['console'],
-            'propagate': True,
         },
     }
 }
