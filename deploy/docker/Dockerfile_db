@@ -2,3 +2,6 @@ FROM postgres:9.6
 LABEL maintainer="Denis Ivanov"
 
 COPY deploy/docker/db_init.sql /docker-entrypoint-initdb.d/
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD pg_isready -U postgres || exit 1

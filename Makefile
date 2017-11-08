@@ -39,13 +39,13 @@ deploy:
 .PHONY: dev
 dev-build:
 	# Install NPM packets
-	docker run --rm -it -v $(CURDIR)/project/public/js:/app tetafro/webpack:8 npm install
+	docker run --rm -it -v $(CURDIR)/project/public/js:/app --entrypoint npm tetafro/webpack:8 install
 	# Build images and make containers
 	docker-compose -f docker-compose-dev.yml build
 	docker-compose -f docker-compose-dev.yml create
 	# Prepare database
-	docker-compose -f docker-compose-dev.yml run backend python3 /srv/manage.py migrate
-	docker-compose -f docker-compose-dev.yml run backend python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
+	docker-compose -f docker-compose-dev.yml run backend /srv/manage.py migrate
+	docker-compose -f docker-compose-dev.yml run backend /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
 
 .PHONY: dev-run
 dev-run:
@@ -58,4 +58,4 @@ dev-stop:
 .PHONY: dev-down
 dev-down:
 	docker-compose -f docker-compose-dev.yml down
-	docker volume rm nott_db
+	docker volume rm nott_cert nott_db nott_project

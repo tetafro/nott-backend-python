@@ -22,7 +22,7 @@
     chdir: "/home/{{ user }}/"
 
 - name: Apply DB migrations
-  command: docker-compose run --rm app python3 /srv/manage.py migrate
+  command: docker-compose run --rm --entrypoint python3 app /srv/manage.py migrate
   args:
     chdir: "/home/{{ user }}/"
 
