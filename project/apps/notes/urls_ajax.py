@@ -2,6 +2,7 @@ from django.conf.urls import url
 from core.decorators import login_required_ajax
 from .views_ajax import FolderView, NotepadView, NoteView, SearchView
 
+
 urlpatterns = [
     url(r'^folders/?$', login_required_ajax(FolderView.as_view())),
     url(r'^folders/(?P<id>\d+)/?$', login_required_ajax(FolderView.as_view())),
