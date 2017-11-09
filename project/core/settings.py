@@ -16,7 +16,7 @@ else:
 ALLOWED_HOSTS = os.environ.get('SERVER_DNS')
 if not ALLOWED_HOSTS:
     raise EnvironmentError('Allowed hosts are not set!')
-ALLOWED_HOSTS = ALLOWED_HOSTS.split(',')
+ALLOWED_HOSTS = ['localhost'] + ALLOWED_HOSTS.split(',')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 if not SECRET_KEY:
