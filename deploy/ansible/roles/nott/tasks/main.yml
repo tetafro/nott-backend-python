@@ -62,13 +62,13 @@
     mode: 0755
 
 - name: Apply DB migrations
-  command: docker-compose run --rm app python3 /srv/manage.py migrate
+  command: docker-compose run --rm app python3 /srv/smart_manage.py migrate
   args:
     chdir: "/home/{{ user }}/"
   notify: restart nott
 
 - name: Populate DB
-  command: docker-compose run --rm app python3 /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
+  command: docker-compose run --rm app python3 /srv/smart_manage.py loaddata /srv/apps/users/fixtures/admin.json
   args:
     chdir: "/home/{{ user }}/"
   notify: restart nott
