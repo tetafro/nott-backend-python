@@ -7,6 +7,7 @@ Online notes service.
 * Python 3
 * Django
 * PostgreSQL
+* Caddy web server
 * BackboneJS
 * Twitter Bootstrap
 
@@ -36,17 +37,11 @@ Prerequirements:
 * Clean Ubuntu 16.04 or later
 * SSH access using key
 
-Deploy:
+Run the deploy
 
-1. Set server's SSH address:port in `deploy/ansible/hosts`.
-
-2. Set server's DNS name and remote user name in  `deploy/ansible/vars.yml`.
-
-3. Run the deploy
-
-    ```sh
-    make deploy
-    ```
+```sh
+make deploy
+```
 
 # Development (debug) version
 

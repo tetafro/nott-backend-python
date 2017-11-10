@@ -4,6 +4,7 @@ knott.cf {
         except /public
         transparent
     }
+    tls {$ADMIN_EMAIL}
     log stdout
     errors stdout
 }

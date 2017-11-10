@@ -7,16 +7,16 @@ SERVER_MODE = os.environ.get('SERVER_MODE')
 if SERVER_MODE == 'production':
     DEBUG = False
     LOG_LEVEL = 'WARNING'
+    ALLOWED_HOSTS = os.environ.get('SERVER_DNS')
+    if not ALLOWED_HOSTS:
+        raise EnvironmentError('Allowed hosts are not set!')
+    ALLOWED_HOSTS = ['localhost'] + ALLOWED_HOSTS.split(',')
 elif SERVER_MODE == 'development':
     LOG_LEVEL = 'DEBUG'
     DEBUG = True
+    ALLOWED_HOSTS = ['*']
 else:
     raise EnvironmentError('Server mode is not set!')
-
-ALLOWED_HOSTS = os.environ.get('SERVER_DNS')
-if not ALLOWED_HOSTS:
-    raise EnvironmentError('Allowed hosts are not set!')
-ALLOWED_HOSTS = ['localhost'] + ALLOWED_HOSTS.split(',')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 if not SECRET_KEY:

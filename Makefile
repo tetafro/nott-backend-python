@@ -16,8 +16,8 @@ run:
 stop:
 	docker-compose -f docker-compose-prod.yml stop
 
-.PHONY: down
-down:
+.PHONY: clear
+clear:
 	docker-compose -f docker-compose-prod.yml down
 	docker volume rm nott_cert nott_db nott_project
 
@@ -38,14 +38,14 @@ deploy:
 
 .PHONY: dev
 dev-build:
-	# Install NPM packets
+	# # Install NPM packets
 	docker run --rm -it -v $(CURDIR)/project/public/js:/app --entrypoint npm tetafro/webpack:8 install
-	# Build images and make containers
+	# # Build images and make containers
 	docker-compose -f docker-compose-dev.yml build
 	docker-compose -f docker-compose-dev.yml create
 	# Prepare database
-	docker-compose -f docker-compose-dev.yml run backend /srv/manage.py migrate
-	docker-compose -f docker-compose-dev.yml run backend /srv/manage.py loaddata /srv/apps/users/fixtures/admin.json
+	docker-compose -f docker-compose-dev.yml run backend /srv/smart_manage.py migrate
+	docker-compose -f docker-compose-dev.yml run backend /srv/smart_manage.py loaddata /srv/apps/users/fixtures/admin.json
 
 .PHONY: dev-run
 dev-run:
@@ -55,7 +55,7 @@ dev-run:
 dev-stop:
 	docker-compose -f docker-compose-dev.yml stop
 
-.PHONY: dev-down
-dev-down:
+.PHONY: dev-clear
+dev-clear:
 	docker-compose -f docker-compose-dev.yml down
 	docker volume rm nott_cert nott_db nott_project
