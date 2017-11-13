@@ -63,12 +63,12 @@ module.exports = Backbone.View.extend({
         var note;
         var noteView;
 
-        for (var i = 0; i < that.collection.length; i++) {
-            note = that.collection.at(i);
-            noteView = new NoteView({model: note});
-
+        // Sort and render
+        this.collection.sortByField('title');
+        this.collection.each(function (note) {
+            var noteView = new NoteView({model: note});
             that.$el.append(noteView.$el);
-        }
+        });
 
         $('.search-form').hide();
     }
