@@ -68,8 +68,8 @@ ROOT_URLCONF = 'core.urls'
 AUTH_USER_MODEL = 'users.User'
 
 # Auth URLs
-LOGIN_URL = 'apps.users.views.user_auth'
-LOGOUT_URL = 'apps.users.views.user_logout'
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = ''
 
 # View function to handle CSRF failures
 CSRF_FAILURE_VIEW = 'core.helpers.csrf_failure'
