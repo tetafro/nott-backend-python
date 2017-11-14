@@ -1,20 +1,10 @@
 # Description
 
-Online notes service.
+Online notes service with markdown formatting and syntax highlight.
 
-# Tech Stack
-
-* Python 3
-* Django
-* PostgreSQL
-* Caddy web server
-* BackboneJS
-* Twitter Bootstrap
-
-# Installation
+# Local installation
 
 Build docker images and run the app locally
-
 ```sh
 make build
 make run
@@ -27,19 +17,19 @@ make stop
 
 Teardown
 ```sh
-make down
+make clear
 ```
 
-# Deployment
+# Deployment to the remote server
 
 Prerequirements:
 
 * Clean Ubuntu 16.04 or later
 * SSH access using key
 
-Run the deploy
-
+Build docker images and deploy new or update existing installation to the remote server
 ```sh
+make build
 make deploy
 ```
 
@@ -52,7 +42,48 @@ make dev-build
 make dev-run
 ```
 
+Stop
+```sh
+make dev-stop
+```
+
 Teardown
 ```sh
-make down
+make dev-clear
+```
+
+# Working with the database
+
+## Backup
+
+```
+docker exec nott_db_1 \
+    pg_dump -U postgres -Fc -C db_nott > db_nott.dump
+```
+
+## Restore
+
+```sh
+docker exec -i nott_db_1 \
+    dropdb -U postgres db_nott
+docker exec -i nott_db_1 \
+    createdb -U postgres db_nott
+docker exec -i nott_db_1 \
+    psql -U postgres db_nott -c 'GRANT ALL PRIVILEGES ON DATABASE db_nott TO pguser;'
+docker exec -i nott_db_1 \
+    pg_restore -U postgres -d db_nott < ./db_nott.dump
+```
+
+## Migrations
+
+Make
+```sh
+docker-compose -f docker-compose-dev.yml run --rm backend \
+    /srv/smart_manage.py makemigrations
+```
+
+Migrate
+```sh
+docker-compose -f docker-compose-dev.yml run --rm backend \
+    /srv/smart_manage.py migrate
 ```

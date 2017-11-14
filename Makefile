@@ -36,16 +36,22 @@ deploy:
 # Development
 ##
 
-.PHONY: dev
+.PHONY: dev-build
 dev-build:
-	# # Install NPM packets
-	docker run --rm -it -v $(CURDIR)/project/public/js:/app --entrypoint npm tetafro/webpack:8 install
+	# Install NPM packets
+	docker run --rm -it \
+		-v $(CURDIR)/project/public/js:/app \
+		--entrypoint npm \
+		tetafro/webpack:8 \
+		install
 	# # Build images and make containers
 	docker-compose -f docker-compose-dev.yml build
 	docker-compose -f docker-compose-dev.yml create
 	# Prepare database
-	docker-compose -f docker-compose-dev.yml run backend /srv/smart_manage.py migrate
-	docker-compose -f docker-compose-dev.yml run backend /srv/smart_manage.py loaddata /srv/apps/users/fixtures/admin.json
+	docker-compose -f docker-compose-dev.yml run --rm backend \
+		/srv/smart_manage.py migrate
+	docker-compose -f docker-compose-dev.yml run --rm backend \
+		/srv/smart_manage.py loaddata /srv/apps/users/fixtures/admin.json
 
 .PHONY: dev-run
 dev-run:
