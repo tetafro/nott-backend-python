@@ -18,7 +18,6 @@ module.exports = Backbone.View.extend({
     modal: null, // link to modal window
 
     events: {
-        'click #show-search': 'toggleSearchMode',
         'click .sidebar-first > h4 > .pull-right': 'callModal',
         'click .sidebar-second > h4 > .pull-right': 'callModal'
     },

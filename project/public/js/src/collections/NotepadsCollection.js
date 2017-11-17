@@ -58,7 +58,5 @@ module.exports = Backbone.Collection.extend({
         });
         activeNotepad.set('active', true);
         this.active = activeNotepad;
-
-        $('#search-form').hide();
     }
 });

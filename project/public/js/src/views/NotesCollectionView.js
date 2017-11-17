@@ -69,7 +69,5 @@ module.exports = Backbone.View.extend({
             var noteView = new NoteView({model: note});
             that.$el.append(noteView.$el);
         });
-
-        $('.search-form').hide();
     }
 });

@@ -127,7 +127,7 @@ span.search {
     position: absolute;
     padding: 0px;
     right: 12px;
-    top: 5px;
+    top: 6px;
     display: none;
 }
 
@@ -154,4 +154,10 @@ span.del {
 .nav-sidebar .active > .item > span {
     display: inline;
     cursor: pointer;
+}
+
+.search-block {
+    margin: 0px -21px 20px -20px;
+    padding: 20px;
+    border-top: 1px #ddd solid;
 }
