@@ -11,6 +11,7 @@
     {% endif %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/code-syntax.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/admin.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/editor.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
@@ -37,6 +38,9 @@
                     {% if user.is_authenticated %}
                         {% block nav_profile %}
                             <li><a href="{% url 'profile' user_id='me' %}">Profile</a></li>
+                        {% endblock %}
+                        {% block nav_adminpanel %}
+                            <li><a href="{% url 'adminpanel' %}">Admin</a></li>
                         {% endblock %}
                     {% endif %}
                 </ul>
