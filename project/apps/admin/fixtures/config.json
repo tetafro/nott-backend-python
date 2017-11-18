@@ -1,0 +1,10 @@
+[{
+    "model": "admin.config",
+    "pk": 1,
+    "fields": {
+        "code": "allow_registration",
+        "name": "Allow registration of new users",
+        "datatype": "bool",
+        "value": "true"
+    }
+}]

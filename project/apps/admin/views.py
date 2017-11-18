@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count
 from django.shortcuts import render
 
+from .models import Config
 from ..users.models import User
 
 
@@ -9,7 +10,7 @@ from ..users.models import User
 def adminpanel(request):
     """Main page of admin panel"""
 
-    # Get users with stats
+    configs = Config.objects.all()
     users = User.objects.\
         annotate(folders_count=Count(
             'folders',
@@ -25,5 +26,5 @@ def adminpanel(request):
         )).\
         all()
 
-    context = {'users': users}
+    context = {'users': users, 'configs': configs}
     return render(request, 'admin/adminpanel.html', context)
