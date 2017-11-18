@@ -59,8 +59,8 @@ body {
     font-size: 18px;
 }
 
-/* Tables inside notes */
-td, th {
-    border: 1px solid #ccc;
-    padding: 5px 40px 5px 5px;
+/* Main content */
+.content {
+    padding: 70px 100px;
+    color: #666;
 }

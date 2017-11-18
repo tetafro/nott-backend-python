@@ -77,3 +77,9 @@
     padding: 5px 10px;
     width: 100%;
 }
+
+/* Tables inside notes */
+.editor-content td, .editor-content th {
+    border: 1px solid #ccc;
+    padding: 5px 40px 5px 5px;
+}
