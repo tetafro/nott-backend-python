@@ -40,18 +40,18 @@ make deploy
 Build docker images and run the app locally in debug mode
 
 ```sh
-make dev-build
-make dev-run
+make -f Makefile_dev build
+make -f Makefile_dev run
 ```
 
 Stop
 ```sh
-make dev-stop
+make -f Makefile_dev stop
 ```
 
 Teardown
 ```sh
-make dev-clear
+make -f Makefile_dev clear
 ```
 
 ## Working with the database
@@ -80,12 +80,10 @@ docker exec -i nott_db_1 \
 
 Make
 ```sh
-docker-compose -f docker-compose-dev.yml run --rm backend \
-    /srv/smart_manage.py makemigrations
+make -f Makefile_dev makemigrations
 ```
 
 Migrate
 ```sh
-docker-compose -f docker-compose-dev.yml run --rm backend \
-    /srv/smart_manage.py migrate
+make -f Makefile_dev migrate
 ```

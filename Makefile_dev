@@ -1,0 +1,46 @@
+include config.env
+
+webpack_image = tetafro/webpack:8
+manage = /srv/smart_manage.py
+compose_file = docker-compose-dev.yml
+fixtures = /srv/apps/users/fixtures/admin.json
+
+.PHONY: build
+build:
+	# Install NPM packets
+	docker run --rm -it \
+		-v $(CURDIR)/project/public/js:/app \
+		--entrypoint npm \
+		$(webpack_image) \
+		install
+	# # Build images and make containers
+	docker-compose -f $(compose_file) build
+	docker-compose -f $(compose_file) create
+	# Prepare database
+	docker-compose -f $(compose_file) run --rm backend $(manage) migrate
+	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata $(fixtures)
+
+.PHONY: run
+run:
+	docker-compose -f $(compose_file) up
+
+.PHONY: stop
+stop:
+	docker-compose -f $(compose_file) stop
+
+.PHONY: clear
+clear:
+	docker-compose -f $(compose_file) down
+	docker volume rm nott_cert nott_db nott_project
+
+.PHONY: makemigrations
+makemigrations:
+	docker-compose -f $(compose_file) run --rm backend $(manage) makemigrations
+
+.PHONY: migrate
+migrate:
+	docker-compose -f $(compose_file) run --rm backend $(manage) migrate
+
+.PHONY: fixtures
+fixtures:
+	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata $(fixtures)

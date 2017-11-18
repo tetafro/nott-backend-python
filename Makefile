@@ -1,24 +1,22 @@
 include config.env
 
-##
-# Production
-##
+compose_file = docker-compose-prod.yml
 
 .PHONY: build
 build:
-	docker-compose -f docker-compose-prod.yml build
+	docker-compose -f $(compose_file) build
 
 .PHONY: run
 run:
-	docker-compose -f docker-compose-prod.yml up
+	docker-compose -f $(compose_file) up
 
 .PHONY: stop
 stop:
-	docker-compose -f docker-compose-prod.yml stop
+	docker-compose -f $(compose_file) stop
 
 .PHONY: clear
 clear:
-	docker-compose -f docker-compose-prod.yml down
+	docker-compose -f $(compose_file) down
 	docker volume rm nott_cert nott_db nott_project
 
 .PHONY: deploy
@@ -31,37 +29,3 @@ deploy:
 		--inventory="$(SERVER_DNS):$(SERVER_SSH_PORT)," \
 		--extra-vars "domain=$(SERVER_DNS) user=$(REMOTE_USER)" \
 		server-update.yml
-
-##
-# Development
-##
-
-.PHONY: dev-build
-dev-build:
-	# Install NPM packets
-	docker run --rm -it \
-		-v $(CURDIR)/project/public/js:/app \
-		--entrypoint npm \
-		tetafro/webpack:8 \
-		install
-	# # Build images and make containers
-	docker-compose -f docker-compose-dev.yml build
-	docker-compose -f docker-compose-dev.yml create
-	# Prepare database
-	docker-compose -f docker-compose-dev.yml run --rm backend \
-		/srv/smart_manage.py migrate
-	docker-compose -f docker-compose-dev.yml run --rm backend \
-		/srv/smart_manage.py loaddata /srv/apps/users/fixtures/admin.json
-
-.PHONY: dev-run
-dev-run:
-	docker-compose -f docker-compose-dev.yml up
-
-.PHONY: dev-stop
-dev-stop:
-	docker-compose -f docker-compose-dev.yml stop
-
-.PHONY: dev-clear
-dev-clear:
-	docker-compose -f docker-compose-dev.yml down
-	docker volume rm nott_cert nott_db nott_project
