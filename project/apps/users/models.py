@@ -10,6 +10,7 @@ from .helpers import OverwriteStorage, image_resize
 
 
 ADMIN_ROLE_ID = 1
+USER_ROLE_ID = 2
 
 
 class Role(models.Model):
@@ -42,7 +43,7 @@ class User(AbstractBaseUser):
 
     username = models.CharField(max_length=40, unique=True)
     email = models.CharField(max_length=40, unique=True)
-    role = models.OneToOneField(Role, default=ADMIN_ROLE_ID)
+    role = models.ForeignKey(Role, default=USER_ROLE_ID)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
