@@ -9,6 +9,14 @@ from django.utils import timezone
 from .helpers import OverwriteStorage, image_resize
 
 
+class Role(models.Model):
+    """
+    User roles
+    """
+
+    name = models.CharField(max_length=40, unique=True)
+
+
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password):
         if not email:
@@ -31,6 +39,7 @@ class User(AbstractBaseUser):
 
     username = models.CharField(max_length=40, unique=True)
     email = models.CharField(max_length=40, unique=True)
+    role = models.OneToOneField(Role, null=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
