@@ -29,3 +29,11 @@ deploy:
 		--inventory="$(SERVER_DNS):$(SERVER_SSH_PORT)," \
 		--extra-vars "domain=$(SERVER_DNS) user=$(REMOTE_USER)" \
 		server-update.yml
+
+.PHONY: test
+test:
+	docker-compose -f $(compose_file) run \
+		--rm \
+		--entrypoint=python3 \
+		app \
+		$(manage) test

@@ -3,7 +3,6 @@ include config.env
 webpack_image = tetafro/webpack:8
 manage = /srv/smart_manage.py
 compose_file = docker-compose-dev.yml
-fixtures = /srv/apps/users/fixtures/admin.json
 
 .PHONY: build
 build:
@@ -18,7 +17,10 @@ build:
 	docker-compose -f $(compose_file) create
 	# Prepare database
 	docker-compose -f $(compose_file) run --rm backend $(manage) migrate
-	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata $(fixtures)
+	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata \
+		/srv/apps/users/fixtures/roles.json \
+		/srv/apps/users/fixtures/admin.json \
+		/srv/apps/admin/fixtures/config.json
 
 .PHONY: run
 run:
@@ -31,11 +33,12 @@ stop:
 .PHONY: clear
 clear:
 	docker-compose -f $(compose_file) down
-	docker volume rm nott_cert nott_db nott_project
+	docker volume rm nott_db
 
 .PHONY: makemigrations
 makemigrations:
-	docker-compose -f $(compose_file) run --rm backend $(manage) makemigrations
+	docker-compose -f $(compose_file) run --rm backend $(manage) \
+		makemigrations users notes admin
 
 .PHONY: migrate
 migrate:
@@ -43,4 +46,11 @@ migrate:
 
 .PHONY: fixtures
 fixtures:
-	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata $(fixtures)
+	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata \
+		/srv/apps/users/fixtures/roles.json \
+		/srv/apps/users/fixtures/admin.json \
+		/srv/apps/admin/fixtures/config.json
+
+.PHONY: test
+test:
+	docker-compose -f $(compose_file) run --rm backend $(manage) test

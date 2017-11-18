@@ -11,7 +11,7 @@ jobs:
           name: Install deps
           command: |
             apk add --quiet --no-progress --no-cache py-pip ansible
-            pip install --quiet docker-compose
+            pip install --quiet docker-compose coverage
       # TODO: Decide what to do with secrets
       - run:
           name: Create dummy config
@@ -20,8 +20,13 @@ jobs:
           name: Build application Docker image
           command: docker-compose -f docker-compose-prod.yml build
       - run:
-          name: Check images
-          command: docker images
+          name: Run tests
+          command: |
+            docker-compose -f docker-compose-prod.yml run \
+                --rm \
+                --entrypoint=python3 \
+                app \
+                /srv/smart_manage.py test
       - run:
           name: Push Docker images to Docker Hub
           command: |

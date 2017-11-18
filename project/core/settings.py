@@ -12,8 +12,8 @@ if SERVER_MODE == 'production':
         raise EnvironmentError('Allowed hosts are not set!')
     ALLOWED_HOSTS = ['localhost'] + ALLOWED_HOSTS.split(',')
 elif SERVER_MODE == 'development':
-    LOG_LEVEL = 'DEBUG'
     DEBUG = True
+    LOG_LEVEL = 'DEBUG'
     ALLOWED_HOSTS = ['*']
 else:
     raise EnvironmentError('Server mode is not set!')
