@@ -9,6 +9,9 @@ from django.utils import timezone
 from .helpers import OverwriteStorage, image_resize
 
 
+ADMIN_ROLE_ID = 1
+
+
 class Role(models.Model):
     """
     User roles
@@ -39,7 +42,7 @@ class User(AbstractBaseUser):
 
     username = models.CharField(max_length=40, unique=True)
     email = models.CharField(max_length=40, unique=True)
-    role = models.OneToOneField(Role, null=True)
+    role = models.OneToOneField(Role, default=ADMIN_ROLE_ID)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -58,6 +61,10 @@ class User(AbstractBaseUser):
 
     def get_short_name(self):
         return self.username
+
+    @property
+    def is_admin(self):
+        return self.role_id == ADMIN_ROLE_ID
 
     # Note: this can't be lamba, otherwise makemigration
     # will give an error
