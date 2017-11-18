@@ -1,8 +1,10 @@
-# Description
+# Nott
+
+[![CircleCI](https://circleci.com/gh/tetafro/nott.svg?style=shield)](https://circleci.com/gh/tetafro/nott)
 
 Online notes service with markdown formatting and syntax highlight.
 
-# Local installation
+## Local installation
 
 Build docker images and run the app locally
 ```sh
@@ -20,7 +22,7 @@ Teardown
 make clear
 ```
 
-# Deployment to the remote server
+## Deployment to the remote server
 
 Prerequirements:
 
@@ -33,7 +35,7 @@ make build
 make deploy
 ```
 
-# Development (debug) version
+## Development (debug) version
 
 Build docker images and run the app locally in debug mode
 
@@ -52,16 +54,16 @@ Teardown
 make dev-clear
 ```
 
-# Working with the database
+## Working with the database
 
-## Backup
+### Backup
 
 ```
 docker exec nott_db_1 \
     pg_dump -U postgres -Fc -C db_nott > db_nott.dump
 ```
 
-## Restore
+### Restore
 
 ```sh
 docker exec -i nott_db_1 \
@@ -74,7 +76,7 @@ docker exec -i nott_db_1 \
     pg_restore -U postgres -d db_nott < ./db_nott.dump
 ```
 
-## Migrations
+### Migrations
 
 Make
 ```sh
