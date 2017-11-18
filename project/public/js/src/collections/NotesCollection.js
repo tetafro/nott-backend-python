@@ -1,12 +1,12 @@
+var $ = require('jquery');
 var Backbone = require('backbone');
 var App = require('../app');
 var Note = require('../models/Note');
 
 module.exports = Backbone.Collection.extend({
     model: Note,
-    url: function () {
-        return '/ajax/notes';
-    },
+    url: '/ajax/notes',
+    urlSearch: '/ajax/search',
     notepad: null,
 
     initialize: function () {
@@ -36,9 +36,11 @@ module.exports = Backbone.Collection.extend({
         var that = this;
 
         that.notepad = notepad;
-        that.url = '/ajax/notes?notepad-id=' + notepad.get('id');
         that.fetch({
             reset: true,
+            data: $.param({
+                "notepad-id": notepad.get('id')
+            }),
             // Synchronize models with EditorsCollection
             success: function () {
                 var note;
@@ -52,6 +54,22 @@ module.exports = Backbone.Collection.extend({
                     }
                 }
 
+                // Event to render view
+                that.trigger('rerender');
+            }
+        });
+    },
+
+    search: function (key) {
+        var that = this;
+
+        that.fetch({
+            url: that.urlSearch,
+            reset: true,
+            data: $.param({
+                "key": key
+            }),
+            success: function () {
                 // Event to render view
                 that.trigger('rerender');
             }

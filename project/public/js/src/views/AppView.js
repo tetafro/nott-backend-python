@@ -12,6 +12,7 @@ var NotepadsCollectionView = require('../views/NotepadsCollectionView');
 var NotesCollectionView = require('../views/NotesCollectionView');
 var EditorsCollectionView = require('../views/EditorsCollectionView');
 var ModalView = require('../views/ModalView');
+var SearchFormView = require('../views/SearchFormView');
 
 module.exports = Backbone.View.extend({
     el: '#app',
@@ -113,13 +114,14 @@ module.exports = Backbone.View.extend({
             }
         });
 
-        // List of notes in left panel
         new NotesCollectionView({
             collection: App.notesCollection
         });
-        // List of notes in left panel
         new EditorsCollectionView({
             collection: App.editorsCollection
+        });
+        new SearchFormView({
+            collection: App.notesCollection
         });
     }
 });

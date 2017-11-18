@@ -240,18 +240,18 @@ class NoteView(ListableView):
 
 
 class SearchView(View):
-    """ Search notes with given text """
+    """Search notes with given text"""
 
     def get(self, request, *args, **kwargs):
-        text = request.GET.get('text')
-        if text:
+        key = request.GET.get('key')
+        if key:
             notes = list(Note.objects.
-                              filter(text__contains=text).
+                              filter(text__contains=key).
                               values('id', 'title'))
             response = {'notes': notes}
             status = 200
         else:
-            response = {'error': 'No text provided'}
+            response = {'error': 'No key provided'}
             status = 400
 
         return JsonResponse(response, status=status)
