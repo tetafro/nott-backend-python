@@ -1,17 +1,11 @@
-# Main
-from django.shortcuts import render, redirect
-
-# Auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-
-# Models
-from django.db.models import Count
-from .models import User
-
-# Forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Count
+from django.shortcuts import render, redirect
+
 from .forms import UserForm, RegistrationForm
+from .models import User
 
 
 def user_auth(request):
@@ -69,28 +63,6 @@ def user_auth(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
-
-
-@login_required
-def userlist(request):
-    # Get users with stats
-    users = User.objects.\
-        annotate(folders_count=Count(
-            'folders',
-            distinct=True
-        )).\
-        annotate(notepads_count=Count(
-            'folders__notepads',
-            distinct=True
-        )).\
-        annotate(notes_count=Count(
-            'folders__notepads__notes',
-            distinct=True
-        )).\
-        all()
-
-    context = {'users': users}
-    return render(request, 'users/userlist.html', context)
 
 
 @login_required

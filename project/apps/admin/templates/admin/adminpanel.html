@@ -9,9 +9,43 @@
 
 {% block content %}
 
-<div class="content">
+<div class="content adminpanel">
     <h1>Admin panel</h1>
+
+    <h3>Settings</h3>
     <div>Under construction...</div>
+
+    <h3>Users</h3>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="col-md-1">Login</th>
+                <th class="col-md-1">Role</th>
+                <th class="col-md-1 text-center">Folders</th>
+                <th class="col-md-1 text-center">Notepads</th>
+                <th class="col-md-1 text-center">Notes</th>
+                <th class="col-md-1 text-center">Last seen</th>
+                <th class="col-md-1 text-center">Registered</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>
+                    <a href="{% url 'profile' user_id=user.id %}">{{ user.username }}</a>
+                </td>
+                <td>{{ user.role.name }}</td>
+                <td class="text-center">{{ user.folders_count }}</td>
+                <td class="text-center">{{ user.notepads_count }}</td>
+                <td class="text-center">{{ user.notes_count }}</td>
+                <td class="text-center">{{ user.last_login|date:'d b Y' }}</td>
+                <td class="text-center">{{ user.created|date:'d b Y' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}

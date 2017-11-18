@@ -32,13 +32,10 @@
                     {% block nav_notes %}
                         <li><a href="{% url 'index' %}">Notes</a></li>
                     {% endblock %}
-                    {% block nav_userlist %}
-                        <li><a href="{% url 'userlist' %}">Users</a></li>
+                    {% block nav_profile %}
+                    <li><a href="{% url 'profile' user_id='me' %}">Profile</a></li>
                     {% endblock %}
-                    {% if user.is_authenticated %}
-                        {% block nav_profile %}
-                            <li><a href="{% url 'profile' user_id='me' %}">Profile</a></li>
-                        {% endblock %}
+                    {% if user.is_admin %}
                         {% block nav_adminpanel %}
                             <li><a href="{% url 'adminpanel' %}">Admin</a></li>
                         {% endblock %}
