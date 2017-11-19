@@ -23,7 +23,7 @@ class UserTestCase(TestCase):
         admin = User.objects.get(username='admin')
         self.assertEqual(admin.is_admin, True)
         self.assertEqual(admin.get_full_name(), 'admin')
-        self.assertEqual(admin.get_full_name(), 'amdin')
+        self.assertEqual(admin.get_full_name(), 'admin')
 
     def test_users_data(self):
         bob = User.objects.get(username='bob')
