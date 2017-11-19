@@ -15,7 +15,7 @@ jobs:
       # TODO: Decide what to do with secrets
       - run:
           name: Create dummy config
-          command: touch ./config.env
+          command: cp ./config.env.example ./config.env
       - run:
           name: Build application Docker image
           command: docker-compose -f docker-compose-prod.yml build
