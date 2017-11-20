@@ -44,21 +44,35 @@
                 <th class="col-md-1 text-center">Notes</th>
                 <th class="col-md-1 text-center">Last seen</th>
                 <th class="col-md-1 text-center">Registered</th>
+                <th class="col-md-1 text-center">Actions</th>
             </tr>
         </thead>
 
         <tbody>
-            {% for user in users %}
+            {% for u in users %}
             <tr>
                 <td>
-                    <a href="{% url 'profile' user_id=user.id %}">{{ user.username }}</a>
+                    <a href="{% url 'profile' user_id=u.id %}">{{ u.username }}</a>
                 </td>
-                <td>{{ user.role.name }}</td>
-                <td class="text-center">{{ user.folders_count }}</td>
-                <td class="text-center">{{ user.notepads_count }}</td>
-                <td class="text-center">{{ user.notes_count }}</td>
-                <td class="text-center">{{ user.last_login|date:'d b Y' }}</td>
-                <td class="text-center">{{ user.created|date:'d b Y' }}</td>
+                <td>{{ u.role.name }}</td>
+                <td class="text-center">{{ u.folders_count }}</td>
+                <td class="text-center">{{ u.notepads_count }}</td>
+                <td class="text-center">{{ u.notes_count }}</td>
+                <td class="text-center">{{ u.last_login|date:'d b Y' }}</td>
+                <td class="text-center">{{ u.created|date:'d b Y' }}</td>
+                <td class="text-center">
+                    {% if u != user %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-xs btn-default" title="Lock" name="lock">
+                            <i class="glyphicon glyphicon-lock"></i>
+                        </button>
+                        <button type="submit" class="btn btn-xs btn-default" title="Remove" name="lock">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

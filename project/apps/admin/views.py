@@ -26,5 +26,13 @@ def adminpanel(request):
         )).\
         all()
 
+    if request.method == 'POST':
+        if 'lock' in request.POST:
+            # TODO: Add code
+            pass
+        elif 'remove' in request.POST:
+            # TODO: Add code
+            pass
+
     context = {'users': users, 'configs': configs}
     return render(request, 'admin/adminpanel.html', context)
