@@ -73,7 +73,7 @@ LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = ''
 
 # View function to handle CSRF failures
-CSRF_FAILURE_VIEW = 'core.helpers.csrf_failure'
+CSRF_FAILURE_VIEW = 'core.middleware.csrf_failure'
 
 TEMPLATES = [
     {

@@ -1,6 +1,8 @@
 import logging
+import json
 
 from django.shortcuts import render
+from django.http import HttpResponse
 
 
 # Get an instance of a logger
@@ -37,3 +39,16 @@ class HttpErrorsMiddleware(object):
         else:
             logger.exception('Unexpected exception: '+str(exception))
             return render(request, '500.html', status=500)
+
+
+def csrf_failure(request, reason=''):
+    """
+    Custom error for missing CSRF token
+    NOTE: Django security logs this
+    """
+
+    if request.get_full_path()[:5] == '/ajax':
+        response = {'error': 'Please refresh the page'}
+        return HttpResponse(json.dumps(response), status=400)
+    else:
+        return render(request, '500.html', status=500)
