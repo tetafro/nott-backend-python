@@ -2,6 +2,7 @@
     "model": "admin.config",
     "pk": 1,
     "fields": {
+        "id": 1,
         "code": "allow_registration",
         "name": "Allow registration of new users",
         "datatype": "bool",
