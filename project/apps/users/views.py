@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Count
 from django.shortcuts import render, redirect
 
+from ..admin.models import Config
 from .forms import UserForm, RegistrationForm
 from .models import User
 
@@ -12,6 +13,11 @@ def user_auth(request):
     """
     Register or login
     """
+
+    reg_allowed = True
+    db_setting = Config.objects.get(code='allow_registration')
+    if db_setting is not None:
+        reg_allowed = db_setting.value == 'true'
 
     reg_form = RegistrationForm()
     login_form = AuthenticationForm()
@@ -23,8 +29,8 @@ def user_auth(request):
 
         # Registration
         if is_reg:
-            # Public registration is currently disabled
-            return redirect('login')
+            if not reg_allowed:
+                return redirect('login')
 
             reg_form = RegistrationForm(request.POST)
             if reg_form.is_valid():
@@ -54,6 +60,7 @@ def user_auth(request):
 
     context = {
         'reg_form': reg_form,
+        'reg_allowed': reg_allowed,
         'login_form': login_form
     }
     return render(request, 'users/auth.html', context)
