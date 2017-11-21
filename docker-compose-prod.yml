@@ -7,7 +7,7 @@ volumes:
 
 services:
   db:
-    image: tetafro/nott_db
+    image: tetafro/nott_db:latest
     build:
       context: .
       dockerfile: deploy/docker/Dockerfile_db
@@ -17,7 +17,7 @@ services:
       - db:/var/lib/postgresql/data
     restart: unless-stopped
   app:
-    image: tetafro/nott_app
+    image: tetafro/nott_app:latest
     build:
       context: .
       dockerfile: deploy/docker/Dockerfile_app_prod
@@ -31,7 +31,7 @@ services:
     depends_on:
       - db
   web:
-    image: tetafro/nott_web
+    image: tetafro/nott_web:latest
     build:
       context: .
       dockerfile: deploy/docker/Dockerfile_web
