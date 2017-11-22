@@ -24,10 +24,9 @@ def user_auth(request):
     reg_form = RegistrationForm()
     login_form = AuthenticationForm()
 
+    errors = False
     if request.method == 'POST':
         is_reg = request.POST.get('reg')
-
-        errors = False
 
         # Registration
         if is_reg:
@@ -65,7 +64,8 @@ def user_auth(request):
         'reg_allowed': reg_allowed,
         'login_form': login_form
     }
-    return render(request, 'users/auth.html', context)
+    status = 400 if errors else 200
+    return render(request, 'users/auth.html', context, status=status)
 
 
 @login_required
