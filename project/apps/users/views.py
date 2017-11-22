@@ -14,9 +14,11 @@ def user_auth(request):
     Register or login
     """
 
-    reg_allowed = True
-    db_setting = Config.objects.get(code='allow_registration')
-    if db_setting is not None:
+    try:
+        db_setting = Config.objects.get(code='allow_registration')
+    except Config.DoesNotExist:
+        reg_allowed = True  # default if settings is not found
+    else:
         reg_allowed = db_setting.value == 'true'
 
     reg_form = RegistrationForm()
