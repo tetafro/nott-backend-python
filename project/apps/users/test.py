@@ -35,3 +35,10 @@ class UserTestCase(TestCase):
         self.assertEqual(alice.is_admin, False)
         self.assertEqual(alice.get_full_name(), 'alice')
         self.assertEqual(alice.get_full_name(), 'alice')
+
+
+class LoginTestCase(TestCase):
+    def test_redirect_to_login_page(self):
+        response = self.client.get('/', follow=True)
+        self.assertRedirects(response, '/login?next=/')
+
