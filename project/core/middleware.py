@@ -4,22 +4,11 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 
+from .errors import Http400, Http403, Http404, Http500
+
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
-
-
-# Classes for HTTP errors
-class Http400(Exception):
-    pass
-
-
-class Http403(Exception):
-    pass
-
-
-class Http500(Exception):
-    pass
 
 
 class HttpErrorsMiddleware(object):
@@ -33,6 +22,9 @@ class HttpErrorsMiddleware(object):
         elif isinstance(exception, Http403):
             logger.exception('Forbidden error: '+str(exception))
             return render(request, '403.html', status=403)
+        elif isinstance(exception, Http404):
+            logger.exception('Forbidden error: ' + str(exception))
+            return render(request, '404.html', status=404)
         elif isinstance(exception, Http500):
             logger.exception('Internal server error: '+str(exception))
             return render(request, '500.html', status=500)
