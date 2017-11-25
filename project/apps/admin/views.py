@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count
 from django.shortcuts import render
 
+from apps.users.models import User
 from .models import Config
-from ..users.models import User
 
 
 @user_passes_test(lambda u: u.is_admin)

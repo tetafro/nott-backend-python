@@ -5,7 +5,7 @@ from django.db.models import Count
 from django.shortcuts import render, redirect
 
 from core.errors import Http405
-from ..admin.models import Config
+from apps.admin.models import Config
 from .forms import UserForm, RegistrationForm
 from .models import User
 
