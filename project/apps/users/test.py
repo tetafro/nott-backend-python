@@ -77,7 +77,7 @@ class AuthTestCase(TestCase):
         response = self.client.post('/logout')
         self.assertEqual(response.status_code, 302)
 
-    def test_protected_views(self):
+    def test_protected_pages_success(self):
         self.client.login(username='bob', password='bobs-password')
         user = auth.get_user(self.client)
         self.assertTrue(user.is_authenticated())
@@ -87,3 +87,11 @@ class AuthTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get('/users/100')
         self.assertEqual(response.status_code, 200)
+
+    def test_protected_pages_fail(self):
+        response = self.client.get('/users/me')
+        self.assertRedirects(response, '/login?next=/users/me')
+        response = self.client.get('/users/me/edit')
+        self.assertRedirects(response, '/login?next=/users/me/edit')
+        response = self.client.get('/users/100')
+        self.assertRedirects(response, '/login?next=/users/100')
