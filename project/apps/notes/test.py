@@ -103,6 +103,6 @@ class FoldersTestCase(TestCase):
         self.assertEqual(folders[0].get('title'), 'Folder 1')
         self.assertEqual(folders[0].get('parent_id'), None)
         # Folder 2
-        self.assertEqual(folders[0].get('id'), 101)
+        self.assertEqual(folders[1].get('id'), 101)
         self.assertEqual(folders[1].get('title'), 'Folder 2')
         self.assertEqual(folders[1].get('parent_id'), 100)
