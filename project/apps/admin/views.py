@@ -6,7 +6,7 @@ from apps.users.models import User
 from .models import Config
 
 
-@user_passes_test(lambda u: u.is_admin)
+@user_passes_test(lambda u: u.is_authenticated() and u.is_admin)
 def adminpanel(request):
     """Main page of admin panel"""
 
