@@ -1,4 +1,3 @@
-from datetime import datetime
 from markdown2 import markdown
 
 from django.db import models
@@ -9,9 +8,7 @@ from apps.users.models import User
 
 class Folder(models.Model):
     """
-    Folders are containers for notepads
-    Root folders (with no parents) can also contain
-    other folders
+    Folder is a container for notepads or other folders.
     """
 
     title = models.CharField(max_length=80)
@@ -38,6 +35,10 @@ class Folder(models.Model):
 
 
 class Notepad(models.Model):
+    """
+    Notepad is a container for notes.
+    """
+
     title = models.CharField(max_length=80)
     user = models.ForeignKey(User, related_name='notepads')
     folder = models.ForeignKey(Folder, related_name='notepads', null=True)
@@ -55,6 +56,10 @@ class Notepad(models.Model):
 
 
 class Note(models.Model):
+    """
+    Note is a container for user text data.
+    """
+
     title = models.CharField(max_length=80)
     user = models.ForeignKey(User, related_name='notes')
     text = models.TextField(blank=True)  # source text in markdown
