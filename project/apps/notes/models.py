@@ -6,10 +6,17 @@ from django.core.exceptions import ValidationError
 from apps.users.models import User
 
 
-class Folder(models.Model):
-    """
-    Folder is a container for notepads or other folders.
-    """
+class Serializer(object):
+    """Abstract class for adding serializing functionality"""
+
+    dict_fields = []
+
+    def to_dict(self):
+        return {f: getattr(self, f) for f in self.dict_fields}
+
+
+class Folder(models.Model, Serializer):
+    """Folder is a container for notepads or other folders"""
 
     title = models.CharField(max_length=80)
     user = models.ForeignKey(User, related_name='folders')
@@ -21,6 +28,8 @@ class Folder(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
+
+    dict_fields = ['id', 'title', 'parent_id', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
@@ -34,16 +43,16 @@ class Folder(models.Model):
         return 'Folder ID%d' % self.id
 
 
-class Notepad(models.Model):
-    """
-    Notepad is a container for notes.
-    """
+class Notepad(models.Model, Serializer):
+    """Notepad is a container for notes"""
 
     title = models.CharField(max_length=80)
     user = models.ForeignKey(User, related_name='notepads')
     folder = models.ForeignKey(Folder, related_name='notepads', null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
+
+    dict_fields = ['id', 'title', 'folder_id', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
@@ -55,10 +64,8 @@ class Notepad(models.Model):
         return 'Notepad ID%d' % self.id
 
 
-class Note(models.Model):
-    """
-    Note is a container for user text data.
-    """
+class Note(models.Model, Serializer):
+    """Note is a container for user text data"""
 
     title = models.CharField(max_length=80)
     user = models.ForeignKey(User, related_name='notes')
@@ -66,6 +73,8 @@ class Note(models.Model):
     notepad = models.ForeignKey(Notepad, related_name='notes')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
+
+    dict_fields = ['id', 'title', 'text', 'notepad_id', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
