@@ -1,10 +1,11 @@
 import json
+from datetime import datetime
 
 from django.contrib import auth
 from django.test import TestCase
 
 from apps.users.models import User
-from .models import Folder
+from .models import Folder, Notepad, Note
 
 
 class PagesTestCase(TestCase):
@@ -34,7 +35,7 @@ class PagesTestCase(TestCase):
 
 
 class FoldersTestCase(TestCase):
-    fixtures = ['config.json', 'roles.json']
+    fixtures = ['roles.json']
 
     def setUp(self):
         bob = User.objects.create(
@@ -58,6 +59,19 @@ class FoldersTestCase(TestCase):
             user=bob,
             parent=folder1
         )
+
+    def test_serializer(self):
+        try:
+            folder = Folder.objects.get(id=101)
+        except Folder.DoesNotExist:
+            self.fail("Folder not found")
+
+        d = folder.to_dict()
+        self.assertEqual(d.get('id'), 101)
+        self.assertEqual(d.get('title'), 'Folder 2')
+        self.assertEqual(d.get('parent_id'), 100)
+        self.assertEqual(type(d.get('created')), datetime)
+        self.assertEqual(type(d.get('updated')), datetime)
 
     def test_create(self):
         self.client.login(username='bob', password='bobs-password')
@@ -106,3 +120,94 @@ class FoldersTestCase(TestCase):
         self.assertEqual(folders[1].get('id'), 101)
         self.assertEqual(folders[1].get('title'), 'Folder 2')
         self.assertEqual(folders[1].get('parent_id'), 100)
+
+    def test_get(self):
+        pass
+
+
+class NotepadsTestCase(TestCase):
+    fixtures = ['roles.json']
+
+    def setUp(self):
+        bob = User.objects.create(
+            id=100,
+            username='bob',
+            email='bob@example.com',
+            role_id=2,
+            is_active=True
+        )
+        bob.set_password('bobs-password')
+        bob.save()
+        folder = Folder.objects.create(
+            id=100,
+            title='Folder',
+            user=bob,
+            parent=None
+        )
+        notepad = Notepad.objects.create(
+            id=200,
+            title='Notepad',
+            user=bob,
+            folder=folder
+        )
+
+    def test_serializer(self):
+        try:
+            notepad = Notepad.objects.get(id=200)
+        except Notepad.DoesNotExist:
+            self.fail("Notepad not found")
+
+        n = notepad.to_dict()
+        self.assertEqual(n.get('id'), 200)
+        self.assertEqual(n.get('title'), 'Notepad')
+        self.assertEqual(n.get('folder_id'), 100)
+        self.assertEqual(type(n.get('created')), datetime)
+        self.assertEqual(type(n.get('updated')), datetime)
+
+
+class NotesTestCase(TestCase):
+    fixtures = ['roles.json']
+
+    def setUp(self):
+        bob = User.objects.create(
+            id=100,
+            username='bob',
+            email='bob@example.com',
+            role_id=2,
+            is_active=True
+        )
+        bob.set_password('bobs-password')
+        bob.save()
+        folder = Folder.objects.create(
+            id=100,
+            title='Folder',
+            user=bob,
+            parent=None
+        )
+        notepad = Notepad.objects.create(
+            id=200,
+            title='Notepad',
+            user=bob,
+            folder=folder
+        )
+        note = Note.objects.create(
+            id=300,
+            title='Note',
+            text='Hello, world!',
+            user=bob,
+            notepad=notepad
+        )
+
+    def test_serializer(self):
+        try:
+            note = Note.objects.get(id=300)
+        except Note.DoesNotExist:
+            self.fail("Note not found")
+
+        n = note.to_dict()
+        self.assertEqual(n.get('id'), 300)
+        self.assertEqual(n.get('title'), 'Note')
+        self.assertEqual(n.get('text'), 'Hello, world!')
+        self.assertEqual(n.get('notepad_id'), 200)
+        self.assertEqual(type(n.get('created')), datetime)
+        self.assertEqual(type(n.get('updated')), datetime)
