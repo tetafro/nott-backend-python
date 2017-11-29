@@ -13,7 +13,7 @@ module.exports = Backbone.View.extend({
 
     initialize: function () {},
 
-    submit: function () {
+    submit: function (event) {
         // Catch only pressing Enter
         if (event.type == 'keypress') {
             if (event.keyCode == 13) {
