@@ -3,6 +3,7 @@ import json
 from django.http import JsonResponse
 from django.views.generic import View
 from django.db import IntegrityError
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 
 from .models import Folder, Notepad, Note
 from .helpers import object_required, object_save
@@ -34,13 +35,21 @@ class FolderView(ListableView):
         data = json.loads(request.body.decode('utf-8'))
         folder = Folder(user=request.user, **data)
 
-        save_result = object_save(folder)
-        if save_result is True:
-            response = {'id': folder.id}
-            return JsonResponse(response, status=201)
-        else:
-            response, status = save_result
-            return JsonResponse(response, status=status)
+        try:
+            folder.full_clean()
+        except ValidationError as e:
+            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
+            response = {'error': error_message}
+            return response, 400
+
+        try:
+            folder.save()
+        except IntegrityError as e:
+            response = {'error': 'Bad request'}
+            return response, 400
+
+        response = {'id': folder.id}
+        return JsonResponse(response, status=201)
 
     @object_required(Folder)
     def get(self, request, *args, **kwargs):
@@ -67,12 +76,20 @@ class FolderView(ListableView):
         for (key, value) in data.items():
             setattr(folder, key, value)
 
-        save_result = object_save(folder)
-        if save_result is True:
-            return JsonResponse({}, status=204)
-        else:
-            response, status = save_result
-            return JsonResponse(response, status=status)
+        try:
+            folder.full_clean()
+        except ValidationError as e:
+            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
+            response = {'error': error_message}
+            return response, 400
+
+        try:
+            folder.save()
+        except IntegrityError as e:
+            response = {'error': 'Bad request'}
+            return response, 400
+
+        return JsonResponse({}, status=204)
 
     @object_required(Folder)
     def delete(self, request, *args, **kwargs):
@@ -104,13 +121,21 @@ class NotepadView(ListableView):
 
         notepad = Notepad(user=request.user, **data)
 
-        save_result = object_save(notepad)
-        if save_result is True:
-            response = {'id': notepad.id}
-            return JsonResponse(response, status=201)
-        else:
-            response, status = save_result
-            return JsonResponse(response, status=status)
+        try:
+            notepad.full_clean()
+        except ValidationError as e:
+            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
+            response = {'error': error_message}
+            return response, 400
+
+        try:
+            notepad.save()
+        except IntegrityError as e:
+            response = {'error': 'Bad request'}
+            return response, 400
+
+        response = {'id': notepad.id}
+        return JsonResponse(response, status=201)
 
     @object_required(Notepad)
     def get(self, request, *args, **kwargs):
@@ -142,12 +167,20 @@ class NotepadView(ListableView):
         for (key, value) in data.items():
             setattr(notepad, key, value)
 
-        save_result = object_save(notepad)
-        if save_result is True:
-            return JsonResponse({}, status=204)
-        else:
-            response, status = save_result
-            return JsonResponse(response, status=status)
+        try:
+            notepad.full_clean()
+        except ValidationError as e:
+            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
+            response = {'error': error_message}
+            return response, 400
+
+        try:
+            notepad.save()
+        except IntegrityError as e:
+            response = {'error': 'Bad request'}
+            return response, 400
+
+        return JsonResponse({}, status=204)
 
     @object_required(Notepad)
     def delete(self, request, *args, **kwargs):
@@ -179,13 +212,21 @@ class NoteView(ListableView):
 
         note = Note(user=request.user, **data)
 
-        save_result = object_save(note)
-        if save_result is True:
-            response = {'id': note.id}
-            return JsonResponse(response, status=201)
-        else:
-            response, status = save_result
-            return JsonResponse(response, status=status)
+        try:
+            note.full_clean()
+        except ValidationError as e:
+            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
+            response = {'error': error_message}
+            return response, 400
+
+        try:
+            note.save()
+        except IntegrityError as e:
+            response = {'error': 'Bad request'}
+            return response, 400
+
+        response = {'id': note.id}
+        return JsonResponse(response, status=201)
 
     @object_required(Note)
     def get(self, request, *args, **kwargs):
@@ -219,11 +260,20 @@ class NoteView(ListableView):
         for (key, value) in data.items():
             setattr(note, key, value)
 
-        save_result = object_save(note)
-        if save_result is True:
-            return JsonResponse({}, status=204)
-        else:
-            return JsonResponse(save_result)
+        try:
+            note.full_clean()
+        except ValidationError as e:
+            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
+            response = {'error': error_message}
+            return response, 400
+
+        try:
+            note.save()
+        except IntegrityError as e:
+            response = {'error': 'Bad request'}
+            return response, 400
+
+        return JsonResponse({}, status=204)
 
     @object_required(Note)
     def delete(self, request, *args, **kwargs):
