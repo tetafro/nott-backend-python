@@ -73,6 +73,39 @@ class FoldersTestCase(TestCase):
         self.assertEqual(type(d.get('created')), datetime)
         self.assertEqual(type(d.get('updated')), datetime)
 
+    def test_get(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        response = self.client.get('/ajax/folders/101')
+        self.assertEqual(response.status_code, 200)
+        folder = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(folder.get('id'), 101)
+        self.assertEqual(folder.get('title'), 'Folder 2')
+        self.assertEqual(folder.get('parent_id'), 100)
+
+    def test_list(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        response = self.client.get('/ajax/folders')
+        self.assertEqual(response.status_code, 200)
+        resp_content = json.loads(response.content.decode('utf-8'))
+        self.assertTrue('folders' in resp_content)
+        folders = resp_content['folders']
+        self.assertEqual(len(folders), 2)
+
+        # Folder 1
+        self.assertEqual(folders[0].get('id'), 100)
+        self.assertEqual(folders[0].get('title'), 'Folder 1')
+        self.assertEqual(folders[0].get('parent_id'), None)
+        # Folder 2
+        self.assertEqual(folders[1].get('id'), 101)
+        self.assertEqual(folders[1].get('title'), 'Folder 2')
+        self.assertEqual(folders[1].get('parent_id'), 100)
+
     def test_create(self):
         self.client.login(username='bob', password='bobs-password')
         user = auth.get_user(self.client)
@@ -100,30 +133,6 @@ class FoldersTestCase(TestCase):
         self.assertEqual(folder.get('title'), 'My Folder')
         self.assertEqual(folder.get('parent_id'), None)
 
-    def test_list(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
-
-        response = self.client.get('/ajax/folders')
-        self.assertEqual(response.status_code, 200)
-        resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue('folders' in resp_content)
-        folders = resp_content['folders']
-        self.assertEqual(len(folders), 2)
-
-        # Folder 1
-        self.assertEqual(folders[0].get('id'), 100)
-        self.assertEqual(folders[0].get('title'), 'Folder 1')
-        self.assertEqual(folders[0].get('parent_id'), None)
-        # Folder 2
-        self.assertEqual(folders[1].get('id'), 101)
-        self.assertEqual(folders[1].get('title'), 'Folder 2')
-        self.assertEqual(folders[1].get('parent_id'), 100)
-
-    def test_get(self):
-        pass
-
 
 class NotepadsTestCase(TestCase):
     fixtures = ['roles.json']
@@ -144,9 +153,15 @@ class NotepadsTestCase(TestCase):
             user=bob,
             parent=None
         )
-        notepad = Notepad.objects.create(
+        notepad1 = Notepad.objects.create(
             id=200,
-            title='Notepad',
+            title='Notepad 1',
+            user=bob,
+            folder=folder
+        )
+        notepad2 = Notepad.objects.create(
+            id=201,
+            title='Notepad 2',
             user=bob,
             folder=folder
         )
@@ -159,10 +174,43 @@ class NotepadsTestCase(TestCase):
 
         n = notepad.to_dict()
         self.assertEqual(n.get('id'), 200)
-        self.assertEqual(n.get('title'), 'Notepad')
+        self.assertEqual(n.get('title'), 'Notepad 1')
         self.assertEqual(n.get('folder_id'), 100)
         self.assertEqual(type(n.get('created')), datetime)
         self.assertEqual(type(n.get('updated')), datetime)
+
+    def test_get(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        response = self.client.get('/ajax/notepads/200')
+        self.assertEqual(response.status_code, 200)
+        notepad = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(notepad.get('id'), 200)
+        self.assertEqual(notepad.get('title'), 'Notepad 1')
+        self.assertEqual(notepad.get('folder_id'), 100)
+
+    def test_list(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        response = self.client.get('/ajax/notepads')
+        self.assertEqual(response.status_code, 200)
+        resp_content = json.loads(response.content.decode('utf-8'))
+        self.assertTrue('notepads' in resp_content)
+        notepads = resp_content['notepads']
+        self.assertEqual(len(notepads), 2)
+
+        # Notepad 1
+        self.assertEqual(notepads[0].get('id'), 200)
+        self.assertEqual(notepads[0].get('title'), 'Notepad 1')
+        self.assertEqual(notepads[0].get('folder_id'), 100)
+        # Notepad 2
+        self.assertEqual(notepads[1].get('id'), 201)
+        self.assertEqual(notepads[1].get('title'), 'Notepad 2')
+        self.assertEqual(notepads[1].get('folder_id'), 100)
 
 
 class NotesTestCase(TestCase):
@@ -190,10 +238,17 @@ class NotesTestCase(TestCase):
             user=bob,
             folder=folder
         )
-        note = Note.objects.create(
+        note1 = Note.objects.create(
             id=300,
-            title='Note',
+            title='Note 1',
             text='Hello, world!',
+            user=bob,
+            notepad=notepad
+        )
+        note2 = Note.objects.create(
+            id=301,
+            title='Note 2',
+            text='Goodbye, world!',
             user=bob,
             notepad=notepad
         )
@@ -206,8 +261,41 @@ class NotesTestCase(TestCase):
 
         n = note.to_dict()
         self.assertEqual(n.get('id'), 300)
-        self.assertEqual(n.get('title'), 'Note')
+        self.assertEqual(n.get('title'), 'Note 1')
         self.assertEqual(n.get('text'), 'Hello, world!')
         self.assertEqual(n.get('notepad_id'), 200)
         self.assertEqual(type(n.get('created')), datetime)
         self.assertEqual(type(n.get('updated')), datetime)
+
+    def test_get(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        response = self.client.get('/ajax/notes/300')
+        self.assertEqual(response.status_code, 200)
+        note = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(note.get('id'), 300)
+        self.assertEqual(note.get('title'), 'Note 1')
+        self.assertEqual(note.get('notepad_id'), 200)
+
+    def test_list(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        response = self.client.get('/ajax/notes')
+        self.assertEqual(response.status_code, 200)
+        resp_content = json.loads(response.content.decode('utf-8'))
+        self.assertTrue('notes' in resp_content)
+        notes = resp_content['notes']
+        self.assertEqual(len(notes), 2)
+
+        # Note 1
+        self.assertEqual(notes[0].get('id'), 300)
+        self.assertEqual(notes[0].get('title'), 'Note 1')
+        self.assertEqual(notes[0].get('notepad_id'), 200)
+        # Note 2
+        self.assertEqual(notes[1].get('id'), 301)
+        self.assertEqual(notes[1].get('title'), 'Note 2')
+        self.assertEqual(notes[1].get('notepad_id'), 200)
