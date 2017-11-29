@@ -74,7 +74,8 @@ class Note(models.Model, Serializer):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
-    dict_fields = ['id', 'title', 'text', 'notepad_id', 'created', 'updated']
+    dict_fields = ['id', 'title', 'text', 'notepad_id',
+        'created', 'updated', 'html']
 
     def clean(self):
         if self.title == '':

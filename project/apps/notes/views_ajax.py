@@ -6,7 +6,6 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 
 from .models import Folder, Notepad, Note
-from .helpers import object_required, object_save
 
 
 class ListableView(View):
@@ -40,37 +39,41 @@ class FolderView(ListableView):
         except ValidationError as e:
             error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
             response = {'error': error_message}
-            return response, 400
+            return JsonResponse(response, 400)
 
         try:
             folder.save()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Bad request'}
-            return response, 400
+            return JsonResponse(response, 400)
 
-        response = {'id': folder.id}
+        response = folder.to_dict()
         return JsonResponse(response, status=201)
 
-    @object_required(Folder)
     def get(self, request, *args, **kwargs):
-        folder_id = kwargs['id']
-        folder = Folder.objects.get(id=folder_id)
+        folder_id = kwargs.get('id')
+        try:
+            folder = Folder.objects.get(id=folder_id, user=request.user)
+        except Folder.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
 
-        response = {'id': folder.id, 'title': folder.title,
-                    'created': folder.created, 'updated': folder.updated}
+        response = folder.to_dict()
         return JsonResponse(response, status=200)
 
     def list(self, request, *args, **kwargs):
-        folders = Folder.objects.\
-            values('id', 'title', 'parent_id', 'created', 'updated')
-
-        response = {'folders': list(folders)}
+        folders = Folder.objects.filter(user=request.user)
+        response = {'folders': [f.to_dict() for f in folders]}
         return JsonResponse(response)
 
-    @object_required(Folder)
     def put(self, request, *args, **kwargs):
-        folder_id = kwargs['id']
-        folder = Folder.objects.get(id=folder_id)
+        folder_id = kwargs.get('id')
+        try:
+            folder = Folder.objects.get(id=folder_id, user=request.user)
+        except Folder.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
+
         data = json.loads(request.body.decode('utf-8'))
 
         for (key, value) in data.items():
@@ -81,24 +84,28 @@ class FolderView(ListableView):
         except ValidationError as e:
             error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
             response = {'error': error_message}
-            return response, 400
+            return JsonResponse(response, 400)
 
         try:
             folder.save()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Bad request'}
-            return response, 400
+            return JsonResponse(response, 400)
 
-        return JsonResponse({}, status=204)
+        response = folder.to_dict()
+        return JsonResponse(response, status=200)
 
-    @object_required(Folder)
     def delete(self, request, *args, **kwargs):
-        folder_id = kwargs['id']
-        folder = Folder.objects.get(id=folder_id)
+        folder_id = kwargs.get('id')
+        try:
+            folder = Folder.objects.get(id=folder_id, user=request.user)
+        except Folder.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
 
         try:
             folder.delete()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Failed to delete due to integrity error'}
             return JsonResponse(response, status=400)
 
@@ -126,44 +133,47 @@ class NotepadView(ListableView):
         except ValidationError as e:
             error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
             response = {'error': error_message}
-            return response, 400
+            return JsonResponse(response, 400)
 
         try:
             notepad.save()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Bad request'}
-            return response, 400
+            return JsonResponse(response, 400)
 
-        response = {'id': notepad.id}
+        response = notepad.to_dict()
         return JsonResponse(response, status=201)
 
-    @object_required(Notepad)
     def get(self, request, *args, **kwargs):
-        notepad_id = kwargs['id']
-        notepad = Notepad.objects.get(id=notepad_id)
+        notepad_id = kwargs.get('id')
+        try:
+            notepad = Notepad.objects.get(id=notepad_id, user=request.user)
+        except Notepad.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
 
-        response = {'id': notepad.id, 'title': notepad.title,
-                    'created': notepad.created, 'updated': notepad.updated}
+        response = notepad.to_dict()
         return JsonResponse(response, status=200)
 
     def list(self, request, *args, **kwargs):
         folder_id = request.GET.get('folder-id')
 
-        notepads = Notepad.objects.\
-            values('id', 'title', 'folder_id', 'created', 'updated')
-
+        notepads = Notepad.objects.filter(user=request.user)
         if folder_id:
             notepads = notepads.filter(folder_id=folder_id)
 
-        response = {'notepads': list(notepads)}
+        response = {'notepads': [n.to_dict() for n in notepads]}
         return JsonResponse(response)
 
-    @object_required(Notepad)
     def put(self, request, *args, **kwargs):
-        notepad_id = kwargs['id']
-        notepad = Notepad.objects.get(id=notepad_id)
-        data = json.loads(request.body.decode('utf-8'))
+        notepad_id = kwargs.get('id')
+        try:
+            notepad = Notepad.objects.get(id=notepad_id, user=request.user)
+        except Notepad.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
 
+        data = json.loads(request.body.decode('utf-8'))
         for (key, value) in data.items():
             setattr(notepad, key, value)
 
@@ -176,20 +186,24 @@ class NotepadView(ListableView):
 
         try:
             notepad.save()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Bad request'}
             return response, 400
 
-        return JsonResponse({}, status=204)
+        response = notepad.to_dict()
+        return JsonResponse(response, status=204)
 
-    @object_required(Notepad)
     def delete(self, request, *args, **kwargs):
-        notepad_id = kwargs['id']
-        notepad = Notepad.objects.get(id=notepad_id)
+        notepad_id = kwargs.get('id')
+        try:
+            notepad = Notepad.objects.get(id=notepad_id, user=request.user)
+        except Notepad.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
 
         try:
             notepad.delete()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Failed to delete due to integrity error'}
             return JsonResponse(response, status=400)
 
@@ -221,40 +235,41 @@ class NoteView(ListableView):
 
         try:
             note.save()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Bad request'}
             return response, 400
 
         response = {'id': note.id}
         return JsonResponse(response, status=201)
 
-    @object_required(Note)
     def get(self, request, *args, **kwargs):
-        note_id = kwargs['id']
-        note = Note.objects.get(id=note_id)
-
-        response = {'text': note.text, 'html': note.html,
-                    'created': note.created, 'updated': note.updated}
+        note_id = kwargs.get('id')
+        try:
+            note = Note.objects.get(id=note_id, user=request.user)
+        except Note.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
+        response = note.to_dict()
         return JsonResponse(response, status=200)
 
     def list(self, request, *args, **kwargs):
-        try:
-            notepad_id = request.GET['notepad-id']
-        except KeyError:
-            response = {'error': 'No notepad id provided'}
-            return JsonResponse(response, status=400)
+        notepad_id = request.GET.get('notepad-id')
 
-        notes = Note.objects. \
-            filter(notepad_id=notepad_id). \
-            values('id', 'title', 'notepad_id', 'created', 'updated')
+        notes = Note.objects.filter(user=request.user)
+        if notepad_id:
+            notes = notes.filter(notepad_id=notepad_id)
 
-        response = {'notes': list(notes)}
+        response = {'notes': [n.to_dict() for n in notes]}
         return JsonResponse(response)
 
-    @object_required(Note)
     def put(self, request, *args, **kwargs):
-        note_id = kwargs['id']
-        note = Note.objects.get(id=note_id)
+        note_id = kwargs.get('id')
+        try:
+            note = Note.objects.get(id=note_id, user=request.user)
+        except Note.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
+
         data = json.loads(request.body.decode('utf-8'))
 
         for (key, value) in data.items():
@@ -265,24 +280,28 @@ class NoteView(ListableView):
         except ValidationError as e:
             error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
             response = {'error': error_message}
-            return response, 400
+            return JsonResponse(response, 400)
 
         try:
             note.save()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Bad request'}
-            return response, 400
+            return JsonResponse(response, 400)
 
-        return JsonResponse({}, status=204)
+        response = note.to_dict()
+        return JsonResponse(response, status=204)
 
-    @object_required(Note)
     def delete(self, request, *args, **kwargs):
-        note_id = kwargs['id']
-        note = Note.objects.get(id=note_id)
+        note_id = kwargs.get('id')
+        try:
+            note = Note.objects.get(id=note_id, user=request.user)
+        except Note.DoesNotExist:
+            response = {'error': 'Object not found'}
+            JsonResponse(response, status=404)
 
         try:
             note.delete()
-        except IntegrityError as e:
+        except IntegrityError:
             response = {'error': 'Failed to delete due to integrity error'}
             return JsonResponse(response, status=400)
 
