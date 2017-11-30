@@ -10,12 +10,16 @@ jobs:
       - run:
           name: Install deps
           command: |
-            apk add --quiet --no-progress --no-cache py-pip ansible
+            apk add --quiet --no-progress --no-cache py-pip ansible git
             pip install --quiet docker-compose coverage
-      # TODO: Decide what to do with secrets
       - run:
           name: Create dummy config
           command: cp ./config.env.example ./config.env
+      - run:
+          name: Get current version
+          command: |
+            LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+            echo $LAST_TAG [build $CIRCLE_BUILD_NUM]
       - run:
           name: Build application Docker image
           command: docker-compose -f docker-compose-prod.yml build
