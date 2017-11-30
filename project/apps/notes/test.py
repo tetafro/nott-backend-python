@@ -133,6 +133,19 @@ class FoldersTestCase(TestCase):
         self.assertEqual(folder.get('title'), 'My Folder')
         self.assertEqual(folder.get('parent_id'), None)
 
+    def test_delete(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Delete
+        response = self.client.delete('/ajax/folders/100')
+        self.assertEqual(response.status_code, 204)
+
+        # Check on server
+        response = self.client.get('/ajax/folders/100')
+        self.assertEqual(response.status_code, 404)
+
 
 class NotepadsTestCase(TestCase):
     fixtures = ['roles.json']
@@ -211,6 +224,19 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(notepads[1].get('id'), 201)
         self.assertEqual(notepads[1].get('title'), 'Notepad 2')
         self.assertEqual(notepads[1].get('folder_id'), 100)
+
+    def test_delete(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Delete
+        response = self.client.delete('/ajax/notepads/200')
+        self.assertEqual(response.status_code, 204)
+
+        # Check on server
+        response = self.client.get('/ajax/notepads/200')
+        self.assertEqual(response.status_code, 404)
 
 
 class NotesTestCase(TestCase):
@@ -299,3 +325,16 @@ class NotesTestCase(TestCase):
         self.assertEqual(notes[1].get('id'), 301)
         self.assertEqual(notes[1].get('title'), 'Note 2')
         self.assertEqual(notes[1].get('notepad_id'), 200)
+
+    def test_delete(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Delete
+        response = self.client.delete('/ajax/notes/300')
+        self.assertEqual(response.status_code, 204)
+
+        # Check on server
+        response = self.client.get('/ajax/notes/300')
+        self.assertEqual(response.status_code, 404)
