@@ -56,7 +56,7 @@ class FolderView(ListableView):
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
 
         response = folder.to_dict()
         return JsonResponse(response, status=200)
@@ -72,7 +72,7 @@ class FolderView(ListableView):
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
 
@@ -101,7 +101,7 @@ class FolderView(ListableView):
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
 
         try:
             folder.delete()
@@ -150,7 +150,7 @@ class NotepadView(ListableView):
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
 
         response = notepad.to_dict()
         return JsonResponse(response, status=200)
@@ -171,7 +171,7 @@ class NotepadView(ListableView):
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
         for (key, value) in data.items():
@@ -199,7 +199,7 @@ class NotepadView(ListableView):
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
 
         try:
             notepad.delete()
@@ -248,7 +248,7 @@ class NoteView(ListableView):
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
         response = note.to_dict()
         return JsonResponse(response, status=200)
 
@@ -268,7 +268,7 @@ class NoteView(ListableView):
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
 
@@ -297,7 +297,7 @@ class NoteView(ListableView):
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
             response = {'error': 'Object not found'}
-            JsonResponse(response, status=404)
+            return JsonResponse(response, status=404)
 
         try:
             note.delete()
