@@ -39,13 +39,13 @@ class FolderView(ListableView):
         except ValidationError as e:
             error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
             response = {'error': error_message}
-            return JsonResponse(response, 400)
+            return JsonResponse(response, status=400)
 
         try:
             folder.save()
         except IntegrityError:
             response = {'error': 'Bad request'}
-            return JsonResponse(response, 400)
+            return JsonResponse(response, status=400)
 
         response = folder.to_dict()
         return JsonResponse(response, status=201)
@@ -84,13 +84,13 @@ class FolderView(ListableView):
         except ValidationError as e:
             error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
             response = {'error': error_message}
-            return JsonResponse(response, 400)
+            return JsonResponse(response, status=400)
 
         try:
             folder.save()
         except IntegrityError:
             response = {'error': 'Bad request'}
-            return JsonResponse(response, 400)
+            return JsonResponse(response, status=400)
 
         response = folder.to_dict()
         return JsonResponse(response, status=200)
@@ -133,13 +133,13 @@ class NotepadView(ListableView):
         except ValidationError as e:
             error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
             response = {'error': error_message}
-            return JsonResponse(response, 400)
+            return JsonResponse(response, status=400)
 
         try:
             notepad.save()
         except IntegrityError:
             response = {'error': 'Bad request'}
-            return JsonResponse(response, 400)
+            return JsonResponse(response, status=400)
 
         response = notepad.to_dict()
         return JsonResponse(response, status=201)
@@ -280,13 +280,13 @@ class NoteView(ListableView):
         except ValidationError as e:
             error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
             response = {'error': error_message}
-            return JsonResponse(response, 400)
+            return JsonResponse(response, status=400)
 
         try:
             note.save()
         except IntegrityError:
             response = {'error': 'Bad request'}
-            return JsonResponse(response, 400)
+            return JsonResponse(response, status=400)
 
         response = note.to_dict()
         return JsonResponse(response, status=200)
