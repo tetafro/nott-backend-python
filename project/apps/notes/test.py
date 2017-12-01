@@ -114,7 +114,6 @@ class FoldersTestCase(TestCase):
         # Create
         body = {
             'title': 'My Folder',
-            'parent': None
         }
         response = self.client.post(
             '/ajax/folders', json.dumps(body), 'application/json'
@@ -131,6 +130,29 @@ class FoldersTestCase(TestCase):
         folder = json.loads(response.content.decode('utf-8'))
         self.assertEqual(folder.get('id'), id)
         self.assertEqual(folder.get('title'), 'My Folder')
+        self.assertEqual(folder.get('parent_id'), None)
+
+    def test_modify(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Modify
+        body = {
+            'title': 'New Name',
+            'parent_id': None
+        }
+        response = self.client.put(
+            '/ajax/folders/101', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Get from server and check
+        response = self.client.get('/ajax/folders/101')
+        self.assertEqual(response.status_code, 200)
+        folder = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(folder.get('id'), 101)
+        self.assertEqual(folder.get('title'), 'New Name')
         self.assertEqual(folder.get('parent_id'), None)
 
     def test_delete(self):
@@ -166,13 +188,13 @@ class NotepadsTestCase(TestCase):
             user=bob,
             parent=None
         )
-        notepad1 = Notepad.objects.create(
+        Notepad.objects.create(
             id=200,
             title='Notepad 1',
             user=bob,
             folder=folder
         )
-        notepad2 = Notepad.objects.create(
+        Notepad.objects.create(
             id=201,
             title='Notepad 2',
             user=bob,
@@ -224,6 +246,55 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(notepads[1].get('id'), 201)
         self.assertEqual(notepads[1].get('title'), 'Notepad 2')
         self.assertEqual(notepads[1].get('folder_id'), 100)
+
+    def test_create(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Create
+        body = {
+            'title': 'My Notepad',
+            'folder_id': 100
+        }
+        response = self.client.post(
+            '/ajax/notepads', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 201)
+        resp_content = json.loads(response.content.decode('utf-8'))
+        self.assertTrue('id' in resp_content)
+        self.assertTrue(resp_content is not None)
+        id = resp_content['id']
+
+        # Get from server and check
+        response = self.client.get('/ajax/notepads/%d' % id)
+        self.assertEqual(response.status_code, 200)
+        notepad = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(notepad.get('id'), id)
+        self.assertEqual(notepad.get('title'), 'My Notepad')
+        self.assertEqual(notepad.get('folder_id'), 100)
+
+    def test_modify(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Modify
+        body = {
+            'title': 'New Name',
+        }
+        response = self.client.put(
+            '/ajax/notepads/200', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Get from server and check
+        response = self.client.get('/ajax/notepads/200')
+        self.assertEqual(response.status_code, 200)
+        notepad = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(notepad.get('id'), 200)
+        self.assertEqual(notepad.get('title'), 'New Name')
+        self.assertEqual(notepad.get('folder_id'), 100)
 
     def test_delete(self):
         self.client.login(username='bob', password='bobs-password')
@@ -325,6 +396,57 @@ class NotesTestCase(TestCase):
         self.assertEqual(notes[1].get('id'), 301)
         self.assertEqual(notes[1].get('title'), 'Note 2')
         self.assertEqual(notes[1].get('notepad_id'), 200)
+
+    def test_create(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Create
+        body = {
+            'title': 'My Note',
+            'notepad_id': 200,
+            'text': 'Hello, world'
+        }
+        response = self.client.post(
+            '/ajax/notes', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 201)
+        resp_content = json.loads(response.content.decode('utf-8'))
+        self.assertTrue('id' in resp_content)
+        self.assertTrue(resp_content is not None)
+        id = resp_content['id']
+
+        # Get from server and check
+        response = self.client.get('/ajax/notes/%d' % id)
+        self.assertEqual(response.status_code, 200)
+        note = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(note.get('id'), id)
+        self.assertEqual(note.get('title'), 'My Note')
+        self.assertEqual(note.get('notepad_id'), 200)
+        self.assertEqual(note.get('text'), 'Hello, world')
+
+    def test_modify(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Modify
+        body = {
+            'title': 'New Name',
+        }
+        response = self.client.put(
+            '/ajax/notepads/200', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Get from server and check
+        response = self.client.get('/ajax/notepads/200')
+        self.assertEqual(response.status_code, 200)
+        notepad = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(notepad.get('id'), 200)
+        self.assertEqual(notepad.get('title'), 'New Name')
+        self.assertEqual(notepad.get('folder_id'), 100)
 
     def test_delete(self):
         self.client.login(username='bob', password='bobs-password')

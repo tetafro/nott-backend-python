@@ -191,7 +191,7 @@ class NotepadView(ListableView):
             return response, 400
 
         response = notepad.to_dict()
-        return JsonResponse(response, status=204)
+        return JsonResponse(response, status=200)
 
     def delete(self, request, *args, **kwargs):
         notepad_id = kwargs.get('id')
@@ -289,7 +289,7 @@ class NoteView(ListableView):
             return JsonResponse(response, 400)
 
         response = note.to_dict()
-        return JsonResponse(response, status=204)
+        return JsonResponse(response, status=200)
 
     def delete(self, request, *args, **kwargs):
         note_id = kwargs.get('id')
