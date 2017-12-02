@@ -8,6 +8,14 @@ from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from .models import Folder, Notepad, Note
 
 
+def dump_errors(errors_dict):
+    """Represent validation errors dict as string"""
+    msg = ''
+    for field, errors in errors_dict.items():
+        msg += '; '.join(errors) + '; '
+    return msg[:-2]  # trim last semicolon and space
+
+
 class ListableView(View):
     """
     Add list method for dispatcher when id is not
@@ -37,8 +45,7 @@ class FolderView(ListableView):
         try:
             folder.full_clean()
         except ValidationError as e:
-            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
-            response = {'error': error_message}
+            response = {'error': dump_errors(e.message_dict)}
             return JsonResponse(response, status=400)
 
         try:
@@ -82,8 +89,7 @@ class FolderView(ListableView):
         try:
             folder.full_clean()
         except ValidationError as e:
-            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
-            response = {'error': error_message}
+            response = {'error': dump_errors(e.message_dict)}
             return JsonResponse(response, status=400)
 
         try:
@@ -131,8 +137,7 @@ class NotepadView(ListableView):
         try:
             notepad.full_clean()
         except ValidationError as e:
-            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
-            response = {'error': error_message}
+            response = {'error': dump_errors(e.message_dict)}
             return JsonResponse(response, status=400)
 
         try:
@@ -180,8 +185,7 @@ class NotepadView(ListableView):
         try:
             notepad.full_clean()
         except ValidationError as e:
-            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
-            response = {'error': error_message}
+            response = {'error': dump_errors(e.message_dict)}
             return response, 400
 
         try:
@@ -229,8 +233,7 @@ class NoteView(ListableView):
         try:
             note.full_clean()
         except ValidationError as e:
-            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
-            response = {'error': error_message}
+            response = {'error': dump_errors(e.message_dict)}
             return response, 400
 
         try:
@@ -278,8 +281,7 @@ class NoteView(ListableView):
         try:
             note.full_clean()
         except ValidationError as e:
-            error_message = ', '.join(e.message_dict[NON_FIELD_ERRORS])
-            response = {'error': error_message}
+            response = {'error': dump_errors(e.message_dict)}
             return JsonResponse(response, status=400)
 
         try:
