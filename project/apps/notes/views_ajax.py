@@ -3,24 +3,24 @@ import json
 from django.http import JsonResponse
 from django.views.generic import View
 from django.db import IntegrityError
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 
-from .models import Folder, Notepad, Note
-
-
-def dump_errors(errors_dict):
-    """Represent validation errors dict as string"""
-    msg = ''
-    for field, errors in errors_dict.items():
-        msg += '; '.join(errors) + '; '
-    return msg[:-2]  # trim last semicolon and space
+from .models import Folder, Notepad, Note, BadInput
 
 
-class ListableView(View):
+class ApiView(View):
     """
     Add list method for dispatcher when id is not
     provided for the GET-method
     """
+
+    # Model's fields that cannot be changed by the clients
+    readonly_fields = []
+
+    def clear_input(self, data):
+        """Remove readonly fields from client's input"""
+        for field in self.readonly_fields:
+            if field in data:
+                del data[field]
 
     def dispatch(self, request, *args, **kwargs):
         method = request.method.lower()
@@ -35,26 +35,21 @@ class ListableView(View):
         return handler(request, *args, **kwargs)
 
 
-class FolderView(ListableView):
+class FolderView(ApiView):
     """Full CRUD for Folders"""
+
+    readonly_fields = ['id', 'html', 'created', 'updated']
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        if 'id' in data:
-            del data['id']
+        self.clear_input(data)
 
         folder = Folder(user=request.user, **data)
 
         try:
-            folder.full_clean()
-        except ValidationError as e:
-            response = {'error': dump_errors(e.message_dict)}
-            return JsonResponse(response, status=400)
-
-        try:
-            folder.save()
-        except IntegrityError:
-            response = {'error': 'Bad request'}
+            folder.full_save()
+        except BadInput as e:
+            response = {'error': str(e)}
             return JsonResponse(response, status=400)
 
         response = folder.to_dict()
@@ -85,20 +80,15 @@ class FolderView(ListableView):
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
+        self.clear_input(data)
 
         for (key, value) in data.items():
             setattr(folder, key, value)
 
         try:
-            folder.full_clean()
-        except ValidationError as e:
-            response = {'error': dump_errors(e.message_dict)}
-            return JsonResponse(response, status=400)
-
-        try:
-            folder.save()
-        except IntegrityError:
-            response = {'error': 'Bad request'}
+            folder.full_save()
+        except BadInput as e:
+            response = {'error': str(e)}
             return JsonResponse(response, status=400)
 
         response = folder.to_dict()
@@ -115,19 +105,20 @@ class FolderView(ListableView):
         try:
             folder.delete()
         except IntegrityError:
-            response = {'error': 'Failed to delete due to integrity error'}
+            response = {'error': 'Failed to delete the object'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)
 
 
-class NotepadView(ListableView):
+class NotepadView(ApiView):
     """Full CRUD for Notepads"""
+
+    readonly_fields = ['id', 'created', 'updated']
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        if 'id' in data:
-            del data['id']
+        self.clear_input(data)
 
         error = None
         if not data.get('folder_id'):
@@ -140,15 +131,9 @@ class NotepadView(ListableView):
         notepad = Notepad(user=request.user, **data)
 
         try:
-            notepad.full_clean()
-        except ValidationError as e:
-            response = {'error': dump_errors(e.message_dict)}
-            return JsonResponse(response, status=400)
-
-        try:
-            notepad.save()
-        except IntegrityError:
-            response = {'error': 'Bad request'}
+            notepad.full_save()
+        except BadInput as e:
+            response = {'error': str(e)}
             return JsonResponse(response, status=400)
 
         response = notepad.to_dict()
@@ -184,20 +169,16 @@ class NotepadView(ListableView):
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
+        self.clear_input(data)
+
         for (key, value) in data.items():
             setattr(notepad, key, value)
 
         try:
-            notepad.full_clean()
-        except ValidationError as e:
-            response = {'error': dump_errors(e.message_dict)}
-            return response, 400
-
-        try:
-            notepad.save()
-        except IntegrityError:
-            response = {'error': 'Bad request'}
-            return response, 400
+            notepad.full_save()
+        except BadInput as e:
+            response = {'error': str(e)}
+            return JsonResponse(response, status=400)
 
         response = notepad.to_dict()
         return JsonResponse(response, status=200)
@@ -213,19 +194,20 @@ class NotepadView(ListableView):
         try:
             notepad.delete()
         except IntegrityError:
-            response = {'error': 'Failed to delete due to integrity error'}
+            response = {'error': 'Failed to delete the object'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)
 
 
-class NoteView(ListableView):
+class NoteView(ApiView):
     """Full CRUD for Notes"""
+
+    readonly_fields = ['id', 'html', 'created', 'updated']
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        if 'id' in data:
-            del data['id']
+        self.clear_input(data)
 
         error = None
         if not data.get('notepad_id'):
@@ -238,16 +220,10 @@ class NoteView(ListableView):
         note = Note(user=request.user, **data)
 
         try:
-            note.full_clean()
-        except ValidationError as e:
-            response = {'error': dump_errors(e.message_dict)}
-            return response, 400
-
-        try:
-            note.save()
-        except IntegrityError:
-            response = {'error': 'Bad request'}
-            return response, 400
+            note.full_save()
+        except BadInput as e:
+            response = {'error': str(e)}
+            return JsonResponse(response, status=400)
 
         response = {'id': note.id}
         return JsonResponse(response, status=201)
@@ -281,20 +257,15 @@ class NoteView(ListableView):
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
+        self.clear_input(data)
 
         for (key, value) in data.items():
             setattr(note, key, value)
 
         try:
-            note.full_clean()
-        except ValidationError as e:
-            response = {'error': dump_errors(e.message_dict)}
-            return JsonResponse(response, status=400)
-
-        try:
-            note.save()
-        except IntegrityError:
-            response = {'error': 'Bad request'}
+            note.full_save()
+        except BadInput as e:
+            response = {'error': str(e)}
             return JsonResponse(response, status=400)
 
         response = note.to_dict()
@@ -311,7 +282,7 @@ class NoteView(ListableView):
         try:
             note.delete()
         except IntegrityError:
-            response = {'error': 'Failed to delete due to integrity error'}
+            response = {'error': 'Failed to delete the object'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)

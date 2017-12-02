@@ -1,9 +1,22 @@
 from markdown2 import markdown
 
-from django.db import models
+from django.db import models, IntegrityError
 from django.core.exceptions import ValidationError
 
 from apps.users.models import User
+
+
+def dump_errors(errors_dict):
+    """Represent validation errors dict as string"""
+    msg = ''
+    for field, errors in errors_dict.items():
+        msg += '; '.join(errors) + '; '
+    return msg[:-2]  # trim last semicolon and space
+
+
+class BadInput(Exception):
+    """Used when model is saving to indicate problems with it's fields"""
+    pass
 
 
 class Serializer(object):
@@ -31,14 +44,22 @@ class Folder(models.Model, Serializer):
 
     # Fields to be given to clients
     dict_fields = ['id', 'title', 'parent_id', 'created', 'updated']
-    # Fields that are not allowed to be changed be clients
-    readonly_fields = ['id', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
             raise ValidationError('Title cannot be empty')
         if len(self.title) > 80:
             raise ValidationError('Title is too long')
+
+    def full_save(self):
+        try:
+            self.full_clean()
+        except ValidationError as e:
+            raise BadInput(', '.join(e.messages))
+        try:
+            self.save()
+        except IntegrityError:
+            raise BadInput('Failed to save the object')
 
     def __repr__(self):
         return 'Folder ID%d' % self.id
@@ -55,14 +76,22 @@ class Notepad(models.Model, Serializer):
 
     # Fields to be given to clients
     dict_fields = ['id', 'title', 'folder_id', 'created', 'updated']
-    # Fields that are not allowed to be changed be clients
-    readonly_fields = ['id', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
             raise ValidationError('Title cannot be empty')
         if len(self.title) > 80:
             raise ValidationError('Title is too long')
+
+    def full_save(self):
+        try:
+            self.full_clean()
+        except ValidationError as e:
+            raise BadInput(', '.join(e.messages))
+        try:
+            self.save()
+        except IntegrityError:
+            raise BadInput('Failed to save the object')
 
     def __repr__(self):
         return 'Notepad ID%d' % self.id
@@ -81,14 +110,22 @@ class Note(models.Model, Serializer):
     # Fields to be given to clients
     dict_fields = ['id', 'title', 'text', 'html', 'notepad_id',
                    'created', 'updated']
-    # Fields that are not allowed to be changed be clients
-    readonly_fields = ['id', 'html', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
             raise ValidationError('Title cannot be empty')
         if len(self.title) > 80:
             raise ValidationError('Title is too long')
+
+    def full_save(self):
+        try:
+            self.full_clean()
+        except ValidationError as e:
+            raise BadInput(', '.join(e.messages))
+        try:
+            self.save()
+        except IntegrityError:
+            raise BadInput('Failed to save the object')
 
     def __repr__(self):
         return 'Note ID%d' % self.id
