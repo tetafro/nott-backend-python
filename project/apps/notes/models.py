@@ -29,7 +29,10 @@ class Folder(models.Model, Serializer):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
+    # Fields to be given to clients
     dict_fields = ['id', 'title', 'parent_id', 'created', 'updated']
+    # Fields that are not allowed to be changed be clients
+    readonly_fields = ['id', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
@@ -50,7 +53,10 @@ class Notepad(models.Model, Serializer):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
+    # Fields to be given to clients
     dict_fields = ['id', 'title', 'folder_id', 'created', 'updated']
+    # Fields that are not allowed to be changed be clients
+    readonly_fields = ['id', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
@@ -72,8 +78,11 @@ class Note(models.Model, Serializer):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
-    dict_fields = ['id', 'title', 'text', 'notepad_id',
-                   'created', 'updated', 'html']
+    # Fields to be given to clients
+    dict_fields = ['id', 'title', 'text', 'html', 'notepad_id',
+                   'created', 'updated']
+    # Fields that are not allowed to be changed be clients
+    readonly_fields = ['id', 'html', 'created', 'updated']
 
     def clean(self):
         if self.title == '':
