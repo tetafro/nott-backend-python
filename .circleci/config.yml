@@ -16,10 +16,11 @@ jobs:
           name: Create dummy config
           command: cp ./config.env.example ./config.env
       - run:
-          name: Get current version
+          name: Set current version in dockerfile
           command: |
-            LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
-            echo $LAST_TAG [build $CIRCLE_BUILD_NUM]
+            last_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+            version="$last_tag [build $CIRCLE_BUILD_NUM]"
+            sed -i "s/VERSION='v0.0.0'/VERSION='$version'/" deploy/docker/Dockerfile_app_prod
       - run:
           name: Build application Docker image
           command: docker-compose -f docker-compose-prod.yml build

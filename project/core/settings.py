@@ -3,6 +3,8 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+VERSION = os.environ.get('VERSION') or 'Unknown'
+
 SERVER_MODE = os.environ.get('SERVER_MODE')
 if SERVER_MODE == 'production':
     DEBUG = False

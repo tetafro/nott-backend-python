@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count
 from django.shortcuts import render
+from django.conf import settings
 
 from apps.users.models import User
 from .models import Config
@@ -34,5 +35,5 @@ def adminpanel(request):
             # TODO: Add code
             pass
 
-    context = {'users': users, 'configs': configs}
+    context = {'users': users, 'configs': configs, 'version': settings.VERSION}
     return render(request, 'admin/adminpanel.html', context)
