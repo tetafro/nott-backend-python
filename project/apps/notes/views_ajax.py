@@ -40,6 +40,9 @@ class FolderView(ListableView):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
+        if 'id' in data:
+            del data['id']
+
         folder = Folder(user=request.user, **data)
 
         try:
@@ -123,6 +126,8 @@ class NotepadView(ListableView):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
+        if 'id' in data:
+            del data['id']
 
         error = None
         if not data.get('folder_id'):
@@ -219,6 +224,8 @@ class NoteView(ListableView):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
+        if 'id' in data:
+            del data['id']
 
         error = None
         if not data.get('notepad_id'):
