@@ -1,4 +1,9 @@
+import logging
+
 from django.test import TestCase
+
+
+logging.disable(logging.CRITICAL)
 
 
 class HealthTestCase(TestCase):

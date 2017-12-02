@@ -1,7 +1,12 @@
+import logging
+
 from django.contrib import auth
 from django.test import TestCase
 
 from apps.users.models import User
+
+
+logging.disable(logging.CRITICAL)
 
 
 class AdminTestCase(TestCase):
