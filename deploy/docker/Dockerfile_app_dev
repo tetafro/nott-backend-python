@@ -6,8 +6,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install deps
 COPY requirements.txt /tmp/
-RUN apt-get -y update && \
-    apt-get -y install \
+RUN apt-get -y -qq update && \
+    apt-get -y -qq install \
         curl \
         gcc \
         libjpeg-dev \
@@ -22,8 +22,8 @@ RUN mkdir -p /srv/
 
 # Cleaning
 RUN rm -f /tmp/requirements.txt && \
-    apt-get -y autoremove && \
-    apt-get -y clean
+    apt-get -y -qq autoremove && \
+    apt-get -y -qq clean
 
 WORKDIR /srv/
 

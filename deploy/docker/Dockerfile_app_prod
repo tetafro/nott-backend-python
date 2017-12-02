@@ -19,8 +19,8 @@ COPY deploy/configs/gunicorn/gunicorn.py /srv/
 COPY --from=build /srv/app.min.js /srv/public/js/
 
 # Install deps
-RUN apt-get -y update && \
-    apt-get -y install \
+RUN apt-get -y -qq update && \
+    apt-get -y -qq install \
         curl \
         libjpeg-dev \
         libpq-dev \
@@ -28,8 +28,8 @@ RUN apt-get -y update && \
     pip3 install -r /srv/requirements.txt
 
 # Cleaning
-RUN apt-get -y autoremove && \
-    apt-get -y clean
+RUN apt-get -y -qq autoremove && \
+    apt-get -y -qq clean
 
 WORKDIR /srv/
 
