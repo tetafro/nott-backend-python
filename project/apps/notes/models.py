@@ -36,8 +36,6 @@ class Folder(models.Model, Serializer):
             raise ValidationError('Title cannot be empty')
         if len(self.title) > 80:
             raise ValidationError('Title is too long')
-        if not self.parent and self.parent is not None:
-            raise ValidationError('This field cannot be blank')
 
     def __repr__(self):
         return 'Folder ID%d' % self.id
