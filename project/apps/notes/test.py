@@ -272,12 +272,6 @@ class FoldersValidationTestCase(TestCase):
         )
         bob.set_password('bobs-password')
         bob.save()
-        Folder.objects.create(
-            id=100,
-            title='Folder 1',
-            user=bob,
-            parent=None
-        )
 
     def test_empty_title(self):
         self.client.login(username='bob', password='bobs-password')
@@ -474,6 +468,81 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class NotepadsValidationTestCase(TestCase):
+    fixtures = ['roles.json']
+
+    def setUp(self):
+        bob = User.objects.create(
+            id=100,
+            username='bob',
+            email='bob@example.com',
+            role_id=2,
+            is_active=True
+        )
+        bob.set_password('bobs-password')
+        bob.save()
+        Folder.objects.create(
+            id=100,
+            title='Folder',
+            user=bob,
+            parent=None
+        )
+
+    def test_empty_title(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        body = {
+            'title': '',
+            'folder_id': 100
+        }
+        response = self.client.post(
+            '/ajax/notepads', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_long_title(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        body = {
+            'title': 'a' * 81,
+            'folder_id': 100
+        }
+        response = self.client.post(
+            '/ajax/notepads', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_empty_folder(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        body = {'title': 'New Notepad'}
+        response = self.client.post(
+            '/ajax/notepads', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_non_existing_folder(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Create
+        body = {
+            'title': 'New Notepad',
+            'folder_id': 600
+        }
+        response = self.client.post(
+            '/ajax/notepads', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+
 class NotesTestCase(TestCase):
     fixtures = ['roles.json']
 
@@ -640,3 +709,85 @@ class NotesTestCase(TestCase):
         # Check on server
         response = self.client.get('/ajax/notes/300')
         self.assertEqual(response.status_code, 404)
+
+
+class NotesValidationTestCase(TestCase):
+    fixtures = ['roles.json']
+
+    def setUp(self):
+        bob = User.objects.create(
+            id=100,
+            username='bob',
+            email='bob@example.com',
+            role_id=2,
+            is_active=True
+        )
+        bob.set_password('bobs-password')
+        bob.save()
+        folder = Folder.objects.create(
+            id=100,
+            title='Folder',
+            user=bob,
+            parent=None
+        )
+        Notepad.objects.create(
+            id=200,
+            title='Notepad',
+            user=bob,
+            folder=folder
+        )
+
+    def test_empty_title(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        body = {
+            'title': '',
+            'notepad_id': 200
+        }
+        response = self.client.post(
+            '/ajax/notes', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_long_title(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        body = {
+            'title': 'a' * 81,
+            'notepad_id': 200
+        }
+        response = self.client.post(
+            '/ajax/notes', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_empty_notepad(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        body = {'title': 'New Note'}
+        response = self.client.post(
+            '/ajax/notes', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_non_existing_notepad(self):
+        self.client.login(username='bob', password='bobs-password')
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated())
+
+        # Create
+        body = {
+            'title': 'New Note',
+            'notepad_id': 600
+        }
+        response = self.client.post(
+            '/ajax/notes', json.dumps(body), 'application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+
