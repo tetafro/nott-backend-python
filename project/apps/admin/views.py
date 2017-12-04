@@ -1,8 +1,11 @@
+from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
+from django.core.exceptions import ValidationError
+from django.db import models, IntegrityError
 from django.db.models import Count
 from django.shortcuts import render
-from django.conf import settings
 
+from core.errors import Http400
 from apps.users.models import User
 from .models import Config
 
@@ -28,12 +31,27 @@ def adminpanel(request):
         all()
 
     if request.method == 'POST':
-        if 'lock' in request.POST:
-            # TODO: Add code
-            pass
-        elif 'remove' in request.POST:
-            # TODO: Add code
-            pass
+        for field, value in request.POST.items():
+            if field == 'csrfmiddlewaretoken':
+                continue
 
-    context = {'users': users, 'configs': configs, 'version': settings.VERSION}
+            try:
+                config = Config.objects.get(code=field)
+            except Config.DoesNotExist:
+                raise Http400
+            config.value = value
+            try:
+                config.full_clean()
+            except ValidationError as e:
+                raise Http400
+            try:
+                config.save()
+            except IntegrityError:
+                raise Http400
+
+    context = {
+        'users': users,
+        'configs': configs,
+        'version': settings.VERSION
+    }
     return render(request, 'admin/adminpanel.html', context)

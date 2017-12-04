@@ -11,76 +11,92 @@
 
 <div class="content adminpanel">
     <h1>Admin panel</h1>
+    <ul class="nav nav-pills">
+        <li class="active">
+            <a data-toggle="pill" href="#tab-info">Info</a>
+        </li>
+        <li>
+            <a data-toggle="pill" href="#tab-settings">Settings</a>
+        </li>
+        <li>
+            <a data-toggle="pill" href="#tab-users">Users</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" id="tab-info" class="tab-pane active">
+            <h3>Version</h3>
 
-    <h3>Version</h3>
+            <p>{{ version }}</p>
+        </div>
 
-    <p>{{ version }}</p>
+        <div role="tabpanel" id="tab-settings" class="tab-pane">
+            <h3>Settings</h3>
 
-    <h3>Settings</h3>
+            <form role="form" method="post">
+                {% csrf_token %}
+                {% for config in configs %}
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="{{ config.code }}" {% if config.value %}checked{% endif %}>
+                        {{ config.name }}
+                    </label>
+                </div>
+                {% endfor %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th class="col-md-1">Setting</th>
-                <th class="col-md-1">Value</th>
-            </tr>
-        </thead>
+        <div role="tabpanel" id="tab-users" class="tab-pane">
+            <h3>Users</h3>
 
-        <tbody>
-            {% for config in configs %}
-            <tr>
-                <td>{{ config.name }}</td>
-                <td>{{ config.value }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h3>Users</h3>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th class="col-md-1">Login</th>
-                <th class="col-md-1">Role</th>
-                <th class="col-md-1 text-center">Folders</th>
-                <th class="col-md-1 text-center">Notepads</th>
-                <th class="col-md-1 text-center">Notes</th>
-                <th class="col-md-1 text-center">Last seen</th>
-                <th class="col-md-1 text-center">Registered</th>
-                <th class="col-md-1 text-center">Actions</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for u in users %}
-            <tr>
-                <td>
-                    <a href="{% url 'profile' user_id=u.id %}">{{ u.username }}</a>
-                </td>
-                <td>{{ u.role.name }}</td>
-                <td class="text-center">{{ u.folders_count }}</td>
-                <td class="text-center">{{ u.notepads_count }}</td>
-                <td class="text-center">{{ u.notes_count }}</td>
-                <td class="text-center">{{ u.last_login|date:'d b Y' }}</td>
-                <td class="text-center">{{ u.created|date:'d b Y' }}</td>
-                <td class="text-center">
-                    {% if u != user %}
-                    <form method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-xs btn-default" title="Lock" name="lock">
-                            <i class="glyphicon glyphicon-lock"></i>
-                        </button>
-                        <button type="submit" class="btn btn-xs btn-default" title="Remove" name="lock">
-                            <i class="glyphicon glyphicon-remove"></i>
-                        </button>
-                    </form>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="col-md-1">Login</th>
+                        <th class="col-md-1">Role</th>
+                        <th class="col-md-1 text-center">Folders</th>
+                        <th class="col-md-1 text-center">Notepads</th>
+                        <th class="col-md-1 text-center">Notes</th>
+                        <th class="col-md-1 text-center">Last seen</th>
+                        <th class="col-md-1 text-center">Registered</th>
+                        <th class="col-md-1 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'profile' user_id=u.id %}">{{ u.username }}</a>
+                        </td>
+                        <td>{{ u.role.name }}</td>
+                        <td class="text-center">{{ u.folders_count }}</td>
+                        <td class="text-center">{{ u.notepads_count }}</td>
+                        <td class="text-center">{{ u.notes_count }}</td>
+                        <td class="text-center">{{ u.last_login|date:'d b Y' }}</td>
+                        <td class="text-center">{{ u.created|date:'d b Y' }}</td>
+                        <td class="text-center">
+                            {% if u != user %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-xs btn-default" title="Lock" name="lock">
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </button>
+                                <button type="submit" class="btn btn-xs btn-default" title="Remove" name="lock">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 {% endblock %}
