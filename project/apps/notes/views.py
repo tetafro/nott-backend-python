@@ -1,10 +1,18 @@
 import json
 
-from django.http import JsonResponse
-from django.views.generic import View
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.generic import View
 
 from .models import Folder, Notepad, Note, BadInput
+
+
+@login_required
+def index(request):
+    """Main page"""
+    return render(request, 'notes/index.html')
 
 
 class ApiView(View):
