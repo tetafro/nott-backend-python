@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
-var App = require('../app');
+var App = require('../../app');
 var NotepadsCollection = require('../collections/NotepadsCollection');
 var NotepadView = require('../views/NotepadView');
 

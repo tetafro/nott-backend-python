@@ -1,6 +1,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
-var App = require('../app');
+var App = require('../../app');
 var ModalTemplate = require('../templates/ModalTemplate');
 
 module.exports = Backbone.View.extend({

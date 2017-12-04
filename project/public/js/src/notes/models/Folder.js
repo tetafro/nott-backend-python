@@ -1,5 +1,5 @@
 var Backbone = require('backbone');
-var App = require('../app');
+var App = require('../../app');
 
 module.exports = Backbone.Model.extend({
     defaults: {

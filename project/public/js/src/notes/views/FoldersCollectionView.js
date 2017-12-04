@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
-var App = require('../app');
+var App = require('../../app');
 var FoldersCollection = require('../collections/FoldersCollection');
 var FolderView = require('../views/FolderView');
 

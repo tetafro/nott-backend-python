@@ -1,32 +1,31 @@
 var _ = require('underscore');
+var $ = require('jquery');
 var Backbone = require('backbone');
-var App = require('../app');
-var Notepad = require('../models/Notepad');
-var NotesCollection = require('../collections/NotesCollection');
-var NotesCollectionView = require('../views/NotesCollectionView');
+var App = require('../../app');
+var Folder = require('../models/Folder');
 var ModalView = require('../views/ModalView');
-var NotepadTemplate = require('../templates/NotepadTemplate');
+var FolderTemplate = require('../templates/FolderTemplate');
 
 module.exports = Backbone.View.extend({
-    model: Notepad,
+    model: Folder,
     tagName: 'li',
     attributes: function () {
         return {
-            'data-type': 'notepad',
+            'data-type': 'folder',
             'data-id': this.model.get('id')
         };
     },
-    template: _.template(NotepadTemplate),
+    template: _.template(FolderTemplate),
 
     events: {
-        'click .item': 'open',
+        'click .expand': 'expand',
+        'click .add': 'showModal',
         'click .edit': 'showModal',
         'click .del': 'showModal'
     },
 
     initialize: function () {
         this.listenTo(this.model, 'change:title', this.rename);
-        this.listenTo(this.model, 'change:active', this.onOpen);
         this.listenTo(this.model, 'request', this.onAjaxStart);
         this.listenTo(this.model, 'sync', this.onAjaxComplete);
         this.listenTo(this.model, 'error', this.onError);
@@ -53,14 +52,13 @@ module.exports = Backbone.View.extend({
         this.remove();
     },
 
-    // Open notepad
-    open: function () {
-        this.model.open();
-    },
-
-    // Change view when element activated/deactivated
-    onOpen: function () {
-        this.$el.toggleClass('active');
+    // Open folder: show subfolder and change icon
+    expand: function (event) {
+        event.stopPropagation();
+        this.$('> ul').collapse('toggle');
+        this.$('> div > a > i')
+            .toggleClass('glyphicon-folder-open')
+            .toggleClass('glyphicon-folder-close');
     },
 
     // Modal window with details for CRUD operation
@@ -69,7 +67,13 @@ module.exports = Backbone.View.extend({
         // is propagating to all parents. It shouldn't happen.
         event.stopPropagation();
 
-        if ($(event.currentTarget).hasClass('edit')) {
+        if ($(event.currentTarget).hasClass('add')) {
+            App.AppView.showModal({
+                action: 'create',
+                parentId: this.model.get('id'),
+                type: 'folder'
+            });
+        } else if ($(event.currentTarget).hasClass('edit')) {
             App.AppView.showModal({
                 model: this.model,
                 action: 'edit'

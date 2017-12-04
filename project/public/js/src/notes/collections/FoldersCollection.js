@@ -1,5 +1,5 @@
 var Backbone = require('backbone');
-var App = require('../app');
+var App = require('../../app');
 var Folder = require('../models/Folder');
 
 module.exports = Backbone.Collection.extend({

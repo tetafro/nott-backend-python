@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
-var App = require('../app');
+var App = require('../../app');
 var Note = require('../models/Note');
 
 module.exports = Backbone.Collection.extend({
