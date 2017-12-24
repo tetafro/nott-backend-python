@@ -1,0 +1,27 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="goto navbar-brand" href="/"><i class="glyphicon glyphicon-home"></i></a>
+        </div>
+
+        <!-- Left -->
+        <ul class="nav navbar-nav">
+            <li><a class="goto" href="/">Notes</a></li>
+            <li><a class="goto" href="/users/me">Profile</a></li>
+            <li><a class="goto" href="/admin">Admin</a></li>
+        </ul>
+
+        <!-- Right -->
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <form action="/logout" method="post">
+                    <button role="button" type="submit" class="btn btn-link logout">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div id="content" class="row"></div>
+</div>

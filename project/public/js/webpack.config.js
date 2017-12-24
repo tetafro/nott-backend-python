@@ -2,7 +2,7 @@ var webpack = require("webpack");
 
 module.exports = {
   context: __dirname,
-  entry: "./src/main.js",
+  entry: "./src/app.js",
   output: {
     path: __dirname,
     filename: "app.min.js"
