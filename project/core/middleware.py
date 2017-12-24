@@ -1,46 +1,57 @@
 import logging
-import json
 
+from django.contrib.auth import authenticate
 from django.shortcuts import render
-from django.http import HttpResponse
-
-from .errors import Http400, Http403, Http404, Http500
 
 
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
+class DisableCSRFForAPI(object):
+    """Disable CSRF for URLs that starts with /api/"""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.get_full_path()[:4] == '/api':
+            setattr(request, '_dont_enforce_csrf_checks', True)
+        response = self.get_response(request)
+        return response
 
 
-class HttpErrorsMiddleware(object):
+def get_token(request):
+    """Get token from HTTP header"""
+
+    if 'HTTP_AUTHORIZATION' in request.META:
+        full_auth = request.META['HTTP_AUTHORIZATION'].split(' ')
+        if len(full_auth) < 2 or full_auth[0] != 'Token':
+            return None
+
+        auth = full_auth[1].split('=')
+        if len(auth) < 2 or auth[0] != 'token':
+            return None
+        token = auth[1].strip('"')
+        return token
+    return None
+
+
+class AuthAPI(object):
     """
-    Catch exceptions and display custom error page
-    """
-    def process_exception(self, request, exception):
-        if isinstance(exception, Http400):
-            logger.exception('Bad request error: '+str(exception))
-            return render(request, '400.html', status=400)
-        elif isinstance(exception, Http403):
-            logger.exception('Forbidden error: '+str(exception))
-            return render(request, '403.html', status=403)
-        elif isinstance(exception, Http404):
-            logger.exception('Forbidden error: ' + str(exception))
-            return render(request, '404.html', status=404)
-        elif isinstance(exception, Http500):
-            logger.exception('Internal server error: '+str(exception))
-            return render(request, '500.html', status=500)
-        else:
-            logger.exception('Unexpected exception: '+str(exception))
-            return render(request, '500.html', status=500)
-
-
-def csrf_failure(request, reason=''):
-    """
-    Custom error for missing CSRF token
-    NOTE: Django security logs this
+    Add user to request var for API calls
+    Header format (RFC2617):
+    Authorization: Token token="abcd1234"
     """
 
-    if request.get_full_path()[:5] == '/ajax':
-        response = {'error': 'Please refresh the page'}
-        return HttpResponse(json.dumps(response), status=400)
-    else:
-        return render(request, '500.html', status=500)
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.get_full_path()[:4] != '/api':
+            return self.get_response(request)
+
+        token = get_token(request)
+        if token:
+            user = authenticate(token=token)
+            if user and user.is_active:
+                user.backend = 'core.backends.TokenBackend'
+                request.user = user
+
+        return self.get_response(request)

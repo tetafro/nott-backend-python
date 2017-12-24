@@ -33,12 +33,13 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'widget_tweaks',
     'apps.admin',
+    'apps.base',
     'apps.health',
     'apps.notes',
     'apps.users',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -47,8 +48,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'core.middleware.HttpErrorsMiddleware',
+    'core.middleware.DisableCSRFForAPI',
+    'core.middleware.AuthAPI',
 )
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'core.backends.TokenBackend',
+]
 
 DB_USER = os.environ.get('POSTGRES_USER')
 DB_PASS = os.environ.get('POSTGRES_PASSWORD')
@@ -73,9 +80,6 @@ AUTH_USER_MODEL = 'users.User'
 # Auth URLs
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = ''
-
-# View function to handle CSRF failures
-CSRF_FAILURE_VIEW = 'core.middleware.csrf_failure'
 
 TEMPLATES = [
     {
