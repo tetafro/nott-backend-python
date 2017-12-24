@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+    <title>Nott</title>
+    {% load staticfiles %}
+    {% if DEBUG %}
+        <link rel="shortcut icon" href="{% static 'images/favicon-dev.png' %}">
+    {% else %}
+        <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
+    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/code-syntax.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/editor.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/users.css' %}">
+</head>
+<body>
+    <div id="app"></app>
+    <script src="{% static 'js/app.min.js' %}"></script>
+</body>
+</html>
