@@ -1,6 +1,0 @@
-module.exports = `
-    <a href="#tab-<%= id %>" role="tab" data-toggle="tab">
-        <span><%= title %></span>
-        <div class="tab-close">&times;</div>
-    </a>
-`;
