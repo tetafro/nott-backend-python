@@ -50,6 +50,14 @@ App = {
         }
 
         return this;
+    },
+
+    getToken: function () {
+        return window.localStorage.getItem('token');
+    },
+
+    setToken: function (token) {
+        window.localStorage.setItem('token', token);
     }
 };
 
