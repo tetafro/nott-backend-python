@@ -12,6 +12,9 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function () {
+        // Listen to any routing event across the app
+        this.listenTo(window.App.Router, 'route', this.onGoto);
+
         this.render();
     },
 
@@ -19,17 +22,26 @@ module.exports = Backbone.View.extend({
         event.preventDefault();
         var href = event.currentTarget.getAttribute("href");
         Backbone.history.navigate(href, true);
+    },
 
+    // Fire at any navigate() and highlight current section in navbar
+    onGoto: function (target) {
         this.$('.nav.navbar-nav li').removeClass('active');
-        var $li = $(event.currentTarget).parent();
-        if ($li.parent().hasClass('navbar-nav')) {
-            $li.addClass('active');
-        } else {
-            // Click on home link
-            this.$('.nav.navbar-nav a[href="/"]')
-                .parent()
-                .addClass('active');
+        var $a;
+        switch (target) {
+            case 'notes':
+                $a = $('nav.navbar li a[href="/"]');
+                break;
+            case 'profile':
+                $a = $('nav.navbar li a[href="/users/me"]');
+                break;
+            case 'admin':
+                $a = $('nav.navbar li a[href="/admin"]');
+                break;
+            default:
+                return;
         }
+        $a.parent().addClass('active');
     },
 
     render: function () {
