@@ -1,24 +1,24 @@
 var $ = require('jquery');
-var Bootstrap = require('bootstrap');
+require('bootstrap');
 var Backbone = require('backbone');
+require('backbone-route-filter');
 var Config = require('./config');
 var Router = require('./router');
 var BaseView = require('./base/views/Base');
 
+USER = {username: 'Bob'};
+
 App = {
+    currentUser: null,
+    collections: {},
+    views: {},
+    router: {},
+
     init: function () {
-        // Set token for all Backbone's requests
-        var oldSync = Backbone.sync;
-        Backbone.sync = function (method, model, options) {
-            options.beforeSend = function (xhr) {
-                var token = window.localStorage.getItem('token');
-                xhr.setRequestHeader(
-                    'Authorization',
-                    'Token token="' + token + '"'
-                );
-            };
-            return oldSync(method, model, options);
-        };
+        var token = this.getToken();
+        if (token != null) {
+            this.setAuthHeader(token);
+        }
 
         // Set timeout for all AJAX requests
         $.ajaxSetup({timeout: 5000});
@@ -31,23 +31,17 @@ App = {
             }
         });
 
-        // Init routing system
-        this.Router = new Router();
+        // Fetch user if token is not empty
+        var token = window.localStorage.getItem('token');
+        if (token != null) {
+            window.App.currentUser = USER;
+        }
 
         // Render app frame
-        new BaseView();
+        this.views.base = new BaseView(this);
 
-        // Init router
-        // NOTE: you cannot do it inside Router.initialize() because it
-        // needs BaseView to be rendered first, and BaseView needs Router
-        // to be created to start listening to it's events.
-        Backbone.history.start({pushState: true});
-
-        // Redirect to login if there is no token
-        var token = window.localStorage.getItem('token');
-        if (token == '') {
-            Backbone.history.navigate(href, true);
-        }
+        // Init routing system
+        this.router = new Router();
 
         return this;
     },
@@ -58,6 +52,51 @@ App = {
 
     setToken: function (token) {
         window.localStorage.setItem('token', token);
+    },
+
+    removeToken: function () {
+        window.localStorage.removeItem('token');
+    },
+
+    isAuthenticated: function () {
+        return this.currentUser != null;
+    },
+
+    // Set token for all Backbone's requests
+    setAuthHeader: function (token) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader(
+                    'Authorization',
+                    'Token token="' + token + '"'
+                );
+            }
+        });
+    },
+
+    // Unset token for Backbone's requests
+    unsetAuthHeader: function () {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {}
+        });
+    },
+
+    login: function (token) {
+        this.currentUser = USER;
+        this.setToken(token);
+        this.setAuthHeader(token);
+
+        // Rerender frame to show navigation
+        window.App.views.base.render();
+    },
+
+    logout: function () {
+        this.currentUser = null;
+        this.removeToken();
+        this.unsetAuthHeader();
+
+        // Rerender frame to hide navigation
+        window.App.views.base.render();
     }
 };
 

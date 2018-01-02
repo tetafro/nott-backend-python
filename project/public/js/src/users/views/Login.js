@@ -21,10 +21,6 @@ module.exports = Backbone.View.extend({
         this.render();
     },
 
-    test: function () {
-        console.log('YEP')
-    },
-
     goto: function (event) {
         event.preventDefault();
         var href = event.currentTarget.getAttribute("href");
@@ -99,8 +95,8 @@ module.exports = Backbone.View.extend({
                     return;
                 }
 
-                window.App.setToken(response.token);
-                Backbone.history.navigate(Config.urls.pages.notes, true);
+                window.App.login(response.token);
+                Backbone.history.navigate('/', true);
             },
             error: function (response) {
                 var data = response.responseJSON;

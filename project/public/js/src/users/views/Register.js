@@ -50,19 +50,19 @@ module.exports = Backbone.View.extend({
 
         var hasErrors = false;
         if ($username.val() == '') {
-            this.addError($username, 'Username cannot be empty');
+            this.addError('Username cannot be empty', $username);
             hasErrors = true;
         }
         if ($email.val() == '') {
-            this.addError($email, 'Email cannot be empty');
+            this.addError('Email cannot be empty', $email);
             hasErrors = true;
         }
         if ($password1.val() == '') {
-            this.addError($password1, 'Password cannot be empty');
+            this.addError('Password cannot be empty', $password1);
             hasErrors = true;
         }
         if ($password1.val() != $password2.val()) {
-            this.addError($password2, 'Passwords do not match');
+            this.addError('Passwords do not match', $password2);
             hasErrors = true;
         }
         return hasErrors;
@@ -109,8 +109,8 @@ module.exports = Backbone.View.extend({
                     return;
                 }
 
-                window.App.setToken(response.token);
-                Backbone.history.navigate(Config.urls.pages.notes, true);
+                window.App.login(response.token);
+                Backbone.history.navigate('/', true);
             },
             error: function (response) {
                 var data = response.responseJSON;

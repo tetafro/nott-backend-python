@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var $ = require('jquery');
 var Backbone = require('backbone');
+var Config = require('../../config');
 var BaseTemplate = require('raw-loader!../templates/Base.html');
 
 module.exports = Backbone.View.extend({
@@ -9,12 +10,10 @@ module.exports = Backbone.View.extend({
 
     events: {
         'click a.goto': 'goto',
+        'click .logout': 'logout'
     },
 
-    initialize: function () {
-        // Listen to any routing event across the app
-        this.listenTo(window.App.Router, 'route', this.onGoto);
-
+    initialize: function (router) {
         this.render();
     },
 
@@ -25,14 +24,15 @@ module.exports = Backbone.View.extend({
     },
 
     // Fire at any navigate() and highlight current section in navbar
-    onGoto: function (target) {
+    nav: function (href) {
         this.$('.nav.navbar-nav li').removeClass('active');
         var $a;
-        switch (target) {
+        switch (href) {
+            case '':
             case 'notes':
                 $a = $('nav.navbar li a[href="/"]');
                 break;
-            case 'profile':
+            case 'users/me':
                 $a = $('nav.navbar li a[href="/users/me"]');
                 break;
             case 'admin':
@@ -44,8 +44,22 @@ module.exports = Backbone.View.extend({
         $a.parent().addClass('active');
     },
 
+    logout: function () {
+        $.ajax({
+            url: Config.urls.api.logout,
+            contentType: 'application/json',
+            dataType: 'json',
+            type: 'POST',
+            data: '{}',
+            complete: function (response) {
+                window.App.logout();
+                Backbone.history.navigate(Config.urls.pages.login, true);
+            }
+        });
+    },
+
     render: function () {
-        this.$el.html(this.template());
+        this.$el.html(this.template({user: window.App.currentUser}));
 
         // Make current page active in navbar
         var path = window.location.pathname;

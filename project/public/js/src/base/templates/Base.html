@@ -1,5 +1,6 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
+        <% if (user != null) { %>
         <div class="navbar-header">
             <a class="goto navbar-brand" href="/"><i class="glyphicon glyphicon-home"></i></a>
         </div>
@@ -13,12 +14,9 @@
 
         <!-- Right -->
         <ul class="nav navbar-nav navbar-right">
-            <li>
-                <form action="/logout" method="post">
-                    <button role="button" type="submit" class="btn btn-link logout">Logout</button>
-                </form>
-            </li>
+            <li class="logout"><span>Logout</span></li>
         </ul>
+        <% } %>
     </div>
 </nav>
 

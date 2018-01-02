@@ -16,6 +16,47 @@ module.exports = Backbone.Router.extend({
         'users/:id': 'profile'
     },
 
+    initialize: function () {
+        Backbone.history.start({pushState: true});
+    },
+
+    // Filters for URL to be applied before routing
+    before: {
+        'login': 'redirectIfAuthenticated',
+        'register': 'redirectIfAuthenticated',
+        '': 'redirectItNotAuthenticated',
+        'notes': 'redirectItNotAuthenticated',
+        'admin': 'redirectItNotAuthenticated',
+        'users(/:id)': 'redirectItNotAuthenticated'
+    },
+
+    // Filters for URL to be applied after routing
+    after: {
+        '*any': function (fragment) {
+            window.App.views.base.nav(fragment);
+        }
+    },
+
+    // Redirect to root if current user is already authenticated
+    redirectIfAuthenticated: function () {
+        if (window.App.isAuthenticated()) {
+            Backbone.history.navigate('/', true);
+            return false;
+        }
+        return true;
+    },
+
+    // Redirect to login if current user is not authenticated
+    redirectItNotAuthenticated: function () {
+        if (!window.App.isAuthenticated()) {
+            Backbone.history.navigate('login', true);
+            return false;
+        }
+        return true;
+    },
+
+    // Handlers
+
     login: function () {
         new LoginView();
     },
