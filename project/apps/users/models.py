@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from django.db import models
@@ -6,6 +7,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
 from django.utils import timezone
 
+from core.api import Serializer
 from .helpers import OverwriteStorage, image_resize
 
 
@@ -13,15 +15,18 @@ ADMIN_ROLE_ID = 1
 USER_ROLE_ID = 2
 
 
-class Role(models.Model):
-    """
-    User roles
-    """
+class Role(models.Model, Serializer):
+    """User roles"""
 
     name = models.CharField(max_length=40, unique=True)
 
+    # Fields to be given to clients
+    dict_fields = ['name']
+
 
 class UserManager(BaseUserManager):
+    """Helper class for managing User objects"""
+
     def create_user(self, username, email, password):
         if not email:
             raise ValueError('Users must have an email address')
@@ -36,10 +41,8 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser):
-    """
-    Custom user model
-    """
+class User(AbstractBaseUser, Serializer):
+    """Custom user model"""
 
     username = models.CharField(max_length=40, unique=True)
     email = models.CharField(max_length=40, unique=True)
@@ -47,6 +50,9 @@ class User(AbstractBaseUser):
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
+
+    # Fields to be given to clients
+    dict_fields = ['id', 'username', 'email', 'role', 'created', 'updated']
 
     USERNAME_FIELD = 'username'
 
@@ -96,3 +102,20 @@ class User(AbstractBaseUser):
 
     def __repr__(self):
         return 'User ID%d Profile' % self.id
+
+
+class Token(models.Model):
+    """Authentication token for user model"""
+
+    # Secret string
+    string = models.CharField(max_length=64, unique=True)
+    # Time to live - number of seconds until token expiration
+    ttl = models.IntegerField(default=3600)
+    user = models.ForeignKey(User, related_name='tokens')
+    created = models.DateTimeField(default=timezone.now)
+
+    @property
+    def is_expired(self):
+        elapsed = datetime.datetime.now() - self.created
+        if elapsed > datetime.timedelta(seconds=self.ttl):
+            return True

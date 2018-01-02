@@ -1,11 +1,13 @@
 from django.conf.urls import url
-from . import views
+
+from core.api import token_required
+from .views import LoginView, RegisterView, LogoutView, UserView
+
 
 urlpatterns = [
-    url(r'^register/?$', views.user_auth, name='register'),
-    url(r'^login$/?', views.user_auth, name='login'),
-    url(r'^logout$/?', views.user_logout, name='logout'),
-    url(r'^users/me/?$', views.profile, {'user_id': 'me'}, name='profile'),
-    url(r'^users/(?P<user_id>\d+)/?$', views.profile, name='profile'),
-    url(r'^users/me/edit/?$', views.profile_edit, name='profile_edit')
+    url(r'^register/?$', RegisterView.as_view(), name='register'),
+    url(r'^login$/?', LoginView.as_view(), name='login'),
+    url(r'^logout$/?', token_required(LogoutView.as_view()), name='logout'),
+    url(r'^users/?$', token_required(UserView.as_view())),
+    url(r'^users/(?P<id>\d+)/?$', token_required(UserView.as_view())),
 ]

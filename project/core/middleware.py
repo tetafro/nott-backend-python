@@ -1,7 +1,6 @@
-import logging
-
 from django.contrib.auth import authenticate
-from django.shortcuts import render
+
+from .api import get_token
 
 
 class DisableCSRFForAPI(object):
@@ -15,22 +14,6 @@ class DisableCSRFForAPI(object):
             setattr(request, '_dont_enforce_csrf_checks', True)
         response = self.get_response(request)
         return response
-
-
-def get_token(request):
-    """Get token from HTTP header"""
-
-    if 'HTTP_AUTHORIZATION' in request.META:
-        full_auth = request.META['HTTP_AUTHORIZATION'].split(' ')
-        if len(full_auth) < 2 or full_auth[0] != 'Token':
-            return None
-
-        auth = full_auth[1].split('=')
-        if len(auth) < 2 or auth[0] != 'token':
-            return None
-        token = auth[1].strip('"')
-        return token
-    return None
 
 
 class AuthAPI(object):

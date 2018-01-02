@@ -1,4 +1,6 @@
 import os
+import random
+import string
 from PIL import Image
 
 from django.core.files.storage import FileSystemStorage
@@ -39,3 +41,12 @@ def image_resize(img_input, img_output, max_size):
     image.save(img_output, format='JPEG')
 
     return image
+
+
+def generate_token():
+    token_length = 64
+    chars = string.ascii_lowercase + \
+            string.ascii_uppercase + \
+            string.digits
+    token = ''.join(random.choice(chars) for each in range(token_length))
+    return token

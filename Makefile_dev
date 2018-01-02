@@ -12,7 +12,7 @@ build:
 		--entrypoint npm \
 		$(webpack_image) \
 		install
-	# # Build images and make containers
+	# Build images and make containers
 	docker-compose -f $(compose_file) build
 	docker-compose -f $(compose_file) create
 	# Prepare database
