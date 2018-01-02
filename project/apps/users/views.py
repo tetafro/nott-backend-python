@@ -40,8 +40,6 @@ class LoginView(View):
 
 class RegisterView(View):
     def post(self, request, *args, **kwargs):
-        return JsonResponse({'token': TEST_TOKEN}, status=200)
-
         try:
             db_setting = Config.objects.get(code='allow_registration')
         except Config.DoesNotExist:
@@ -67,15 +65,33 @@ class RegisterView(View):
                 status=400
             )
 
+        # Create user
         # TODO: validate email format
-        user = User(
-            username=username,
-            email=email,
-            password=password1
-        )
-        user.save()
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password1
+            )
+            user.save()
+        except IntegrityError:
+            return JsonResponse(
+                {'error': 'username or email is already taken'},
+                status=400
+            )
 
-        return JsonResponse({'token': 'test-token'}, status=200)
+        # Sign in created user
+        try:
+            token = Token.objects.create(
+                string=generate_token(),
+                user=user
+            )
+            token.save()
+        except (IntegrityError, ValidationError) as e:
+            logging.error('Failed to create token: %s', e)
+            return JsonResponse({}, status=500)
+
+        return JsonResponse({'token': token.string}, status=200)
 
 
 class LogoutView(View):
