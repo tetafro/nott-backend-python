@@ -32,11 +32,8 @@ module.exports = Backbone.View.extend({
             case 'notes':
                 $a = $('nav.navbar li a[href="/"]');
                 break;
-            case 'users/me':
-                $a = $('nav.navbar li a[href="/users/me"]');
-                break;
-            case 'admin':
-                $a = $('nav.navbar li a[href="/admin"]');
+            case 'profile':
+                $a = $('nav.navbar li a[href="/profile"]');
                 break;
             default:
                 return;
@@ -62,11 +59,7 @@ module.exports = Backbone.View.extend({
         this.$el.html(this.template({user: window.App.currentUser}));
 
         // Make current page active in navbar
-        var path = window.location.pathname;
-        if (path.startsWith("/users/")) {
-            path = '/users/me';
-        }
-        this.$('nav.navbar li a[href="' + path + '"]')
+        this.$('nav.navbar li a[href="' + window.location.pathname + '"]')
             .parent()
             .addClass('active');
     }

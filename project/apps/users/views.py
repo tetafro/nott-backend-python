@@ -16,6 +16,8 @@ from .helpers import generate_token
 
 
 class LoginView(View):
+    """Process login requests"""
+
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
         username = bleach.clean(data.get('username'))
@@ -39,6 +41,8 @@ class LoginView(View):
 
 
 class RegisterView(View):
+    """Process registration requests"""
+
     def post(self, request, *args, **kwargs):
         try:
             db_setting = Config.objects.get(code='allow_registration')
@@ -95,6 +99,8 @@ class RegisterView(View):
 
 
 class LogoutView(View):
+    """Process logout requests"""
+
     def post(self, request, *args, **kwargs):
         token = get_token(request)
         print(token)
@@ -106,6 +112,8 @@ class LogoutView(View):
 
 
 class UserView(ApiView):
+    """Full CRUD for User model"""
+
     def list(self, request, *args, **kwargs):
         users = User.objects.\
             annotate(folders_count=Count(
@@ -126,7 +134,6 @@ class UserView(ApiView):
 
     def get(self, request, *args, **kwargs):
         user_id = kwargs.get('id')
-
         try:
             # Get user's stats
             user = User.objects.\
@@ -176,4 +183,12 @@ class UserView(ApiView):
         # TODO: Update user
 
         response = user.to_dict()
+        return JsonResponse(response, status=200)
+
+
+class ProfileView(View):
+    """Return current user profile"""
+
+    def get(self, request, *args, **kwargs):
+        response = request.user.to_dict()
         return JsonResponse(response, status=200)

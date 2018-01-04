@@ -52,7 +52,8 @@ class User(AbstractBaseUser, Serializer):
     is_active = models.BooleanField(default=True)
 
     # Fields to be given to clients
-    dict_fields = ['id', 'username', 'email', 'role', 'created', 'updated']
+    dict_fields = ['id', 'username', 'email', 'avatar_url',
+                   'role', 'created', 'updated']
 
     USERNAME_FIELD = 'username'
 

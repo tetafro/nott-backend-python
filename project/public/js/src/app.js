@@ -4,9 +4,8 @@ var Backbone = require('backbone');
 require('backbone-route-filter');
 var Config = require('./config');
 var Router = require('./router');
+var User = require('./users/models/User');
 var BaseView = require('./base/views/Base');
-
-USER = {username: 'Bob'};
 
 App = {
     currentUser: null,
@@ -34,7 +33,7 @@ App = {
         // Fetch user if token is not empty
         var token = window.localStorage.getItem('token');
         if (token != null) {
-            window.App.currentUser = USER;
+            window.App.currentUser = this.getCurrentUser();
         }
 
         // Render app frame
@@ -81,10 +80,18 @@ App = {
         });
     },
 
+    // Get current user profile from backend
+    getCurrentUser: function () {
+        var that = this;
+        var user = new User({'id': 'me'});
+        user.fetch({async: false});
+        return user;
+    },
+
     login: function (token) {
-        this.currentUser = USER;
         this.setToken(token);
         this.setAuthHeader(token);
+        this.currentUser = this.getCurrentUser();
 
         // Rerender frame to show navigation
         window.App.views.base.render();

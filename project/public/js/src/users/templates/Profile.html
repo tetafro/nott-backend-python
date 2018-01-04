@@ -1,1 +1,40 @@
-<h1 style="margin:100px;">Users <%= id %></h1>
+<div class="content profile">
+    <h1>User: <%= username %></h1>
+
+    <form class="form-horizontal" role="form" action="" method="post" enctype=multipart/form-data>
+        <div class="col-md-2 avatar-block">
+            <img class="avatar" src="<%= avatar_url %>">
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="col-md-4 control-label">Role:</label>
+                <div class="col-md-8">
+                    <p class="form-control-static">
+                        <%= role.name %>
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-4 control-label">E-mail:</label>
+                <div class="col-md-8">
+                    <p class="form-control-static">
+                        <%= email %>
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-4 control-label">Registered:</label>
+                <div class="col-md-8">
+                    <p class="form-control-static">
+                        <%= created %>
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-4">
+                    <a href="/profile/edit" class="btn btn-primary col-md-3">Edit</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

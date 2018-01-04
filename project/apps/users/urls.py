@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from core.api import token_required
-from .views import LoginView, RegisterView, LogoutView, UserView
+from .views import LoginView, RegisterView, LogoutView, UserView, ProfileView
 
 
 urlpatterns = [
@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^logout$/?', token_required(LogoutView.as_view()), name='logout'),
     url(r'^users/?$', token_required(UserView.as_view())),
     url(r'^users/(?P<id>\d+)/?$', token_required(UserView.as_view())),
+    url(r'^users/me/?$', token_required(ProfileView.as_view())),
 ]
