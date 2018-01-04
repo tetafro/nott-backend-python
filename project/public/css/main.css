@@ -25,12 +25,11 @@ body {
 }
 
 .navbar-nav .logout {
-    padding: 15px;
+    padding: 13px;
 }
 
 .navbar-nav .logout:hover {
-    color: #fff;
-    cursor: pointer;
+    text-decoration: none;
 }
 
 /* Overlay objects */

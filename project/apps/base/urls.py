@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^register/?$', index, name='index'),
     url(r'^logout/?$', index, name='index'),
     url(r'^profile/?$', index, name='index'),
+    url(r'^profile/edit/?$', index, name='index'),
 ]

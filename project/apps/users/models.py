@@ -1,10 +1,10 @@
 import datetime
 import os
 
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.exceptions import ValidationError
+from django.db import models, IntegrityError
 from django.utils import timezone
 
 from core.api import Serializer
@@ -13,6 +13,11 @@ from .helpers import OverwriteStorage, image_resize
 
 ADMIN_ROLE_ID = 1
 USER_ROLE_ID = 2
+
+
+class BadInput(Exception):
+    """Used when model is saving to indicate problems with it's fields"""
+    pass
 
 
 class Role(models.Model, Serializer):
@@ -95,11 +100,22 @@ class User(AbstractBaseUser, Serializer):
         return avatar
 
     def save(self, *args, **kwargs):
-        # Resize uploaded file
+        """Resize uploaded file on save"""
         if self.avatar:
             avatar_file = os.path.join(settings.AVATARS_ROOT, str(self.avatar))
             image_resize(avatar_file, avatar_file, 180)
         super().save(*args, **kwargs)
+
+    def full_save(self):
+        """Validate before saving"""
+        try:
+            self.full_clean()
+        except ValidationError as e:
+            raise BadInput(', '.join(e.messages))
+        try:
+            self.save()
+        except IntegrityError:
+            raise BadInput('Failed to save the object')
 
     def __repr__(self):
         return 'User ID%d Profile' % self.id

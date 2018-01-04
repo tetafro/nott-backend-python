@@ -4,13 +4,15 @@ var LoginView = require('./users/views/Login');
 var RegisterView = require('./users/views/Register');
 var NotesView = require('./notes/views/Page');
 var ProfileView = require('./users/views/Profile');
+var ProfileEditView = require('./users/views/ProfileEdit');
 
 module.exports = Backbone.Router.extend({
     routes: {
         'login': 'login',
         'register': 'register',
         '': 'notes',
-        'profile': 'profile'
+        'profile': 'profile',
+        'profile/edit': 'editProfile'
     },
 
     initialize: function () {
@@ -23,7 +25,8 @@ module.exports = Backbone.Router.extend({
         'register': 'redirectIfAuthenticated',
         '': 'redirectItNotAuthenticated',
         'notes': 'redirectItNotAuthenticated',
-        'profile': 'redirectItNotAuthenticated'
+        'profile': 'redirectItNotAuthenticated',
+        'profile/edit': 'redirectItNotAuthenticated'
     },
 
     // Filters for URL to be applied after routing
@@ -67,5 +70,9 @@ module.exports = Backbone.Router.extend({
 
     profile: function (id) {
         new ProfileView(id);
+    },
+
+    editProfile: function (id) {
+        new ProfileEditView(id);
     }
 });

@@ -8,15 +8,6 @@ class ApiView(View):
     provided for the GET-method
     """
 
-    # Model's fields that cannot be changed by the clients
-    readonly_fields = []
-
-    def clear_input(self, data):
-        """Remove readonly fields from client's input"""
-        for field in self.readonly_fields:
-            if field in data:
-                del data[field]
-
     def dispatch(self, request, *args, **kwargs):
         method = request.method.lower()
 

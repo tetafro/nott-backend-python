@@ -11,7 +11,7 @@ from django.views.generic import View
 
 from core.api import ApiView, get_token
 from apps.admin.models import Config
-from .models import User, Token
+from .models import BadInput, User, Token
 from .helpers import generate_token
 
 
@@ -108,11 +108,13 @@ class LogoutView(View):
             Token.objects.get(string=token).delete()
             return JsonResponse({}, status=200)
         except Token.DoesNotExist:
-            return JsonResponse({'error': 'Invalid token'}, status=400)
+            return JsonResponse({'error': 'invalid token'}, status=400)
 
 
 class UserView(ApiView):
     """Full CRUD for User model"""
+
+    editable_fields = ['email']
 
     def list(self, request, *args, **kwargs):
         users = User.objects.\
@@ -160,27 +162,27 @@ class UserView(ApiView):
     def put(self, request, *args, **kwargs):
         user_id = kwargs.get('id')
 
+        # User can modify only his own profile
+        if user_id != str(request.user.id):
+            return JsonResponse({'error': 'forbidden'}, status=403)
+
         try:
-            # Get user's stats
-            user = User.objects.\
-                annotate(folders_count=Count(
-                    'folders',
-                    distinct=True
-                )).\
-                annotate(notepads_count=Count(
-                    'folders__notepads',
-                    distinct=True
-                )).\
-                annotate(notes_count=Count(
-                    'folders__notepads__notes',
-                    distinct=True
-                )).\
-                get(id=user_id)
+            user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             response = {'error': 'Object not found'}
             return JsonResponse(response, status=404)
 
-        # TODO: Update user
+        data = json.loads(request.body.decode('utf-8'))
+
+        for (key, value) in data.items():
+            if key in self.editable_fields:
+                setattr(user, key, value)
+
+        try:
+            user.full_save()
+        except BadInput as e:
+            response = {'error': str(e)}
+            return JsonResponse(response, status=400)
 
         response = user.to_dict()
         return JsonResponse(response, status=200)

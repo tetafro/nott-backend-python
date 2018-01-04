@@ -10,7 +10,7 @@ module.exports = Backbone.View.extend({
 
     events: {
         'click a.goto': 'goto',
-        'click .logout': 'logout'
+        'click button.logout': 'logout'
     },
 
     initialize: function (router) {
@@ -33,6 +33,7 @@ module.exports = Backbone.View.extend({
                 $a = $('nav.navbar li a[href="/"]');
                 break;
             case 'profile':
+            case 'profile/edit':
                 $a = $('nav.navbar li a[href="/profile"]');
                 break;
             default:
@@ -42,6 +43,7 @@ module.exports = Backbone.View.extend({
     },
 
     logout: function () {
+        event.preventDefault();
         $.ajax({
             url: Config.urls.api.logout,
             contentType: 'application/json',
@@ -57,10 +59,5 @@ module.exports = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template({user: window.App.currentUser}));
-
-        // Make current page active in navbar
-        this.$('nav.navbar li a[href="' + window.location.pathname + '"]')
-            .parent()
-            .addClass('active');
     }
 });
