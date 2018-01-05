@@ -1,57 +1,36 @@
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
-from django.core.exceptions import ValidationError
-from django.db import models, IntegrityError
-from django.db.models import Count
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.generic import View
 
-from core.errors import Http400
-from apps.users.models import User
-from .models import Config
+from core.api import ApiView
+from .models import Setting
 
 
-@user_passes_test(lambda u: u.is_authenticated() and u.is_admin)
-def adminpanel(request):
-    """Main page of admin panel"""
+class VersionView(View):
+    @method_decorator(user_passes_test(lambda u: u.is_admin))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
-    configs = Config.objects.all()
-    users = User.objects.\
-        annotate(folders_count=Count(
-            'folders',
-            distinct=True
-        )).\
-        annotate(notepads_count=Count(
-            'folders__notepads',
-            distinct=True
-        )).\
-        annotate(notes_count=Count(
-            'folders__notepads__notes',
-            distinct=True
-        )).\
-        all()
+    def get(self, request, *args, **kwargs):
+        response = {'version': settings.VERSION}
+        return JsonResponse(response, status=200)
 
-    if request.method == 'POST':
-        for field, value in request.POST.items():
-            if field == 'csrfmiddlewaretoken':
-                continue
 
-            try:
-                config = Config.objects.get(code=field)
-            except Config.DoesNotExist:
-                raise Http400
-            config.value = value
-            try:
-                config.full_clean()
-            except ValidationError as e:
-                raise Http400
-            try:
-                config.save()
-            except IntegrityError:
-                raise Http400
+class SettingView(ApiView):
+    def list(self, request, *args, **kwargs):
+        sets = Setting.objects.all()
+        response = {'settings': [s.to_dict() for s in sets]}
+        return JsonResponse(response)
 
-    context = {
-        'users': users,
-        'configs': configs,
-        'version': settings.VERSION
-    }
-    return render(request, 'admin/adminpanel.html', context)
+    def get(self, request, *args, **kwargs):
+        setting_id = kwargs.get('id')
+        try:
+            setting = Setting.objects.get(id=setting_id)
+        except Setting.DoesNotExist:
+            response = {'error': 'object not found'}
+            return JsonResponse(response, status=404)
+
+        response = setting.to_dict()
+        return JsonResponse(response, status=200)

@@ -1,10 +1,13 @@
 from django.db import models
 
+from core.api import Serializer
 
-class Config(models.Model):
-    """
-    Application-wide settings that can be set by admins
-    """
+
+class Setting(models.Model, Serializer):
+    """Application-wide settings"""
+
+    # Fields to be given to clients
+    dict_fields = ['id', 'code', 'name', 'datatype', 'value']
 
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=80)

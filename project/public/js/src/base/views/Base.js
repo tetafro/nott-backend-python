@@ -13,7 +13,7 @@ module.exports = Backbone.View.extend({
         'click button.logout': 'logout'
     },
 
-    initialize: function (router) {
+    initialize: function () {
         this.render();
     },
 
@@ -35,6 +35,9 @@ module.exports = Backbone.View.extend({
             case 'profile':
             case 'profile/edit':
                 $a = $('nav.navbar li a[href="/profile"]');
+                break;
+            case 'admin':
+                $a = $('nav.navbar li a[href="/admin"]');
                 break;
             default:
                 return;

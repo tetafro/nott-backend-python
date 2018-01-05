@@ -1,6 +1,8 @@
 module.exports = {
     urls: {
         api: {
+            version: '/api/v1/version',
+            settings: '/api/v1/settings',
             login: '/api/v1/login',
             logout: '/api/v1/logout',
             register: '/api/v1/register',

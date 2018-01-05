@@ -41,10 +41,32 @@ def token_required(func):
     """login_requred analog for API"""
 
     def wrap(request, *args, **kwargs):
-        error401 = JsonResponse({'error': 'Unauthorized'}, status=401)
+        error401 = JsonResponse({'error': 'unauthorized'}, status=401)
         if 'HTTP_AUTHORIZATION' in request.META:
             if request.user is None or not request.user.is_active:
                 return error401
+            else:
+                return func(request, *args, **kwargs)
+        else:
+            return error401
+
+    return wrap
+
+
+def admin_required(func):
+    """
+    Analog of the following code for API:
+    user_passes_test(lambda u: u.is_admin)
+    """
+
+    def wrap(request, *args, **kwargs):
+        error401 = JsonResponse({'error': 'unauthorized'}, status=401)
+        error403 = JsonResponse({'error': 'forbidden'}, status=403)
+        if 'HTTP_AUTHORIZATION' in request.META:
+            if (request.user is None or not request.user.is_active):
+                return error401
+            elif not request.user.is_admin:
+                return error403
             else:
                 return func(request, *args, **kwargs)
         else:

@@ -1,0 +1,13 @@
+<td><%= username %></td>
+<td><%= role.name %></td>
+<td class="text-center"><%= created.toLocaleString() %></td>
+<td class="text-center">
+    <form method="POST">
+        <button type="submit" class="btn btn-xs btn-default" title="Lock" name="lock">
+            <i class="glyphicon glyphicon-lock"></i>
+        </button>
+        <button type="submit" class="btn btn-xs btn-default" title="Remove" name="lock">
+            <i class="glyphicon glyphicon-remove"></i>
+        </button>
+    </form>
+</td>

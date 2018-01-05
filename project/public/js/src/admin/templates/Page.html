@@ -1,1 +1,24 @@
-<h1 style="margin:100px;">Admin</h1>
+<div class="page admin">
+    <h1>Admin panel</h1>
+    <ul class="nav nav-pills">
+        <li class="active">
+            <a data-toggle="pill" href="#tab-info">Info</a>
+        </li>
+        <li>
+            <a data-toggle="pill" href="#tab-settings">Settings</a>
+        </li>
+        <li>
+            <a data-toggle="pill" href="#tab-users">Users</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" id="tab-info" class="tab-pane active">
+            <h3>Version</h3>
+            <p><%= version %></p>
+        </div>
+
+        <div role="tabpanel" id="tab-settings" class="tab-pane"></div>
+
+        <div role="tabpanel" id="tab-users" class="tab-pane"></div>
+    </div>
+</div>

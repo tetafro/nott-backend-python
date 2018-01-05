@@ -57,10 +57,6 @@ App = {
         window.localStorage.removeItem('token');
     },
 
-    isAuthenticated: function () {
-        return this.currentUser != null;
-    },
-
     // Set token for all Backbone's requests
     setAuthHeader: function (token) {
         $.ajaxSetup({

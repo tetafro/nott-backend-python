@@ -9,6 +9,9 @@
         <ul class="nav navbar-nav">
             <li><a class="goto" href="/">Notes</a></li>
             <li><a class="goto" href="/profile">Profile</a></li>
+            <% if (user.get('role').name == 'admin') { %>
+            <li><a class="goto" href="/admin">Admin</a></li>
+            <% } %>
         </ul>
 
         <!-- Right -->
