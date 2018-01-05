@@ -5,6 +5,8 @@ var RegisterView = require('./users/views/Register');
 var NotesView = require('./notes/views/Page');
 var ProfileView = require('./users/views/Profile');
 var ProfileEditView = require('./users/views/ProfileEdit');
+var AdminView = require('./admin/views/Page');
+var ErrorView = require('./base/views/Error');
 
 module.exports = Backbone.Router.extend({
     routes: {
@@ -12,7 +14,9 @@ module.exports = Backbone.Router.extend({
         'register': 'register',
         '': 'notes',
         'profile': 'profile',
-        'profile/edit': 'editProfile'
+        'profile/edit': 'editProfile',
+        'admin': 'admin',
+        '*any': 'default'
     },
 
     initialize: function () {
@@ -26,7 +30,8 @@ module.exports = Backbone.Router.extend({
         '': 'redirectItNotAuthenticated',
         'notes': 'redirectItNotAuthenticated',
         'profile': 'redirectItNotAuthenticated',
-        'profile/edit': 'redirectItNotAuthenticated'
+        'profile/edit': 'redirectItNotAuthenticated',
+        'admin': 'redirectItNotAdmin'
     },
 
     // Filters for URL to be applied after routing
@@ -38,7 +43,7 @@ module.exports = Backbone.Router.extend({
 
     // Redirect to root if current user is already authenticated
     redirectIfAuthenticated: function () {
-        if (window.App.isAuthenticated()) {
+        if (window.App.currentUser != null) {
             Backbone.history.navigate('/', true);
             return false;
         }
@@ -47,8 +52,18 @@ module.exports = Backbone.Router.extend({
 
     // Redirect to login if current user is not authenticated
     redirectItNotAuthenticated: function () {
-        if (!window.App.isAuthenticated()) {
+        if (window.App.currentUser == null) {
             Backbone.history.navigate('login', true);
+            return false;
+        }
+        return true;
+    },
+
+    // Redirect to root if current user is not admin
+    redirectItNotAdmin: function () {
+        var role = window.App.currentUser.get('role').name;
+        if (role != 'admin') {
+            Backbone.history.navigate('/', true);
             return false;
         }
         return true;
@@ -74,5 +89,13 @@ module.exports = Backbone.Router.extend({
 
     editProfile: function (id) {
         new ProfileEditView(id);
+    },
+
+    admin: function () {
+        new AdminView();
+    },
+
+    default: function () {
+        new ErrorView('Page not found');
     }
 });
