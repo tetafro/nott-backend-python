@@ -1,56 +1,25 @@
 import json
 
-from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.views.generic import View
+
+from core.api import ApiView
 
 from .models import Folder, Notepad, Note, BadInput
 
 
-@login_required
-def index(request):
-    """Main page"""
-    return render(request, 'notes/index.html')
-
-
-class ApiView(View):
-    """
-    Add list method for dispatcher when id is not
-    provided for the GET-method
-    """
-
-    # Model's fields that cannot be changed by the clients
-    readonly_fields = []
-
-    def clear_input(self, data):
-        """Remove readonly fields from client's input"""
-        for field in self.readonly_fields:
-            if field in data:
-                del data[field]
-
-    def dispatch(self, request, *args, **kwargs):
-        method = request.method.lower()
-
-        if method == 'get' and 'id' not in self.kwargs:
-            handler = getattr(self, 'list', self.http_method_not_allowed)
-        elif method in self.http_method_names:
-            handler = getattr(self, method, self.http_method_not_allowed)
-        else:
-            handler = self.http_method_not_allowed
-
-        return handler(request, *args, **kwargs)
-
-
 class FolderView(ApiView):
-    """Full CRUD for Folders"""
+    """Full CRUD for Folder model"""
 
-    readonly_fields = ['id', 'html', 'created', 'updated']
+    editable_fields = ['title', 'parent_id']
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        self.clear_input(data)
+
+        for key in list(data.keys()):
+            if key not in self.editable_fields:
+                data.pop(key)
 
         folder = Folder(user=request.user, **data)
 
@@ -88,10 +57,10 @@ class FolderView(ApiView):
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
-        self.clear_input(data)
 
         for (key, value) in data.items():
-            setattr(folder, key, value)
+            if key in self.editable_fields:
+                setattr(folder, key, value)
 
         try:
             folder.full_save()
@@ -120,13 +89,16 @@ class FolderView(ApiView):
 
 
 class NotepadView(ApiView):
-    """Full CRUD for Notepads"""
+    """Full CRUD for Notepad model"""
 
-    readonly_fields = ['id', 'created', 'updated']
+    editable_fields = ['title', 'folder_id']
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        self.clear_input(data)
+
+        for key in list(data.keys()):
+            if key not in self.editable_fields:
+                data.pop(key)
 
         error = None
         if not data.get('folder_id'):
@@ -177,10 +149,10 @@ class NotepadView(ApiView):
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
-        self.clear_input(data)
 
         for (key, value) in data.items():
-            setattr(notepad, key, value)
+            if key in self.editable_fields:
+                setattr(notepad, key, value)
 
         try:
             notepad.full_save()
@@ -209,13 +181,16 @@ class NotepadView(ApiView):
 
 
 class NoteView(ApiView):
-    """Full CRUD for Notes"""
+    """Full CRUD for Note model"""
 
-    readonly_fields = ['id', 'html', 'created', 'updated']
+    editable_fields = ['title', 'text', 'notepad_id']
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        self.clear_input(data)
+
+        for key in list(data.keys()):
+            if key not in self.editable_fields:
+                data.pop(key)
 
         error = None
         if not data.get('notepad_id'):
@@ -265,10 +240,10 @@ class NoteView(ApiView):
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
-        self.clear_input(data)
 
         for (key, value) in data.items():
-            setattr(note, key, value)
+            if key in self.editable_fields:
+                setattr(note, key, value)
 
         try:
             note.full_save()

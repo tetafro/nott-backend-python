@@ -42,7 +42,7 @@ body {
 }
 
 /* Flash message */
-#flash-message {
+#popup {
     background-color: #222;
     color: #ddd;
     padding: 10px 15px;
@@ -51,11 +51,11 @@ body {
     -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
 }
 
-#flash-message .header {
+#popup .header {
     font-size: 26px;
 }
 
-#flash-message .message {
+#popup .message {
     font-size: 18px;
 }
 

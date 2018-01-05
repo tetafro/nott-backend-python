@@ -1,31 +1,16 @@
 from markdown2 import markdown
 
-from django.db import models, IntegrityError
 from django.core.exceptions import ValidationError
+from django.db import models, IntegrityError
+from django.utils.html import escape
 
+from core.api import Serializer
 from apps.users.models import User
-
-
-def dump_errors(errors_dict):
-    """Represent validation errors dict as string"""
-    msg = ''
-    for field, errors in errors_dict.items():
-        msg += '; '.join(errors) + '; '
-    return msg[:-2]  # trim last semicolon and space
 
 
 class BadInput(Exception):
     """Used when model is saving to indicate problems with it's fields"""
     pass
-
-
-class Serializer(object):
-    """Abstract class for adding serializing functionality"""
-
-    dict_fields = []
-
-    def to_dict(self):
-        return {f: getattr(self, f) for f in self.dict_fields}
 
 
 class Folder(models.Model, Serializer):
@@ -133,4 +118,10 @@ class Note(models.Model, Serializer):
     @property
     def html(self):
         """Convert text in mardown to HTML"""
-        return markdown(self.text, extras=['fenced-code-blocks', 'tables'])
+        escaped_text = escape(self.text)
+        md = markdown(escaped_text,
+                      extras=['fenced-code-blocks', 'tables'])
+        print(self.text)
+        print(escaped_text)
+        print(md)
+        return md

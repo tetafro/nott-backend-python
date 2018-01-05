@@ -1,4 +1,3 @@
-import bleach
 import json
 import logging
 
@@ -7,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Count
 from django.http import JsonResponse
+from django.utils.html import escape
 from django.views.generic import View
 
 from core.api import ApiView, get_token
@@ -20,15 +20,14 @@ class LoginView(View):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        username = bleach.clean(data.get('username'))
-        password = bleach.clean(data.get('password'))
+        username = data.get('username')
+        password = data.get('password')
 
         user = authenticate(username=username, password=password)
 
         if user is None:
-            return JsonResponse(
-                {'error': 'wrong username or password'}, status=400
-            )
+            response = {'error': 'wrong username or password'}
+            return JsonResponse(response, status=400)
 
         try:
             token = Token.objects.create(string=generate_token(), user=user)
@@ -52,22 +51,26 @@ class RegisterView(View):
             reg_allowed = db_setting.value == 'true'
 
         if not reg_allowed:
-            return JsonResponse(
-                {'error': 'registration is currently disabled'},
-                status=400
-            )
+            response = {'error': 'registration is currently disabled'}
+            return JsonResponse(response, status=400)
 
         data = json.loads(request.body.decode('utf-8'))
-        username = bleach.clean(data.get('username'))
-        email = bleach.clean(data.get('email'))
-        password1 = bleach.clean(data.get('password1'))
-        password2 = bleach.clean(data.get('password2'))
+        username = data.get('username')
+        email = data.get('email')
+        password1 = data.get('password1')
+        password2 = data.get('password2')
+
+        if username != escape(username):
+            response = {'error': 'invalid characters in username'}
+            return JsonResponse(response, status=400)
+
+        if email != escape(email):
+            response = {'error': 'invalid characters in email'}
+            return JsonResponse(response, status=400)
 
         if password1 != password2:
-            return JsonResponse(
-                {'error': 'passwords do not match'},
-                status=400
-            )
+            response = {'error': 'passwords do not match'}
+            return JsonResponse(response, status=400)
 
         # Create user
         # TODO: validate email format
@@ -79,10 +82,8 @@ class RegisterView(View):
             )
             user.save()
         except IntegrityError:
-            return JsonResponse(
-                {'error': 'username or email is already taken'},
-                status=400
-            )
+            response = {'error': 'username or email is already taken'}
+            return JsonResponse(response, status=400)
 
         # Sign in created user
         try:

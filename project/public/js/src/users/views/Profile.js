@@ -11,7 +11,7 @@ module.exports = Backbone.View.extend({
 
     initialize: function () {
         this.model = window.App.currentUser;
-
+        window.App.views.page = this;
         this.render();
     },
 

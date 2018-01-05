@@ -44,6 +44,7 @@ module.exports = Backbone.View.extend({
 
     logout: function () {
         event.preventDefault();
+
         $.ajax({
             url: Config.urls.api.logout,
             contentType: 'application/json',
@@ -55,6 +56,37 @@ module.exports = Backbone.View.extend({
                 Backbone.history.navigate(Config.urls.pages.login, true);
             }
         });
+    },
+
+    showLoadIcon: function () {
+        this.$('#loading-icon').show();
+    },
+
+    hideLoadIcon: function () {
+        this.$('#loading-icon').hide();
+    },
+
+    // This method is used for all errors over the app
+    displayError: function (level, msg) {
+        var $errorBlock = this.$('#popup');
+
+        var header;
+        switch (level) {
+            case 'error':
+                header = 'ERROR:'
+                break;
+            case 'info':
+                header = 'INFO:'
+                break;
+        }
+        console.log(level, msg)
+
+        $errorBlock.find('.header').text(header);
+        $errorBlock.find('.message').text(msg);
+        $errorBlock.fadeIn(300);
+        setTimeout(function () {
+            $errorBlock.fadeOut(300);
+        }, 2000);
     },
 
     render: function () {

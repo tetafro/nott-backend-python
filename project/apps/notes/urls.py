@@ -1,15 +1,15 @@
 from django.conf.urls import url
-from core.decorators import login_required_ajax
-from .views import index, FolderView, NotepadView, NoteView, SearchView
+
+from core.api import token_required
+from .views import FolderView, NotepadView, NoteView, SearchView
 
 
 urlpatterns = [
-    url(r'^$', index, name='index'),
-    url(r'^ajax/folders/?$', login_required_ajax(FolderView.as_view())),
-    url(r'^ajax/folders/(?P<id>\d+)/?$', login_required_ajax(FolderView.as_view())),
-    url(r'^ajax/notepads/?$', login_required_ajax(NotepadView.as_view())),
-    url(r'^ajax/notepads/(?P<id>\d+)/?$', login_required_ajax(NotepadView.as_view())),
-    url(r'^ajax/notes/?$', login_required_ajax(NoteView.as_view())),
-    url(r'^ajax/notes/(?P<id>\d+)/?$', login_required_ajax(NoteView.as_view())),
-    url(r'^ajax/search/?$', login_required_ajax(SearchView.as_view())),
+    url(r'^folders/?$', token_required(FolderView.as_view())),
+    url(r'^folders/(?P<id>\d+)/?$', token_required(FolderView.as_view())),
+    url(r'^notepads/?$', token_required(NotepadView.as_view())),
+    url(r'^notepads/(?P<id>\d+)/?$', token_required(NotepadView.as_view())),
+    url(r'^notes/?$', token_required(NoteView.as_view())),
+    url(r'^notes/(?P<id>\d+)/?$', token_required(NoteView.as_view())),
+    url(r'^search/?$', token_required(SearchView.as_view())),
 ]
