@@ -37,7 +37,7 @@ class FolderView(ApiView):
         try:
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         response = folder.to_dict()
@@ -53,7 +53,7 @@ class FolderView(ApiView):
         try:
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
@@ -76,13 +76,13 @@ class FolderView(ApiView):
         try:
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         try:
             folder.delete()
         except IntegrityError:
-            response = {'error': 'Failed to delete the object'}
+            response = {'error': 'failed to delete the object'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)
@@ -102,9 +102,9 @@ class NotepadView(ApiView):
 
         error = None
         if not data.get('folder_id'):
-            error = 'Can\'t make notepad outside folders'
+            error = 'can\'t make notepad outside folders'
         elif not data.get('title'):
-            error = 'Notepad must have title'
+            error = 'notepad must have title'
         if error:
             return JsonResponse({'error': error}, status=400)
 
@@ -124,7 +124,7 @@ class NotepadView(ApiView):
         try:
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         response = notepad.to_dict()
@@ -145,7 +145,7 @@ class NotepadView(ApiView):
         try:
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
@@ -168,13 +168,13 @@ class NotepadView(ApiView):
         try:
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         try:
             notepad.delete()
         except IntegrityError:
-            response = {'error': 'Failed to delete the object'}
+            response = {'error': 'failed to delete the object'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)
@@ -194,9 +194,9 @@ class NoteView(ApiView):
 
         error = None
         if not data.get('notepad_id'):
-            error = 'Can\'t make note outside notepads'
+            error = 'can\'t make note outside notepads'
         elif not data.get('title'):
-            error = 'Note must have title'
+            error = 'note must have title'
         if error:
             return JsonResponse({'error': error}, status=400)
 
@@ -216,7 +216,7 @@ class NoteView(ApiView):
         try:
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
         response = note.to_dict()
         return JsonResponse(response, status=200)
@@ -236,7 +236,7 @@ class NoteView(ApiView):
         try:
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
@@ -259,13 +259,13 @@ class NoteView(ApiView):
         try:
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         try:
             note.delete()
         except IntegrityError:
-            response = {'error': 'Failed to delete the object'}
+            response = {'error': 'failed to delete the object'}
             return JsonResponse(response, status=400)
 
         return JsonResponse({}, status=204)
@@ -283,7 +283,7 @@ class SearchView(View):
             response = {'notes': notes}
             status = 200
         else:
-            response = {'error': 'No key provided'}
+            response = {'error': 'no key provided'}
             status = 400
 
         return JsonResponse(response, status=status)

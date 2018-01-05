@@ -1,4 +1,4 @@
-<div class="content profile">
+<div class="page profile">
     <h1>User: <%= username %></h1>
 
     <form class="form-horizontal" role="form">
@@ -26,7 +26,7 @@
                 <label class="col-md-4 control-label">Registered:</label>
                 <div class="col-md-8">
                     <p class="form-control-static">
-                        <%= created %>
+                        <%= created.toLocaleString() %>
                     </p>
                 </div>
             </div>

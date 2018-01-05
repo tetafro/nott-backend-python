@@ -10,7 +10,7 @@ from django.utils.html import escape
 from django.views.generic import View
 
 from core.api import ApiView, get_token
-from apps.admin.models import Config
+from apps.admin.models import Setting
 from .models import BadInput, User, Token
 from .helpers import generate_token
 
@@ -44,8 +44,8 @@ class RegisterView(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            db_setting = Config.objects.get(code='allow_registration')
-        except Config.DoesNotExist:
+            db_setting = Setting.objects.get(code='allow_registration')
+        except Setting.DoesNotExist:
             reg_allowed = True  # default if settings is not found
         else:
             reg_allowed = db_setting.value == 'true'
@@ -104,7 +104,6 @@ class LogoutView(View):
 
     def post(self, request, *args, **kwargs):
         token = get_token(request)
-        print(token)
         try:
             Token.objects.get(string=token).delete()
             return JsonResponse({}, status=200)
@@ -154,7 +153,7 @@ class UserView(ApiView):
                 )).\
                 get(id=user_id)
         except User.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         response = user.to_dict()
@@ -170,7 +169,7 @@ class UserView(ApiView):
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
-            response = {'error': 'Object not found'}
+            response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))

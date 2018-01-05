@@ -19,5 +19,5 @@ module.exports = Backbone.Model.extend({
         user.created = new Date(response.created);
         user.updated = new Date(response.updated);
         return user;
-    },
+    }
 });

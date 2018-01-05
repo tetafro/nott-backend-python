@@ -34,7 +34,7 @@ class UserManager(BaseUserManager):
 
     def create_user(self, username, email, password):
         if not email:
-            raise ValueError('Users must have an email address')
+            raise ValueError('users must have an email address')
 
         user = self.model(
             email=self.normalize_email(email),
@@ -115,7 +115,7 @@ class User(AbstractBaseUser, Serializer):
         try:
             self.save()
         except IntegrityError:
-            raise BadInput('Failed to save the object')
+            raise BadInput('failed to save the object')
 
     def __repr__(self):
         return 'User ID%d Profile' % self.id

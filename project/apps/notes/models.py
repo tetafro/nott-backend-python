@@ -32,9 +32,9 @@ class Folder(models.Model, Serializer):
 
     def clean(self):
         if self.title == '':
-            raise ValidationError('Title cannot be empty')
+            raise ValidationError('title cannot be empty')
         if len(self.title) > 80:
-            raise ValidationError('Title is too long')
+            raise ValidationError('title is too long')
 
     def full_save(self):
         try:
@@ -44,7 +44,7 @@ class Folder(models.Model, Serializer):
         try:
             self.save()
         except IntegrityError:
-            raise BadInput('Failed to save the object')
+            raise BadInput('failed to save the object')
 
     def __repr__(self):
         return 'Folder ID%d' % self.id
@@ -64,9 +64,9 @@ class Notepad(models.Model, Serializer):
 
     def clean(self):
         if self.title == '':
-            raise ValidationError('Title cannot be empty')
+            raise ValidationError('title cannot be empty')
         if len(self.title) > 80:
-            raise ValidationError('Title is too long')
+            raise ValidationError('title is too long')
 
     def full_save(self):
         try:
@@ -76,7 +76,7 @@ class Notepad(models.Model, Serializer):
         try:
             self.save()
         except IntegrityError:
-            raise BadInput('Failed to save the object')
+            raise BadInput('failed to save the object')
 
     def __repr__(self):
         return 'Notepad ID%d' % self.id
@@ -98,9 +98,9 @@ class Note(models.Model, Serializer):
 
     def clean(self):
         if self.title == '':
-            raise ValidationError('Title cannot be empty')
+            raise ValidationError('title cannot be empty')
         if len(self.title) > 80:
-            raise ValidationError('Title is too long')
+            raise ValidationError('title is too long')
 
     def full_save(self):
         try:
@@ -110,7 +110,7 @@ class Note(models.Model, Serializer):
         try:
             self.save()
         except IntegrityError:
-            raise BadInput('Failed to save the object')
+            raise BadInput('failed to save the object')
 
     def __repr__(self):
         return 'Note ID%d' % self.id
@@ -121,7 +121,4 @@ class Note(models.Model, Serializer):
         escaped_text = escape(self.text)
         md = markdown(escaped_text,
                       extras=['fenced-code-blocks', 'tables'])
-        print(self.text)
-        print(escaped_text)
-        print(md)
         return md

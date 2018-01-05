@@ -6,7 +6,9 @@ var PageTemplate = require('raw-loader!../templates/Profile.html');
 
 module.exports = Backbone.View.extend({
     model: User,
-    tagName: 'div',
+    el: function () {
+        return $('#content');
+    },
     template: _.template(PageTemplate),
 
     initialize: function () {
@@ -16,11 +18,6 @@ module.exports = Backbone.View.extend({
     },
 
     render: function () {
-        var data = this.model.toJSON();
-        data.created = data.created.toLocaleString();
-        data.updated = data.updated.toLocaleString();
-
-        this.$el.html(this.template(data));
-        $('#content').html(this.el);
+        this.$el.html(this.template(this.model.toJSON()));
     }
 });
