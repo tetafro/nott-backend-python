@@ -41,7 +41,12 @@ body {
     z-index: 10;
 }
 
-/* Flash message */
+/* Error page */
+div.error-page {
+    padding: 50px;
+}
+
+/* Popup message */
 #popup {
     background-color: #222;
     color: #ddd;
@@ -59,8 +64,8 @@ body {
     font-size: 18px;
 }
 
-/* Main content */
-.content {
+/* Page content */
+.page {
     padding: 70px 100px;
     color: #666;
 }
