@@ -45,7 +45,7 @@ module.exports = Backbone.View.extend({
         $a.parent().addClass('active');
     },
 
-    logout: function () {
+    logout: function (event) {
         event.preventDefault();
 
         $.ajax({
