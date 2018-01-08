@@ -1,4 +1,11 @@
 /* Login/register page */
+.page.auth {
+    left: 50%;
+    position: fixed;
+    transform: translateX(-50%);
+    width: 600px;
+}
+
 .auth-mode {
     margin-top: 20px;
 }

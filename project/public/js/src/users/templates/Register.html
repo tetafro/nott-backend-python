@@ -1,43 +1,45 @@
-<div class="row">
-    <div class="col-md-12 text-center">
-        <h1>Register</h1>
-    </div>
-</div>
-
-<form class="form-horizontal" role="form">
-    <input class="form-control" name="reg" type="hidden" value=1>
-    <div class="form-group">
-        <div class="col-md-10 col-md-offset-1">
-            <input name="username" placeholder="Username" class="form-control" type="text">
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-10 col-md-offset-1">
-            <input name="email" placeholder="E-mail" class="form-control" type="text">
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-10 col-md-offset-1">
-            <input name="password1" placeholder="Password" class="form-control" type="password">
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-10 col-md-offset-1">
-            <input name="password2" placeholder="Confirm password" class="form-control" type="password">
-        </div>
-    </div>
+<div class="page auth">
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <input class="btn btn-block btn-primary" type="submit" value="Sign up">
+        <div class="col-md-12 text-center">
+            <h1>Register</h1>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <div class="auth-mode">
-                <a class="goto" href="/login">Login</a>
+    <form class="form-horizontal" role="form">
+        <input class="form-control" name="reg" type="hidden" value=1>
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-1">
+                <input name="username" placeholder="Username" class="form-control" type="text">
             </div>
-            <div class="auth-errors text-danger"></div>
         </div>
-    </div>
-</form>
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-1">
+                <input name="email" placeholder="E-mail" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-1">
+                <input name="password1" placeholder="Password" class="form-control" type="password">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-1">
+                <input name="password2" placeholder="Confirm password" class="form-control" type="password">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <input class="btn btn-block btn-primary" type="submit" value="Sign up">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="auth-mode">
+                    <a class="goto" href="/login">Login</a>
+                </div>
+                <div class="auth-errors text-danger"></div>
+            </div>
+        </div>
+    </form>
+</div>

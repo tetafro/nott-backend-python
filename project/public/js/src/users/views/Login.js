@@ -5,9 +5,8 @@ var Config = require('../../config');
 var LoginTemplate = require('raw-loader!../templates/Login.html');
 
 module.exports = Backbone.View.extend({
-    tagName: 'div',
-    attributes: {
-        class: "page col-md-6 col-md-offset-3"
+    el: function () {
+        return $('#content');
     },
     template: _.template(LoginTemplate),
 
@@ -115,6 +114,5 @@ module.exports = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template());
-        $('#content').html(this.el);
     }
 });

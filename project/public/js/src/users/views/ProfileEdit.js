@@ -7,7 +7,9 @@ var PageTemplate = require('raw-loader!../templates/ProfileEdit.html');
 
 module.exports = Backbone.View.extend({
     model: User,
-    tagName: 'div',
+    el: function () {
+        return $('#content');
+    },
     template: _.template(PageTemplate),
 
     events: {
@@ -80,6 +82,5 @@ module.exports = Backbone.View.extend({
         data.updated = data.updated.toLocaleString();
 
         this.$el.html(this.template(data));
-        $('#content').html(this.el);
     }
 });
