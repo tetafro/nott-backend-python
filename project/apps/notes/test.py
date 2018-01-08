@@ -2,7 +2,6 @@ import json
 import logging
 from datetime import datetime
 
-from django.contrib import auth
 from django.test import TestCase
 
 from core.api import login_test
@@ -560,14 +559,14 @@ class NotesTestCase(TestCase):
             user=bob,
             folder=folder
         )
-        note1 = Note.objects.create(
+        Note.objects.create(
             id=300,
             title='Note 1',
             text='Hello, world!',
             user=bob,
             notepad=notepad
         )
-        note2 = Note.objects.create(
+        Note.objects.create(
             id=301,
             title='Note 2',
             text='Goodbye, world!',
@@ -772,4 +771,3 @@ class NotesValidationTestCase(TestCase):
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
-

@@ -16,8 +16,8 @@ module.exports = Backbone.View.extend({
     template: _.template(PageTemplate),
 
     initialize: function () {
-        var settings = new SettingsCollection(),
-            users = new UsersCollection();
+        var settings = new SettingsCollection();
+        var users = new UsersCollection();
 
         window.App.views.page = this;
         this.render();

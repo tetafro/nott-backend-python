@@ -53,7 +53,9 @@ module.exports = Backbone.Model.extend({
     },
 
     close: function () {
-        if (!this.get('opened')) { return; }
+        if (!this.get('opened')) {
+            return;
+        }
         window.App.collections.editors.closeOne(this);
     },
 

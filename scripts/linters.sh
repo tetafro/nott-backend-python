@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd /srv
-
 LOG=linters.log
 : > $LOG
 
@@ -11,7 +9,7 @@ echo '>>      ' >> $LOG
 find ./project/public/js/src \
     -name '*.js' \
     -exec echo '>>> ' {} \; \
-    -exec eslint -c scripts/eslintrc {} \; \
+    -exec eslint -c .eslintrc.json {} \; \
     >> $LOG
 
 echo '>>    ' >> $LOG

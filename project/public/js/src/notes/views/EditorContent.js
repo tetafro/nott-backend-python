@@ -40,10 +40,10 @@ module.exports = Backbone.View.extend({
 
     // Save and re-read rendered HTML from server
     saveModel: function (event) {
-        var that = this,
-            text = that
-                .$('#editor-' + that.model.get('id') + ' textarea')
-                .val();
+        var that = this;
+        var text = that
+            .$('#editor-' + that.model.get('id') + ' textarea')
+            .val();
         that.model.save({text: text}, {
             success: function (model, response) {
                 model.fetch({

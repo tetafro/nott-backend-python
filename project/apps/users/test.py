@@ -46,7 +46,10 @@ class PermissionsTestCase(TestCase):
             response = self.client.get(url, HTTP_AUTHORIZATION=header)
             self.assertEqual(response.status_code, 403)
 
-        response = self.client.get('/api/v1/users/me', HTTP_AUTHORIZATION=header)
+        response = self.client.get(
+            '/api/v1/users/me',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 200)
 
     def test_views_permissions_anon(self):
@@ -89,7 +92,10 @@ class UserTestCase(TestCase):
 
         # Get profile using API
         header = login_test(self.client.post, 'bob', 'bobs-password')
-        response = self.client.get('/api/v1/users/me', HTTP_AUTHORIZATION=header)
+        response = self.client.get(
+            '/api/v1/users/me',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 200)
 
         profile = json.loads(response.content.decode('utf-8'))

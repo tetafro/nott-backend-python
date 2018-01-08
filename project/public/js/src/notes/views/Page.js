@@ -15,8 +15,9 @@ var SearchFormView = require('../views/SearchForm');
 var PageTemplate = require('raw-loader!../templates/Page.html');
 
 module.exports = Backbone.View.extend({
-    tagName: 'div',
-    className: "page col-md-6 col-md-offset-3",
+    el: function () {
+        return $('#content');
+    },
     template: _.template(PageTemplate),
     modal: null, // link to modal window
 
@@ -26,11 +27,11 @@ module.exports = Backbone.View.extend({
     },
 
     initialize: function () {
-        var that = this,
-            folders = new FoldersCollection(),
-            notepads = new NotepadsCollection(),
-            notes = new NotesCollection(),
-            editors = new EditorsCollection();
+        var that = this;
+        var folders = new FoldersCollection();
+        var notepads = new NotepadsCollection();
+        var notes = new NotesCollection();
+        var editors = new EditorsCollection();
 
         // Add global links to collections
         window.App.collections.folders = folders;
@@ -82,6 +83,5 @@ module.exports = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template());
-        $('#content').html(this.el);
     }
 });

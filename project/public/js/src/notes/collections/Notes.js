@@ -23,7 +23,7 @@ module.exports = Backbone.Collection.extend({
 
         this.comparator = function (model) {
             return model.get(field);
-        }
+        };
         this.sort();
 
         this.comparator = oldComparator;
@@ -40,7 +40,7 @@ module.exports = Backbone.Collection.extend({
         that.fetch({
             reset: true,
             data: $.param({
-                "notepad-id": notepad.get('id')
+                'notepad-id': notepad.get('id')
             }),
             // Synchronize models with EditorsCollection
             success: function () {
@@ -68,7 +68,7 @@ module.exports = Backbone.Collection.extend({
             url: that.urlSearch,
             reset: true,
             data: $.param({
-                "key": key
+                'key': key
             }),
             success: function () {
                 // Event to render view
@@ -77,12 +77,12 @@ module.exports = Backbone.Collection.extend({
         });
     },
 
-    sortByField: function(field) {
+    sortByField: function (field) {
         var oldComparator = this.comparator;
 
-        this.comparator = function(model) {
+        this.comparator = function (model) {
             return model.get(field);
-        }
+        };
         this.sort();
 
         this.comparator = oldComparator;
@@ -90,7 +90,8 @@ module.exports = Backbone.Collection.extend({
 
     createOne: function (title, notepadId) {
         var that = this;
-        var notepadId = this.notepad.get('id');
+
+        notepadId = this.notepad.get('id');
 
         var note = new Note();
         note.save(

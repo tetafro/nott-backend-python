@@ -10,12 +10,12 @@ module.exports = Backbone.Collection.extend({
         return response.folders;
     },
 
-    sortByField: function(field) {
+    sortByField: function (field) {
         var oldComparator = this.comparator;
 
-        this.comparator = function(model) {
+        this.comparator = function (model) {
             return model.get(field);
-        }
+        };
         this.sort();
 
         this.comparator = oldComparator;

@@ -19,7 +19,7 @@ module.exports = Backbone.View.extend({
 
     goto: function (event) {
         event.preventDefault();
-        var href = event.currentTarget.getAttribute("href");
+        var href = event.currentTarget.getAttribute('href');
         Backbone.history.navigate(href, true);
     },
 
@@ -76,10 +76,10 @@ module.exports = Backbone.View.extend({
         var header;
         switch (level) {
             case 'error':
-                header = 'ERROR:'
+                header = 'ERROR:';
                 break;
             case 'info':
-                header = 'INFO:'
+                header = 'INFO:';
                 break;
         }
 

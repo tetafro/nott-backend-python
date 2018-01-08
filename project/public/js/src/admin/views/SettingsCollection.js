@@ -19,7 +19,7 @@ module.exports = Backbone.View.extend({
     render: function () {
         this.$el.html(this.template());
 
-        var tbody = this.$('tbody')
+        var tbody = this.$('tbody');
         this.collection.each(function (setting) {
             var settingView = new SettingView({model: setting});
             tbody.append(settingView.$el);

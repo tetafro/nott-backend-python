@@ -23,7 +23,7 @@ module.exports = Backbone.View.extend({
 
     goto: function (event) {
         event.preventDefault();
-        var href = event.currentTarget.getAttribute("href");
+        var href = event.currentTarget.getAttribute('href');
         Backbone.history.navigate(href, true);
     },
 
@@ -81,7 +81,7 @@ module.exports = Backbone.View.extend({
         that.clearErrors();
         var hasErrors = that.validate();
         if (hasErrors) {
-            return
+            return;
         }
 
         var username = that.$('input[name="username"]').val();

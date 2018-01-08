@@ -24,7 +24,7 @@ module.exports = Backbone.View.extend({
             }
         }
 
-        key = this.$('input[name="search"]').val();;
+        key = this.$('input[name="search"]').val();
         this.collection.search(key);
     }
 });

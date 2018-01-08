@@ -14,10 +14,6 @@ App = {
     router: {},
 
     init: function () {
-        var token = this.getToken();
-        if (token != null) {
-            this.setAuthHeader(token);
-        }
 
         // Set timeout for all AJAX requests
         $.ajaxSetup({timeout: 5000});
@@ -31,8 +27,9 @@ App = {
         });
 
         // Fetch user if token is not empty
-        var token = window.localStorage.getItem('token');
+        var token = this.getToken();
         if (token != null) {
+            this.setAuthHeader(token);
             window.App.currentUser = this.getCurrentUser();
         }
 
