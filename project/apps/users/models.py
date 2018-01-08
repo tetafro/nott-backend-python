@@ -51,7 +51,11 @@ class User(AbstractBaseUser, Serializer):
 
     username = models.CharField(max_length=40, unique=True)
     email = models.CharField(max_length=40, unique=True)
-    role = models.ForeignKey(Role, default=USER_ROLE_ID)
+    role = models.ForeignKey(
+        Role,
+        default=USER_ROLE_ID,
+        on_delete=models.CASCADE
+    )
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -128,7 +132,11 @@ class Token(models.Model):
     string = models.CharField(max_length=64, unique=True)
     # Time to live - number of seconds until token expiration
     ttl = models.IntegerField(default=3600)
-    user = models.ForeignKey(User, related_name='tokens')
+    user = models.ForeignKey(
+        User,
+        related_name='tokens',
+        on_delete=models.CASCADE
+    )
     created = models.DateTimeField(default=timezone.now)
 
     @property

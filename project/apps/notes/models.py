@@ -17,12 +17,17 @@ class Folder(models.Model, Serializer):
     """Folder is a container for notepads or other folders"""
 
     title = models.CharField(max_length=80)
-    user = models.ForeignKey(User, related_name='folders')
+    user = models.ForeignKey(
+        User,
+        related_name='folders',
+        on_delete=models.CASCADE
+    )
     parent = models.ForeignKey(
         'self',
         related_name='subfolders',
         null=True,
-        blank=True
+        blank=True,
+        on_delete=models.CASCADE
     )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
@@ -54,8 +59,17 @@ class Notepad(models.Model, Serializer):
     """Notepad is a container for notes"""
 
     title = models.CharField(max_length=80)
-    user = models.ForeignKey(User, related_name='notepads')
-    folder = models.ForeignKey(Folder, related_name='notepads', null=True)
+    user = models.ForeignKey(
+        User,
+        related_name='notepads',
+        on_delete=models.CASCADE
+    )
+    folder = models.ForeignKey(
+        Folder,
+        related_name='notepads',
+        null=True,
+        on_delete=models.CASCADE
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
@@ -86,9 +100,17 @@ class Note(models.Model, Serializer):
     """Note is a container for user text data"""
 
     title = models.CharField(max_length=80)
-    user = models.ForeignKey(User, related_name='notes')
+    user = models.ForeignKey(
+        User,
+        related_name='notes',
+        on_delete=models.CASCADE
+    )
     text = models.TextField(blank=True)  # source text in markdown
-    notepad = models.ForeignKey(Notepad, related_name='notes')
+    notepad = models.ForeignKey(
+        Notepad,
+        related_name='notes',
+        on_delete=models.CASCADE
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True, null=True)
 
