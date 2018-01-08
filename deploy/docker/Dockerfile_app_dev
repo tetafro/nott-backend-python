@@ -4,6 +4,9 @@ LABEL maintainer="Denis Ivanov"
 # Quiet apt-get
 ARG DEBIAN_FRONTEND=noninteractive
 
+ENV TAG=v0.0.0
+ENV BUILD=0
+
 # Install deps
 COPY requirements.txt /tmp/
 RUN apt-get -y -qq update && \

@@ -14,7 +14,8 @@ class VersionView(View):
         return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        response = {'version': settings.VERSION}
+        version = '%s [build %s]' % (settings.TAG, settings.BUILD)
+        response = {'version': version}
         return JsonResponse(response, status=200)
 
 

@@ -3,7 +3,9 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-VERSION = os.environ.get('VERSION') or 'Unknown'
+# Version
+TAG = os.environ.get('TAG')
+BUILD = os.environ.get('BUILD')
 
 SERVER_MODE = os.environ.get('SERVER_MODE')
 if SERVER_MODE == 'production':
