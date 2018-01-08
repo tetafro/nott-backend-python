@@ -10,7 +10,7 @@ logging.disable(logging.CRITICAL)
 
 
 class PermissionsTestCase(TestCase):
-    fixtures = ['setting.json', 'roles.json', 'admin.json']
+    fixtures = ['settings.json', 'roles.json', 'admin.json']
 
     def test_views_permissions_admin(self):
         header = login_test(self.client.post, 'admin', '123')

@@ -20,7 +20,7 @@ build:
 	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata \
 		/srv/apps/users/fixtures/roles.json \
 		/srv/apps/users/fixtures/admin.json \
-		/srv/apps/admin/fixtures/config.json
+		/srv/apps/admin/fixtures/settings.json
 
 .PHONY: run
 run:
@@ -49,7 +49,7 @@ fixtures:
 	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata \
 		/srv/apps/users/fixtures/roles.json \
 		/srv/apps/users/fixtures/admin.json \
-		/srv/apps/admin/fixtures/config.json
+		/srv/apps/admin/fixtures/settigs.json
 
 .PHONY: test
 test:
