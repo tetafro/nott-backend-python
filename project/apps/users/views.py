@@ -114,7 +114,7 @@ class LogoutView(View):
 class UserView(ApiView):
     """Full CRUD for User model"""
 
-    editable_fields = ['email']
+    editable_fields = ['email', 'password']
 
     def list(self, request, *args, **kwargs):
         users = User.objects.\
@@ -173,10 +173,12 @@ class UserView(ApiView):
             return JsonResponse(response, status=404)
 
         data = json.loads(request.body.decode('utf-8'))
-
         for (key, value) in data.items():
             if key in self.editable_fields:
-                setattr(user, key, value)
+                if key == 'password' and value != '':
+                    user.set_password(value)
+                else:
+                    setattr(user, key, value)
 
         try:
             user.full_save()

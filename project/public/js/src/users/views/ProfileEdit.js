@@ -52,16 +52,17 @@ module.exports = Backbone.View.extend({
         that.clearErrors();
 
         var email = that.$('input[name="email"]').val();
+        var password = that.$('input[name="password"]').val();
         that.model.save(
             {
-                email: email
+                email: email,
+                password: password
             },
             {
                 success: function (model, response) {
                     Backbone.history.navigate(Config.urls.pages.profile, true);
                 },
                 error: function (model, response) {
-                    console.log(response)
                     var data = response.responseJSON;
 
                     // Invalid responses
@@ -71,6 +72,12 @@ module.exports = Backbone.View.extend({
                     }
 
                     that.addError('Error: ' + data.error);
+                },
+                complete: function () {
+                    // Clear model's password field
+                    // NOTE: It will not be rewritten on backend on next
+                    // sync, because password cannnot be empty
+                    that.model.set('password', '');
                 }
             }
         );

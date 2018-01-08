@@ -82,7 +82,6 @@ module.exports = Backbone.View.extend({
                 header = 'INFO:'
                 break;
         }
-        console.log(level, msg)
 
         $errorBlock.find('.header').text(header);
         $errorBlock.find('.message').text(msg);
