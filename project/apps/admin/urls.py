@@ -7,4 +7,5 @@ from .views import VersionView, SettingView
 urlpatterns = [
     url(r'^version/?$', admin_required(VersionView.as_view())),
     url(r'^settings/?$', admin_required(SettingView.as_view())),
+    url(r'^settings/(?P<id>\d+)/?$', admin_required(SettingView.as_view())),
 ]

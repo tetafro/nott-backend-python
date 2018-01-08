@@ -5,37 +5,59 @@ from datetime import datetime
 from django.contrib import auth
 from django.test import TestCase
 
-from apps.users.models import User
+from core.api import login_test
+from apps.users.models import USER_ROLE_ID, User
 from .models import Folder, Notepad, Note
 
 
 logging.disable(logging.CRITICAL)
 
 
-class PagesTestCase(TestCase):
-    fixtures = ['config.json', 'roles.json']
+class PermissionsTestCase(TestCase):
+    fixtures = ['setting.json', 'roles.json', 'admin.json']
 
-    def setUp(self):
+    def test_views_permissions_admin(self):
+        header = login_test(self.client.post, 'admin', '123')
+        urls = [
+            '/api/v1/folders',
+            '/api/v1/notepads',
+            '/api/v1/notes'
+        ]
+        for url in urls:
+            response = self.client.get(url, HTTP_AUTHORIZATION=header)
+            self.assertEqual(response.status_code, 200)
+
+    def test_views_permissions_user(self):
+        # Create user for test
         bob = User.objects.create(
             id=100,
             username='bob',
             email='bob@example.com',
-            role_id=2,
+            role_id=USER_ROLE_ID,
             is_active=True
         )
         bob.set_password('bobs-password')
         bob.save()
 
-    def test_protected_pages_success(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
+        header = login_test(self.client.post, 'bob', 'bobs-password')
+        urls = [
+            '/api/v1/folders',
+            '/api/v1/notepads',
+            '/api/v1/notes'
+        ]
+        for url in urls:
+            response = self.client.get(url, HTTP_AUTHORIZATION=header)
+            self.assertEqual(response.status_code, 200)
 
-    def test_protected_pages_unauthorized(self):
-        response = self.client.get('/')
-        self.assertRedirects(response, '/login?next=/')
+    def test_views_permissions_anon(self):
+        urls = [
+            '/api/v1/folders',
+            '/api/v1/notepads',
+            '/api/v1/notes'
+        ]
+        for url in urls:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 401)
 
 
 class FoldersCRUDTestCase(TestCase):
@@ -65,10 +87,7 @@ class FoldersCRUDTestCase(TestCase):
         )
 
     def test_serializer(self):
-        try:
-            folder = Folder.objects.get(id=101)
-        except Folder.DoesNotExist:
-            self.fail("Folder not found")
+        folder = Folder.objects.get(id=101)
 
         d = folder.to_dict()
         self.assertEqual(d.get('id'), 101)
@@ -78,11 +97,11 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(type(d.get('updated')), datetime)
 
     def test_get_success(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
-
-        response = self.client.get('/ajax/folders/101')
+        header = login_test(self.client.post, 'bob', 'bobs-password')
+        response = self.client.get(
+            '/api/v1/folders/101',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 200)
         folder = json.loads(response.content.decode('utf-8'))
         self.assertEqual(folder.get('id'), 101)
@@ -90,26 +109,27 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(folder.get('parent_id'), 100)
 
     def test_get_non_existing_id(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
-
-        response = self.client.get('/ajax/folders/501')
+        header = login_test(self.client.post, 'bob', 'bobs-password')
+        response = self.client.get(
+            '/api/v1/folders/501',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 404)
 
     def test_get_malformed_id(self):
-        response = self.client.get('/ajax/folders/abc')
+        response = self.client.get('/api/v1/folders/abc')
         self.assertEqual(response.status_code, 404)
 
     def test_list(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/folders')
+        response = self.client.get(
+            '/api/v1/folders',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 200)
         resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue('folders' in resp_content)
+        self.assertIn('folders', resp_content)
         folders = resp_content['folders']
         self.assertEqual(len(folders), 2)
 
@@ -123,14 +143,13 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(folders[1].get('parent_id'), 100)
 
     def test_create_success(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Create
         body = {'title': 'My Folder'}
         response = self.client.post(
-            '/ajax/folders', json.dumps(body), 'application/json'
+            '/api/v1/folders', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 201)
         resp_content = json.loads(response.content.decode('utf-8'))
@@ -138,20 +157,14 @@ class FoldersCRUDTestCase(TestCase):
         self.assertTrue(resp_content is not None)
         id = resp_content['id']
 
-        # Get from server and check
-        response = self.client.get('/ajax/folders/%d' % id)
-        self.assertEqual(response.status_code, 200)
-        folder = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(folder.get('id'), id)
-        self.assertEqual(folder.get('title'), 'My Folder')
-        self.assertEqual(folder.get('parent_id'), None)
+        # Check
+        folder = Folder.objects.get(id=id)
+        self.assertEqual(folder.title, 'My Folder')
+        self.assertEqual(folder.parent_id, None)
 
     def test_create_with_readonly_fields(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        # Create
         body = {
             'id': 999999,  # will be skipped
             'title': 'New Name',
@@ -159,7 +172,8 @@ class FoldersCRUDTestCase(TestCase):
             'updated': '2010-10-10T10:10:10.000Z'  # will be skipped
         }
         response = self.client.post(
-            '/ajax/folders', json.dumps(body), 'application/json'
+            '/api/v1/folders', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 201)
         resp_content = json.loads(response.content.decode('utf-8'))
@@ -169,21 +183,17 @@ class FoldersCRUDTestCase(TestCase):
         self.assertNotEqual(resp_content.get('updated'), body['updated'])
 
     def test_create_empty_body(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        # Create
         body = {}
         response = self.client.post(
-            '/ajax/folders', json.dumps(body), 'application/json'
+            '/api/v1/folders', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_modify_success(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Modify
         body = {
@@ -191,72 +201,66 @@ class FoldersCRUDTestCase(TestCase):
             'parent_id': None
         }
         response = self.client.put(
-            '/ajax/folders/101', json.dumps(body), 'application/json'
+            '/api/v1/folders/101', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
 
-        # Get from server and check
-        response = self.client.get('/ajax/folders/101')
-        self.assertEqual(response.status_code, 200)
-        folder = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(folder.get('id'), 101)
-        self.assertEqual(folder.get('title'), 'New Name')
-        self.assertEqual(folder.get('parent_id'), None)
+        # Check
+        folder = Folder.objects.get(id=101)
+        self.assertEqual(folder.title, 'New Name')
+        self.assertEqual(folder.parent_id, None)
 
     def test_modify_empty_body(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Modify
         body = {}
         response = self.client.put(
-            '/ajax/folders/101', json.dumps(body), 'application/json'
+            '/api/v1/folders/101', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)  # nothing happened
 
         # Get from server and check
-        response = self.client.get('/ajax/folders/101')
-        self.assertEqual(response.status_code, 200)
-        folder = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(folder.get('id'), 101)
-        self.assertEqual(folder.get('title'), 'Folder 2')
-        self.assertEqual(folder.get('parent_id'), 100)
+        folder = Folder.objects.get(id=101)
+        self.assertEqual(folder.title, 'Folder 2')
+        self.assertEqual(folder.parent_id, 100)
 
     def test_modify_non_existing_id(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {'title': 'New Name'}
         response = self.client.put(
-            '/ajax/folders/501', json.dumps(body), 'application/json'
+            '/api/v1/folders/501', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 404)
 
     def test_modify_malformed_id(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {'title': 'New Name'}
         response = self.client.put(
-            '/ajax/folders/abc', json.dumps(body), 'application/json'
+            '/api/v1/folders/abc', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 404)
 
     def test_delete(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Delete
-        response = self.client.delete('/ajax/folders/100')
+        response = self.client.delete(
+            '/api/v1/folders/100',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 204)
 
-        # Check on server
-        response = self.client.get('/ajax/folders/100')
-        self.assertEqual(response.status_code, 404)
+        # Check
+        def test_check():
+            Folder.objects.get(id=100)
+        self.assertRaises(Folder.DoesNotExist, test_check)
 
 
 class FoldersValidationTestCase(TestCase):
@@ -274,31 +278,27 @@ class FoldersValidationTestCase(TestCase):
         bob.save()
 
     def test_empty_title(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {'title': ''}
         response = self.client.post(
-            '/ajax/folders', json.dumps(body), 'application/json'
+            '/api/v1/folders', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_long_title(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {'title': 'a' * 81}
         response = self.client.post(
-            '/ajax/folders', json.dumps(body), 'application/json'
+            '/api/v1/folders', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_non_existing_parent(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Create
         body = {
@@ -306,7 +306,8 @@ class FoldersValidationTestCase(TestCase):
             'parent_id': 600
         }
         response = self.client.post(
-            '/ajax/folders', json.dumps(body), 'application/json'
+            '/api/v1/folders', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
@@ -344,10 +345,7 @@ class NotepadsTestCase(TestCase):
         )
 
     def test_serializer(self):
-        try:
-            notepad = Notepad.objects.get(id=200)
-        except Notepad.DoesNotExist:
-            self.fail("Notepad not found")
+        notepad = Notepad.objects.get(id=200)
 
         n = notepad.to_dict()
         self.assertEqual(n.get('id'), 200)
@@ -357,11 +355,12 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(type(n.get('updated')), datetime)
 
     def test_get_success(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/notepads/200')
+        response = self.client.get(
+            '/api/v1/notepads/200',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 200)
         notepad = json.loads(response.content.decode('utf-8'))
         self.assertEqual(notepad.get('id'), 200)
@@ -369,27 +368,30 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(notepad.get('folder_id'), 100)
 
     def test_get_non_existing_id(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/notepads/501')
+        response = self.client.get(
+            '/api/v1/notepads/501',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 404)
 
     def test_get_malformed_id(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/notepads/abc')
+        response = self.client.get(
+            '/api/v1/notepads/abc',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 404)
 
     def test_list(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/notepads')
+        response = self.client.get(
+            '/api/v1/notepads',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 200)
         resp_content = json.loads(response.content.decode('utf-8'))
         self.assertTrue('notepads' in resp_content)
@@ -406,9 +408,7 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(notepads[1].get('folder_id'), 100)
 
     def test_create(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Create
         body = {
@@ -416,7 +416,8 @@ class NotepadsTestCase(TestCase):
             'folder_id': 100
         }
         response = self.client.post(
-            '/ajax/notepads', json.dumps(body), 'application/json'
+            '/api/v1/notepads', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 201)
         resp_content = json.loads(response.content.decode('utf-8'))
@@ -424,48 +425,43 @@ class NotepadsTestCase(TestCase):
         self.assertTrue('id' in resp_content)
         id = resp_content['id']
 
-        # Get from server and check
-        response = self.client.get('/ajax/notepads/%d' % id)
-        self.assertEqual(response.status_code, 200)
-        notepad = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(notepad.get('id'), id)
-        self.assertEqual(notepad.get('title'), 'My Notepad')
-        self.assertEqual(notepad.get('folder_id'), 100)
+        # Check
+        notepad = Notepad.objects.get(id=id)
+        self.assertEqual(notepad.title, 'My Notepad')
+        self.assertEqual(notepad.folder_id, 100)
 
     def test_modify(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Modify
         body = {
             'title': 'New Name',
         }
         response = self.client.put(
-            '/ajax/notepads/200', json.dumps(body), 'application/json'
+            '/api/v1/notepads/200', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
 
-        # Get from server and check
-        response = self.client.get('/ajax/notepads/200')
-        self.assertEqual(response.status_code, 200)
-        notepad = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(notepad.get('id'), 200)
-        self.assertEqual(notepad.get('title'), 'New Name')
-        self.assertEqual(notepad.get('folder_id'), 100)
+        # Check
+        notepad = Notepad.objects.get(id=200)
+        self.assertEqual(notepad.title, 'New Name')
+        self.assertEqual(notepad.folder_id, 100)
 
     def test_delete(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Delete
-        response = self.client.delete('/ajax/notepads/200')
+        response = self.client.delete(
+            '/api/v1/notepads/200',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 204)
 
-        # Check on server
-        response = self.client.get('/ajax/notepads/200')
-        self.assertEqual(response.status_code, 404)
+        # Check
+        def test_check():
+            Notepad.objects.get(id=200)
+        self.assertRaises(Notepad.DoesNotExist, test_check)
 
 
 class NotepadsValidationTestCase(TestCase):
@@ -489,48 +485,43 @@ class NotepadsValidationTestCase(TestCase):
         )
 
     def test_empty_title(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {
             'title': '',
             'folder_id': 100
         }
         response = self.client.post(
-            '/ajax/notepads', json.dumps(body), 'application/json'
+            '/api/v1/notepads', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_long_title(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {
             'title': 'a' * 81,
             'folder_id': 100
         }
         response = self.client.post(
-            '/ajax/notepads', json.dumps(body), 'application/json'
+            '/api/v1/notepads', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_empty_folder(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {'title': 'New Notepad'}
         response = self.client.post(
-            '/ajax/notepads', json.dumps(body), 'application/json'
+            '/api/v1/notepads', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_non_existing_folder(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Create
         body = {
@@ -538,7 +529,8 @@ class NotepadsValidationTestCase(TestCase):
             'folder_id': 600
         }
         response = self.client.post(
-            '/ajax/notepads', json.dumps(body), 'application/json'
+            '/api/v1/notepads', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
@@ -584,10 +576,7 @@ class NotesTestCase(TestCase):
         )
 
     def test_serializer(self):
-        try:
-            note = Note.objects.get(id=300)
-        except Note.DoesNotExist:
-            self.fail("Note not found")
+        note = Note.objects.get(id=300)
 
         n = note.to_dict()
         self.assertEqual(n.get('id'), 300)
@@ -598,11 +587,12 @@ class NotesTestCase(TestCase):
         self.assertEqual(type(n.get('updated')), datetime)
 
     def test_get_success(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/notes/300')
+        response = self.client.get(
+            '/api/v1/notes/300',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 200)
         note = json.loads(response.content.decode('utf-8'))
         self.assertEqual(note.get('id'), 300)
@@ -610,27 +600,30 @@ class NotesTestCase(TestCase):
         self.assertEqual(note.get('notepad_id'), 200)
 
     def test_get_non_existing_id(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/notepads/501')
+        response = self.client.get(
+            '/api/v1/notepads/501',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 404)
 
     def test_get_malformed_id(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/notepads/abc')
+        response = self.client.get(
+            '/api/v1/notepads/abc',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 404)
 
     def test_list(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
-        response = self.client.get('/ajax/notes')
+        response = self.client.get(
+            '/api/v1/notes',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 200)
         resp_content = json.loads(response.content.decode('utf-8'))
         self.assertTrue('notes' in resp_content)
@@ -647,9 +640,7 @@ class NotesTestCase(TestCase):
         self.assertEqual(notes[1].get('notepad_id'), 200)
 
     def test_create(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Create
         body = {
@@ -658,7 +649,8 @@ class NotesTestCase(TestCase):
             'text': 'Hello, world'
         }
         response = self.client.post(
-            '/ajax/notes', json.dumps(body), 'application/json'
+            '/api/v1/notes', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 201)
         resp_content = json.loads(response.content.decode('utf-8'))
@@ -666,49 +658,43 @@ class NotesTestCase(TestCase):
         self.assertTrue('id' in resp_content)
         id = resp_content['id']
 
-        # Get from server and check
-        response = self.client.get('/ajax/notes/%d' % id)
-        self.assertEqual(response.status_code, 200)
-        note = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(note.get('id'), id)
-        self.assertEqual(note.get('title'), 'My Note')
-        self.assertEqual(note.get('notepad_id'), 200)
-        self.assertEqual(note.get('text'), 'Hello, world')
+        # Check
+        note = Note.objects.get(id=id)
+        self.assertEqual(note.title, 'My Note')
+        self.assertEqual(note.notepad_id, 200)
+        self.assertEqual(note.text, 'Hello, world')
 
     def test_modify(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Modify
         body = {
             'title': 'New Name',
         }
         response = self.client.put(
-            '/ajax/notepads/200', json.dumps(body), 'application/json'
+            '/api/v1/notes/300', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
 
-        # Get from server and check
-        response = self.client.get('/ajax/notepads/200')
-        self.assertEqual(response.status_code, 200)
-        notepad = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(notepad.get('id'), 200)
-        self.assertEqual(notepad.get('title'), 'New Name')
-        self.assertEqual(notepad.get('folder_id'), 100)
+        # Check
+        note = Note.objects.get(id=300)
+        self.assertEqual(note.title, 'New Name')
 
     def test_delete(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Delete
-        response = self.client.delete('/ajax/notes/300')
+        response = self.client.delete(
+            '/api/v1/notes/300',
+            HTTP_AUTHORIZATION=header
+        )
         self.assertEqual(response.status_code, 204)
 
-        # Check on server
-        response = self.client.get('/ajax/notes/300')
-        self.assertEqual(response.status_code, 404)
+        # Check
+        def test_check():
+            Note.objects.get(id=300)
+        self.assertRaises(Note.DoesNotExist, test_check)
 
 
 class NotesValidationTestCase(TestCase):
@@ -738,48 +724,43 @@ class NotesValidationTestCase(TestCase):
         )
 
     def test_empty_title(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {
             'title': '',
             'notepad_id': 200
         }
         response = self.client.post(
-            '/ajax/notes', json.dumps(body), 'application/json'
+            '/api/v1/notes', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_long_title(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {
             'title': 'a' * 81,
             'notepad_id': 200
         }
         response = self.client.post(
-            '/ajax/notes', json.dumps(body), 'application/json'
+            '/api/v1/notes', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_empty_notepad(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         body = {'title': 'New Note'}
         response = self.client.post(
-            '/ajax/notes', json.dumps(body), 'application/json'
+            '/api/v1/notes', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 
     def test_non_existing_notepad(self):
-        self.client.login(username='bob', password='bobs-password')
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated())
+        header = login_test(self.client.post, 'bob', 'bobs-password')
 
         # Create
         body = {
@@ -787,7 +768,8 @@ class NotesValidationTestCase(TestCase):
             'notepad_id': 600
         }
         response = self.client.post(
-            '/ajax/notes', json.dumps(body), 'application/json'
+            '/api/v1/notes', json.dumps(body), 'application/json',
+            HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 400)
 

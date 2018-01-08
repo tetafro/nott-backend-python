@@ -15,30 +15,6 @@ from .models import BadInput, User, Token
 from .helpers import generate_token
 
 
-class LoginView(View):
-    """Process login requests"""
-
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body.decode('utf-8'))
-        username = data.get('username')
-        password = data.get('password')
-
-        user = authenticate(username=username, password=password)
-
-        if user is None:
-            response = {'error': 'wrong username or password'}
-            return JsonResponse(response, status=400)
-
-        try:
-            token = Token.objects.create(string=generate_token(), user=user)
-            token.save()
-        except (IntegrityError, ValidationError) as e:
-            logging.error('Failed to create token: %s', e)
-            return JsonResponse({}, status=500)
-
-        return JsonResponse({'token': token.string}, status=200)
-
-
 class RegisterView(View):
     """Process registration requests"""
 
@@ -99,13 +75,37 @@ class RegisterView(View):
         return JsonResponse({'token': token.string}, status=200)
 
 
+class LoginView(View):
+    """Process login requests"""
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body.decode('utf-8'))
+        username = data.get('username')
+        password = data.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user is None:
+            response = {'error': 'wrong username or password'}
+            return JsonResponse(response, status=400)
+
+        try:
+            token = Token.objects.create(string=generate_token(), user=user)
+            token.save()
+        except (IntegrityError, ValidationError) as e:
+            logging.error('Failed to create token: %s', e)
+            return JsonResponse({}, status=500)
+
+        return JsonResponse({'token': token.string}, status=200)
+
+
 class LogoutView(View):
     """Process logout requests"""
 
     def post(self, request, *args, **kwargs):
         token = get_token(request)
         try:
-            Token.objects.get(string=token).delete()
+            token = Token.objects.get(string=token).delete()
             return JsonResponse({}, status=200)
         except Token.DoesNotExist:
             return JsonResponse({'error': 'invalid token'}, status=400)

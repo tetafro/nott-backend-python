@@ -1,5 +1,5 @@
 [{
-    "model": "admin.config",
+    "model": "admin.setting",
     "pk": 1,
     "fields": {
         "id": 1,

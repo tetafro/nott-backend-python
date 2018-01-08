@@ -1,3 +1,5 @@
+import json
+
 from django.views.generic import View
 from django.http import JsonResponse
 
@@ -89,3 +91,17 @@ def get_token(request):
         token = auth[1].strip('"')
         return token
     return None
+
+
+def login_test(post, username, password):
+    """Sign in user for test cases and return formatted string
+    with token for HTTP_AUTHORIZATION header"""
+
+    creds = {'username': username, 'password': password}
+    response = post(
+        '/api/v1/login',
+        content_type='application/json',
+        data=json.dumps(creds)
+    )
+    data = json.loads(response.content.decode('utf-8'))
+    return 'Token token="%s"' % data['token']
