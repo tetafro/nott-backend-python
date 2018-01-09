@@ -140,7 +140,8 @@ class Note(models.Model, Serializer):
     @property
     def html(self):
         """Convert text in mardown to HTML"""
-        escaped_text = escape(self.text)
-        md = markdown(escaped_text,
-                      extras=['fenced-code-blocks', 'tables'])
-        return md
+        return markdown(
+            self.text,
+            extras=['fenced-code-blocks', 'tables'],
+            safe_mode='escape'
+        )
