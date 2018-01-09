@@ -1,13 +1,17 @@
 /* User profile */
-.profile .avatar-block {
-    display: flex;
-    align-items: center;
-    padding: 0px;
-    width: 180px;
-    height: 180px;
+.profile .avatar,
+.profile-edit .avatar {
+    margin: 20px;
+    text-align: center;
+    width: 200px;
 }
 
-.profile .avatar {
-    max-width: 180px;
-    max-height: 180px;
+.profile .info,
+.profile-edit .info {
+    width: 400px;
+}
+
+.profile .avatar img,
+.profile-edit .avatar img {
+    margin-bottom: 15px;
 }
