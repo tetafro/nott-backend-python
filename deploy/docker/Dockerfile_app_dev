@@ -7,6 +7,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV TAG=v0.0.0
 ENV BUILD=0
 
+# Project
+RUN mkdir -p /srv/public/media
+
 # Install deps
 COPY requirements.txt /tmp/
 RUN apt-get -y -qq update && \
@@ -19,9 +22,6 @@ RUN apt-get -y -qq update && \
         python3-pip \
         zlib1g-dev && \
     pip3 install -r /tmp/requirements.txt
-
-# Project
-RUN mkdir -p /srv/
 
 # Cleaning
 RUN rm -f /tmp/requirements.txt && \

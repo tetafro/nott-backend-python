@@ -1,26 +1,19 @@
 import os
 
 
+SERVER_MODE = os.environ.get('SERVER_MODE')
+if SERVER_MODE == 'production':
+    from .settings_prod import DEBUG, LOG_LEVEL, ALLOWED_HOSTS
+elif SERVER_MODE == 'development':
+    from .settings_dev import DEBUG, LOG_LEVEL, ALLOWED_HOSTS
+else:
+    raise EnvironmentError('Server mode is not set!')
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Version
 TAG = os.environ.get('TAG')
 BUILD = os.environ.get('BUILD')
-
-SERVER_MODE = os.environ.get('SERVER_MODE')
-if SERVER_MODE == 'production':
-    DEBUG = False
-    LOG_LEVEL = 'WARNING'
-    ALLOWED_HOSTS = os.environ.get('SERVER_DNS')
-    if not ALLOWED_HOSTS:
-        raise EnvironmentError('Allowed hosts are not set!')
-    ALLOWED_HOSTS = ['localhost'] + ALLOWED_HOSTS.split(',')
-elif SERVER_MODE == 'development':
-    DEBUG = True
-    LOG_LEVEL = 'DEBUG'
-    ALLOWED_HOSTS = ['*']
-else:
-    raise EnvironmentError('Server mode is not set!')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 if not SECRET_KEY:
@@ -35,6 +28,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'apps.admin',
     'apps.base',
+    'apps.files',
     'apps.health',
     'apps.notes',
     'apps.users',
@@ -115,10 +109,10 @@ STATICFILES_DIRS = (
 STATIC_ROOT = ''
 
 # User uploads
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = STATIC_URL + 'media/'
+MEDIA_ROOT = os.path.join(STATICFILES_DIRS[0], 'media')
 
-AVATARS_URL = '/media/avatars/'
+AVATARS_URL = MEDIA_URL + 'avatars/'
 AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')
 
 LOGGING = {

@@ -98,9 +98,9 @@ class User(AbstractBaseUser, Serializer):
         """ Check if avatar file exist and return URL """
         avatar_file = os.path.join(settings.AVATARS_ROOT, str(self.avatar))
         if self.avatar and os.path.isfile(avatar_file):
-            avatar = settings.AVATARS_URL + str(self.avatar)
+            avatar = settings.AVATARS_URL + '/' + str(self.avatar)
         else:
-            avatar = settings.STATIC_URL + 'images/no-avatar.png'
+            avatar = settings.STATIC_URL + '/images/no-avatar.png'
         return avatar
 
     def save(self, *args, **kwargs):
