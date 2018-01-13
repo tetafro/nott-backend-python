@@ -83,7 +83,7 @@ module.exports = Backbone.View.extend({
             url: Config.urls.api.login,
             contentType: 'application/json',
             dataType: 'json',
-            type: 'POST',
+            method: 'POST',
             data: JSON.stringify({
                 'username': username,
                 'password': password

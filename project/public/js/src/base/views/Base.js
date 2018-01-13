@@ -52,7 +52,7 @@ module.exports = Backbone.View.extend({
             url: Config.urls.api.logout,
             contentType: 'application/json',
             dataType: 'json',
-            type: 'POST',
+            method: 'POST',
             data: '{}',
             complete: function (response) {
                 window.App.logout();

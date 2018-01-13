@@ -95,7 +95,7 @@ module.exports = Backbone.View.extend({
             url: Config.urls.api.register,
             contentType: 'application/json',
             dataType: 'json',
-            type: 'POST',
+            method: 'POST',
             data: JSON.stringify({
                 'username': username,
                 'email': email,

@@ -41,7 +41,7 @@ module.exports = Backbone.View.extend({
             async: false,
             url: Config.urls.api.version,
             contentType: 'application/json',
-            type: 'GET',
+            method: 'GET',
             success: function (response) {
                 if ('version' in response) {
                     version = response.version;
