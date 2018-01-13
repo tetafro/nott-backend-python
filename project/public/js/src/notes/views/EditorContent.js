@@ -62,7 +62,7 @@ module.exports = Backbone.View.extend({
     // Handle hotkeys
     checkHotkey: function (event) {
         // Save note on CTRL+Enter
-        if (event.keyCode == 10 && event.ctrlKey) {
+        if (event.keyCode == 13 && event.ctrlKey) {
             this.saveModel(event.keyCode);
         }
     },
