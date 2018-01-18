@@ -11,7 +11,8 @@ module.exports = {
             folders: '/api/v1/folders',
             notepads: '/api/v1/notepads',
             notes: '/api/v1/notes',
-            search: '/api/v1/search'
+            search: '/api/v1/search',
+            files: '/api/v1/files'
         },
         pages: {
             login: 'login',

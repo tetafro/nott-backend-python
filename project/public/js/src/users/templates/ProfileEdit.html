@@ -4,7 +4,8 @@
     <form class="form-horizontal" role="form">
         <div class="col-md-3 avatar">
             <img src="<%= avatar_url %>">
-            <button class="btn btn-primary">Upload</button>
+            <input accept="image/gif,image/jpeg,image/png" name="avatar" type="file">
+            <button class="btn btn-primary" name="fake-avatar">Upload</button>
         </div>
         <div class="col-md-9 info">
             <div class="form-group">

@@ -14,6 +14,8 @@ module.exports = Backbone.View.extend({
 
     events: {
         'click a.goto': 'goto',
+        'click button[name="fake-avatar"]': 'clickSelectFile',
+        'change .avatar input[type="file"]': 'onAvatarSelect',
         'click button[type="submit"]': 'submit'
     },
 
@@ -44,6 +46,61 @@ module.exports = Backbone.View.extend({
         this.$('.auth-errors').text('');
     },
 
+    // Send click to real input
+    clickSelectFile: function (event) {
+        event.preventDefault();
+        var realInput = $('.avatar input[type="file"]');
+        realInput.click();
+    },
+
+    // Update avatar picture before uploading it to server
+    onAvatarSelect: function (event) {
+        var input = event.currentTarget;
+        var reader;
+        if (input.files && input.files[0]) {
+            reader = new FileReader();
+            reader.onload = function (e) {
+                $('.avatar img').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    },
+
+    // Upload avatar (in sync mode) and return it's URL
+    uploadAvatar: function (file) {
+        var avatarURL = '';
+
+        var formdata = new FormData();
+        formdata.append('file', file);
+        $.ajax({
+            async: false,
+            url: Config.urls.api.files,
+            contentType: false,
+            method: 'POST',
+            data: formdata,
+            processData: false,
+            cache: false,
+            success: function (response) {
+                if ('url' in response) {
+                    avatarURL = response.url;
+                }
+            },
+            error: function (response) {
+                var data = response.responseJSON;
+
+                // Invalid responses
+                if (typeof data === 'undefined' || !('error' in data)) {
+                    that.addError('Unexpected error');
+                    return;
+                }
+
+                that.addError('Authentication error: ' + data.error);
+            }
+        });
+
+        return avatarURL;
+    },
+
     submit: function (event) {
         var that = this;
 
@@ -53,11 +110,25 @@ module.exports = Backbone.View.extend({
 
         var email = that.$('input[name="email"]').val();
         var password = that.$('input[name="password"]').val();
+        var inputAvatar = that.$('input[name="avatar"]')[0];
+
+        var fields = {
+            email: email,
+            password: password
+        };
+
+        var avatarURL = '';
+        if (inputAvatar.files && inputAvatar.files[0]) {
+            avatarURL = that.uploadAvatar(inputAvatar.files[0]);
+            // There was an error
+            if (avatarURL == '') {
+                return;
+            }
+            fields.avatar = avatarURL;
+        }
+
         that.model.save(
-            {
-                email: email,
-                password: password
-            },
+            fields,
             {
                 success: function (model, response) {
                     Backbone.history.navigate(Config.urls.pages.profile, true);

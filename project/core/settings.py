@@ -112,8 +112,8 @@ STATIC_ROOT = ''
 MEDIA_URL = STATIC_URL + 'media/'
 MEDIA_ROOT = os.path.join(STATICFILES_DIRS[0], 'media')
 
-AVATARS_URL = MEDIA_URL + 'avatars/'
-AVATARS_ROOT = os.path.join(MEDIA_ROOT, 'avatars')
+# Length of the longest avatar size in pixels
+AVATAR_SIZE = 180
 
 LOGGING = {
     'version': 1,

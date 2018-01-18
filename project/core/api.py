@@ -4,6 +4,19 @@ from django.views.generic import View
 from django.http import JsonResponse
 
 
+JsonResponse404 = JsonResponse(
+    {'error': 'object not found'},
+    status=500
+)
+JsonResponse405 = JsonResponse(
+    {'error': 'method not allowed'},
+    status=405
+)
+JsonResponse500 = JsonResponse(
+    {'error': 'internal server error'},
+    status=500
+)
+
 class ApiView(View):
     """
     Add list method for dispatcher when id is not

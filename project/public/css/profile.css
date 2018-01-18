@@ -13,5 +13,11 @@
 
 .profile .avatar img,
 .profile-edit .avatar img {
+    height: 128px;
     margin-bottom: 15px;
+    width: 128px;
+}
+
+.profile-edit input[name="avatar"] {
+    display: none;
 }

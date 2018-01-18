@@ -1,5 +1,4 @@
 import datetime
-import os
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -8,7 +7,6 @@ from django.db import models, IntegrityError
 from django.utils import timezone
 
 from core.api import Serializer
-from .helpers import OverwriteStorage, image_resize
 
 
 ADMIN_ROLE_ID = 1
@@ -59,6 +57,14 @@ class User(AbstractBaseUser, Serializer):
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
+    avatar = models.CharField(max_length=200, null=True)
+
+    @property
+    def avatar_url(self):
+        if self.avatar:
+            return settings.MEDIA_URL + self.avatar
+        else:
+            return settings.STATIC_URL + 'images/no-avatar.png'
 
     # Fields to be given to clients
     dict_fields = ['id', 'username', 'email', 'avatar_url',
@@ -82,33 +88,6 @@ class User(AbstractBaseUser, Serializer):
     @property
     def is_admin(self):
         return self.role_id == ADMIN_ROLE_ID
-
-    # Note: this can't be lamba, otherwise makemigration
-    # will give an error
-    def _upload_to(u, f):
-        return u.username
-
-    avatar = models.FileField(upload_to=_upload_to,
-                              storage=OverwriteStorage(),
-                              blank=True,
-                              null=True)
-
-    @property
-    def avatar_url(self):
-        """ Check if avatar file exist and return URL """
-        avatar_file = os.path.join(settings.AVATARS_ROOT, str(self.avatar))
-        if self.avatar and os.path.isfile(avatar_file):
-            avatar = settings.AVATARS_URL + '/' + str(self.avatar)
-        else:
-            avatar = settings.STATIC_URL + '/images/no-avatar.png'
-        return avatar
-
-    def save(self, *args, **kwargs):
-        """Resize uploaded file on save"""
-        if self.avatar:
-            avatar_file = os.path.join(settings.AVATARS_ROOT, str(self.avatar))
-            image_resize(avatar_file, avatar_file, 180)
-        super().save(*args, **kwargs)
 
     def full_save(self):
         """Validate before saving"""

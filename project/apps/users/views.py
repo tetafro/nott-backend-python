@@ -1,5 +1,7 @@
 import json
 import logging
+import random
+import string
 
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
@@ -9,10 +11,18 @@ from django.http import JsonResponse
 from django.utils.html import escape
 from django.views.generic import View
 
-from core.api import ApiView, get_token
+from core.api import ApiView, get_token, JsonResponse500
 from apps.admin.models import Setting
 from .models import BadInput, User, Token
-from .helpers import generate_token
+
+
+def generate_token():
+    token_length = 64
+    chars = string.ascii_lowercase + \
+        string.ascii_uppercase + \
+        string.digits
+    token = ''.join(random.choice(chars) for each in range(token_length))
+    return token
 
 
 class RegisterView(View):
@@ -70,7 +80,7 @@ class RegisterView(View):
             token.save()
         except (IntegrityError, ValidationError) as e:
             logging.error('Failed to create token: %s', e)
-            return JsonResponse({}, status=500)
+            return JsonResponse500
 
         return JsonResponse({'token': token.string}, status=200)
 
@@ -94,7 +104,7 @@ class LoginView(View):
             token.save()
         except (IntegrityError, ValidationError) as e:
             logging.error('Failed to create token: %s', e)
-            return JsonResponse({}, status=500)
+            return JsonResponse500
 
         return JsonResponse({'token': token.string}, status=200)
 
