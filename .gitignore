@@ -21,7 +21,7 @@ package-lock.json
 *.log
 
 # Static, media
-/project/media/
+/project/public/media/
 
 # Builds
 /project/public/js/app.js

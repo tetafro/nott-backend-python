@@ -15,7 +15,9 @@ ENV BUILD=0
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Project
-RUN mkdir -p /srv/public/{.well-known,media}
+RUN mkdir -p \
+    /srv/public/.well-known
+    /srv/public/media
 COPY project /srv/
 COPY requirements.txt /srv/
 COPY deploy/configs/gunicorn/gunicorn.py /srv/

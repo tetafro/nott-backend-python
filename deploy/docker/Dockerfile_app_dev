@@ -8,7 +8,7 @@ ENV TAG=v0.0.0
 ENV BUILD=0
 
 # Project
-RUN mkdir -p /srv/public/media
+RUN mkdir -p /srv/
 
 # Install deps
 COPY requirements.txt /tmp/

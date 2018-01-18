@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^api/v1/', include('apps.admin.urls')),
+    url(r'^api/v1/', include('apps.files.urls')),
     url(r'^api/v1/', include('apps.notes.urls')),
     url(r'^api/v1/', include('apps.users.urls')),
     url(r'', include('apps.health.urls')),
