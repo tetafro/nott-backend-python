@@ -5,7 +5,7 @@ COPY project/public/js .
 RUN npm install --silent && \
     webpack
 
-FROM tetafro/gunicorn:ubuntu-16.10
+FROM tetafro/gunicorn:ubuntu-17.10
 LABEL maintainer="Denis Ivanov"
 
 ENV TAG=v0.0.0
