@@ -16,7 +16,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Project
 RUN mkdir -p \
-    /srv/public/.well-known
+    /srv/public/.well-known \
     /srv/public/media
 COPY project /srv/
 COPY requirements.txt /srv/
