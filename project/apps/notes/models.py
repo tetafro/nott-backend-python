@@ -142,6 +142,6 @@ class Note(models.Model, Serializer):
         """Convert text in mardown to HTML"""
         return markdown(
             self.text,
-            extras=['fenced-code-blocks', 'tables'],
+            extras=['fenced-code-blocks', 'tables', 'header-ids'],
             safe_mode='escape'
         )
