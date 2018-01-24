@@ -68,6 +68,7 @@ module.exports = Backbone.View.extend({
 
     // Upload avatar (in sync mode) and return it's URL
     uploadAvatar: function (file) {
+        var that = this;
         var avatarURL = '';
 
         var formdata = new FormData();
@@ -94,7 +95,7 @@ module.exports = Backbone.View.extend({
                     return;
                 }
 
-                that.addError('Authentication error: ' + data.error);
+                that.addError('Error: ' + data.error);
             }
         });
 

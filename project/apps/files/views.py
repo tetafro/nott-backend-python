@@ -10,7 +10,7 @@ from core.api import JsonResponse405, JsonResponse500
 
 
 def image_resize(img_input, img_output, max_size):
-    """Resizes input image so that longest side is equal to max_size"""
+    """Resize input image so that longest side is equal to max_size"""
 
     # Read file
     image = Image.open(img_input).convert('RGB')
@@ -26,7 +26,7 @@ def image_resize(img_input, img_output, max_size):
 
 
 def upload(request):
-    """Upload binary files"""
+    """Upload binary file"""
 
     if request.method != 'POST':
         return JsonResponse405
@@ -36,13 +36,22 @@ def upload(request):
         error = {'error': 'request has no file'}
         return JsonResponse(error, status=400)
 
-    avatar_file = os.path.join(settings.MEDIA_ROOT, str(self.avatar))
+    file_content = ContentFile(uploaded_file.read())
 
-    name = str(uuid.uuid4())
+    # Check if it is a valid image
+    try:
+        img = Image.open(file_content)
+        fmt = img.format.lower()
+        img.close()
+    except (OSError, IOError):
+        error = {'error': 'the file is not a valid image'}
+        return JsonResponse(error, status=400)
+
+    # Save to disk
+    name = str(uuid.uuid4()) + '.' + fmt
     file_path = os.path.join(settings.MEDIA_ROOT, name)
     try:
         with open(file_path, 'wb+') as f:
-            file_content = ContentFile(uploaded_file.read())
             for chunk in file_content.chunks():
                 f.write(chunk)
     except FileNotFoundError:
@@ -53,4 +62,3 @@ def upload(request):
 
     url = settings.MEDIA_URL + name
     return JsonResponse({'url': url}, status=200)
-
