@@ -57,17 +57,13 @@ class User(AbstractBaseUser, Serializer):
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
-    avatar = models.CharField(max_length=200, null=True)
-
-    @property
-    def avatar_url(self):
-        if self.avatar:
-            return settings.MEDIA_URL + self.avatar
-        else:
-            return settings.STATIC_URL + 'images/no-avatar.png'
+    avatar = models.CharField(
+        max_length=200,
+        default=settings.STATIC_URL+'images/no-avatar.png'
+    )
 
     # Fields to be given to clients
-    dict_fields = ['id', 'username', 'email', 'avatar_url',
+    dict_fields = ['id', 'username', 'email', 'avatar',
                    'role', 'created', 'updated']
 
     USERNAME_FIELD = 'username'

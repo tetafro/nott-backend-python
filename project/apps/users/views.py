@@ -124,7 +124,7 @@ class LogoutView(View):
 class UserView(ApiView):
     """Full CRUD for User model"""
 
-    editable_fields = ['email']
+    editable_fields = ['email', 'avatar']
 
     def list(self, request, *args, **kwargs):
         users = User.objects.\
