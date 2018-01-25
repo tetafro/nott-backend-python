@@ -6,7 +6,8 @@ var SettingTemplate = require('raw-loader!../templates/Setting.html');
 
 module.exports = Backbone.View.extend({
     model: Setting,
-    tagName: 'tr',
+    tagName: 'div',
+    className: 'form-group',
     template: _.template(SettingTemplate),
 
     initialize: function () {

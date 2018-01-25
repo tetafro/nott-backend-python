@@ -1,2 +1,4 @@
-<td class="col-md-6"><%= name %></td>
-<td class="col-md-6"><%= value %></td>
+<div class="col-md-4 settings-name"><%= name %></div>
+<div class="col-md-2 settings-value">
+    <input name="<%= code %>" type="checkbox" <% if (value) {%>checked<% }%>>
+</div>
