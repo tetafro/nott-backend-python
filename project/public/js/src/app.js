@@ -14,6 +14,7 @@ App = {
     router: {},
 
     init: function () {
+        var that = this;
 
         // Set timeout for all AJAX requests
         $.ajaxSetup({timeout: 5000});
@@ -22,24 +23,25 @@ App = {
         $(document).ajaxError(function (e, xhr, options) {
             // Unauthorized
             if (xhr.status == 401) {
+                that.removeToken();
                 Backbone.history.navigate(Config.urls.pages.login, true);
             }
         });
 
         // Fetch user if token is not empty
-        var token = this.getToken();
+        var token = that.getToken();
         if (token != null) {
-            this.setAuthHeader(token);
-            window.App.currentUser = this.getCurrentUser();
+            that.setAuthHeader(token);
+            window.App.currentUser = that.getCurrentUser();
         }
 
         // Render app frame
-        this.views.base = new BaseView(this);
+        that.views.base = new BaseView(that);
 
         // Init routing system
-        this.router = new Router();
+        that.router = new Router();
 
-        return this;
+        return that;
     },
 
     getToken: function () {
