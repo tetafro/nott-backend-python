@@ -14,7 +14,7 @@ build:
 		install
 	# Build images and make containers
 	docker-compose -f $(compose_file) build
-	docker-compose -f $(compose_file) create
+	docker-compose -f $(compose_file) up --no-start
 	# Prepare database
 	docker-compose -f $(compose_file) run --rm backend $(manage) migrate
 	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata \

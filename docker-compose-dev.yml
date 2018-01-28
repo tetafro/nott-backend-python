@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 
 volumes:
   db:
@@ -31,6 +31,6 @@ services:
       - db
   frontend:
     image: tetafro/webpack:8
-    command: webpack -w
+    command: -w
     volumes:
       - ./project/public/js:/app
