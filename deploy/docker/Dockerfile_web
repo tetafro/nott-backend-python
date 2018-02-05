@@ -1,7 +1,7 @@
 FROM tetafro/caddy:latest
 LABEL maintainer="Denis Ivanov"
 
-RUN mkdir -p /srv/project
+RUN mkdir -p /app/project
 COPY deploy/configs/caddy/Caddyfile .
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \

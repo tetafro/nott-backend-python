@@ -1,6 +1,6 @@
 FROM tetafro/webpack:8 AS build
 
-WORKDIR /srv/
+WORKDIR /build/
 COPY project/public/js .
 RUN npm install --silent && \
     webpack
@@ -16,12 +16,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Project
 RUN mkdir -p \
-    /srv/public/.well-known \
-    /srv/public/media
-COPY project /srv/
-COPY requirements.txt /srv/
-COPY deploy/configs/gunicorn/gunicorn.py /srv/
-COPY --from=build /srv/app.min.js /srv/public/js/
+    /app/public/.well-known \
+    /app/public/media
+COPY project /app/
+COPY requirements.txt /app/
+COPY deploy/configs/gunicorn/gunicorn.py /app/
+COPY --from=build /build/app.min.js /app/public/js/
 
 # Install deps
 RUN apt-get -y -qq update && \
@@ -30,16 +30,16 @@ RUN apt-get -y -qq update && \
         libjpeg-dev \
         libpq-dev \
         zlib1g-dev && \
-    pip3 install -r /srv/requirements.txt
+    pip3 install -r /app/requirements.txt
 
 # Cleaning
 RUN apt-get -y -qq autoremove && \
     apt-get -y -qq clean
 
-WORKDIR /srv/
+WORKDIR /app/
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/healthz || exit 1
 
 ENTRYPOINT [ "gunicorn" ]
-CMD [ "--config", "/srv/gunicorn.py", "core.wsgi:application" ]
+CMD [ "--config", "/app/gunicorn.py", "core.wsgi:application" ]

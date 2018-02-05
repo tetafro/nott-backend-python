@@ -1,5 +1,5 @@
 knott.cf {
-    root /srv/project
+    root /app/project
     proxy / app:8000 {
         except /public
         transparent

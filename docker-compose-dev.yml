@@ -13,7 +13,7 @@ services:
       - config.env
     volumes:
       - db:/var/lib/postgresql/data
-  backend:
+  app:
     image: nott_app_dev
     build:
       context: .
@@ -24,12 +24,12 @@ services:
       - config.env
     tty: true
     volumes:
-      - ./project:/srv
+      - ./project:/app
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
       - db
-  frontend:
+  webpack:
     image: tetafro/webpack:8
     command: -w
     volumes:

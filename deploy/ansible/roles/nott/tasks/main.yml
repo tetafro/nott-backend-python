@@ -62,13 +62,13 @@
     mode: 0755
 
 - name: Apply DB migrations
-  command: docker-compose run --rm app python3 /srv/smart_manage.py migrate
+  command: docker-compose run --rm app python3 /app/smart_manage.py migrate
   args:
     chdir: "/home/{{ user }}/"
   notify: restart nott
 
 - name: Populate DB
-  command: docker-compose run --rm app python3 /srv/smart_manage.py loaddata /srv/apps/users/fixtures/admin.json
+  command: docker-compose run --rm app python3 /app/smart_manage.py loaddata /app/apps/users/fixtures/admin.json
   args:
     chdir: "/home/{{ user }}/"
   notify: restart nott
@@ -89,6 +89,6 @@
 - name: Obtain LetEncrypt certificate
   command: docker exec -it nott_certbot_1 certbot certonly
     --webroot
-    -w /srv/public/
+    -w /app/public/
     -d {{ server_dns }}
     -d www.{{ server_dns }}

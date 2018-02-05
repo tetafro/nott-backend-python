@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 
 volumes:
   cert:
@@ -26,7 +26,7 @@ services:
     env_file:
       - config.env
     volumes:
-      - project:/srv
+      - project:/app
     restart: unless-stopped
     depends_on:
       - db
@@ -37,7 +37,7 @@ services:
       dockerfile: deploy/docker/Dockerfile_web
     volumes:
       - cert:/root/.caddy
-      - project:/srv/project
+      - project:/app/project
     ports:
       - "80:80"
       - "443:443"

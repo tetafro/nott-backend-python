@@ -1,7 +1,7 @@
 include config.env
 
 webpack_image = tetafro/webpack:8
-manage = /srv/smart_manage.py
+manage = /app/smart_manage.py
 compose_file = docker-compose-dev.yml
 
 .PHONY: build
@@ -18,9 +18,9 @@ build:
 	# Prepare database
 	docker-compose -f $(compose_file) run --rm backend $(manage) migrate
 	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata \
-		/srv/apps/users/fixtures/roles.json \
-		/srv/apps/users/fixtures/admin.json \
-		/srv/apps/admin/fixtures/settings.json
+		/app/apps/users/fixtures/roles.json \
+		/app/apps/users/fixtures/admin.json \
+		/app/apps/admin/fixtures/settings.json
 
 .PHONY: run
 run:
@@ -47,9 +47,9 @@ migrate:
 .PHONY: fixtures
 fixtures:
 	docker-compose -f $(compose_file) run --rm backend $(manage) loaddata \
-		/srv/apps/users/fixtures/roles.json \
-		/srv/apps/users/fixtures/admin.json \
-		/srv/apps/admin/fixtures/settigs.json
+		/app/apps/users/fixtures/roles.json \
+		/app/apps/users/fixtures/admin.json \
+		/app/apps/admin/fixtures/settigs.json
 
 .PHONY: test
 test:
