@@ -147,21 +147,7 @@ class UserView(ApiView):
     def get(self, request, *args, **kwargs):
         user_id = kwargs.get('id')
         try:
-            # Get user's stats
-            user = User.objects.\
-                annotate(folders_count=Count(
-                    'folders',
-                    distinct=True
-                )).\
-                annotate(notepads_count=Count(
-                    'folders__notepads',
-                    distinct=True
-                )).\
-                annotate(notes_count=Count(
-                    'folders__notepads__notes',
-                    distinct=True
-                )).\
-                get(id=user_id)
+            user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             response = {'error': 'object not found'}
             return JsonResponse(response, status=404)
