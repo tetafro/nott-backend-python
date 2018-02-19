@@ -40,18 +40,18 @@ make deploy
 Build docker images and run the app locally in debug mode
 
 ```sh
-make -f Makefile_dev build
-make -f Makefile_dev run
+make ENV=dev build
+make ENV=dev run
 ```
 
 Stop
 ```sh
-make -f Makefile_dev stop
+make ENV=dev stop
 ```
 
 Teardown
 ```sh
-make -f Makefile_dev clear
+make ENV=dev clear
 ```
 
 ## Working with the database
@@ -80,10 +80,10 @@ docker exec -i nott_db_1 \
 
 Make
 ```sh
-make -f Makefile_dev makemigrations
+make makemigrations
 ```
 
 Migrate
 ```sh
-make -f Makefile_dev migrate
+make migrate
 ```
