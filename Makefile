@@ -28,6 +28,10 @@ fixtures:
 		/app/apps/users/fixtures/admin.json \
 		/app/apps/admin/fixtures/settigs.json
 
+.PHONE: lint
+lint:
+	./scripts/lint.sh
+
 .PHONY: test
 test:
 	docker-compose -f $(compose_file) run \
