@@ -6,7 +6,7 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/..
 webpack_image=tetafro/webpack:8
 manage=/app/smart_manage.py
 
-case $env
+case $env in
     'prod')
         docker-compose -f $dir/docker-compose-prod.yml build
     ;;
@@ -21,8 +21,8 @@ case $env
         docker-compose -f $dir/docker-compose-dev.yml build
         docker-compose -f $dir/docker-compose-dev.yml up --no-start
         # Prepare database
-        docker-compose -f $dir/docker-compose-dev.yml run --rm backend $manage migrate
-        docker-compose -f $dir/docker-compose-dev.yml run --rm backend $manage loaddata \
+        docker-compose -f $dir/docker-compose-dev.yml run --rm app $manage migrate
+        docker-compose -f $dir/docker-compose-dev.yml run --rm app $manage loaddata \
             /app/apps/users/fixtures/roles.json \
             /app/apps/users/fixtures/admin.json \
             /app/apps/admin/fixtures/settings.json
