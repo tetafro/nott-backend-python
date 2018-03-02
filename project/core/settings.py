@@ -51,21 +51,19 @@ AUTHENTICATION_BACKENDS = [
     'core.backends.TokenBackend',
 ]
 
-DB_USER = os.environ.get('POSTGRES_USER')
-DB_PASS = os.environ.get('POSTGRES_PASSWORD')
-if not DB_USER or not DB_PASS:
-    raise EnvironmentError('Database credentials are not set!')
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db_nott',
-        'USER': DB_USER,
-        'PASSWORD': DB_PASS,
-        'HOST': 'db',
-        'PORT': '5432',
+        'NAME': os.environ.get('POSTGRES_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_HOST'),
+        'PORT': os.environ.get('POSTGRES_PORT'),
     }
 }
+for key, value in DATABASES['default'].items():
+    if not value:
+        raise EnvironmentError('Database setting is empty: %s' % key)
 
 ROOT_URLCONF = 'core.urls'
 

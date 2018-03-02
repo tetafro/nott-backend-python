@@ -39,6 +39,7 @@ jobs:
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push tetafro/nott_web:latest
             docker push tetafro/nott_db:latest
+            docker push tetafro/nott_db_backup:latest
             docker push tetafro/nott_app:latest
       - run:
           name: Deploy

@@ -16,6 +16,16 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     restart: unless-stopped
+  backup:
+    image: tetafro/nott_db_backup:latest
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile_backup
+    env_file:
+      - config.env
+    restart: unless-stopped
+    depends_on:
+      - db
   app:
     image: tetafro/nott_app:latest
     build:
