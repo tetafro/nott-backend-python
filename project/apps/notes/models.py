@@ -2,7 +2,6 @@ from markdown2 import markdown
 
 from django.core.exceptions import ValidationError
 from django.db import models, IntegrityError
-from django.utils.html import escape
 
 from core.api import Serializer
 from apps.users.models import User
@@ -143,5 +142,5 @@ class Note(models.Model, Serializer):
         return markdown(
             self.text,
             extras=['fenced-code-blocks', 'tables', 'header-ids'],
-            safe_mode='escape'
+            safe_mode=''
         )

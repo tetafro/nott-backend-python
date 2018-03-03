@@ -61,9 +61,6 @@ module.exports = Backbone.View.extend({
         // Clear list of notes
         that.$el.empty();
 
-        var note;
-        var noteView;
-
         // Sort and render
         this.collection.sortByField('title');
         this.collection.each(function (note) {

@@ -17,6 +17,7 @@ JsonResponse500 = JsonResponse(
     status=500
 )
 
+
 class ApiView(View):
     """
     Add list method for dispatcher when id is not
