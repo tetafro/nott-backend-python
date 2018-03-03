@@ -118,73 +118,28 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'general': {
-            'format': '[%(asctime)s] [%(levelname)s] '
-                      '%(name)s - %(filename)s:%(lineno)s %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S %z'
-        },
-        'request': {
-            'format': '[%(asctime)s] [%(levelname)s] '
-                      '%(name)s - %(filename)s:%(lineno)s %(message)s '
-                      'STATUS: %(status_code)s '
-                      'REQUEST: %(request)s '
-                      'EXCEPTION: %(exc_info)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S %z'
-        },
-        'db': {
-            'format': '[%(asctime)s] [%(levelname)s] '
-                      '%(name)s - %(filename)s:%(lineno)s %(message)s '
-                      'DURATION: %(duration)s '
-                      'SQL: %(sql)s '
-                      'PARAMS: %(params)s '
-                      'EXCEPTION: %(exc_info)s)',
-            'datefmt': '%Y-%m-%d %H:%M:%S %z'
+            'format':
+            '[%(asctime)s] [%(levelname)s] %(name)s - %(filename)s:%(lineno)s %(message)s',
+            'datefmt':
+            '%Y-%m-%d %H:%M:%S %z'
         },
     },
     'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
+        'no_healthchecks': {
+            '()': 'core.log.HealthchechFilter'
         }
     },
     'handlers': {
-        'django': {
+        'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'general',
-        },
-        'request': {
-            'level': 'WARNING',
-            'class': 'logging.StreamHandler',
-            'formatter': 'request',
-        },
-        'db': {
-            'level': 'WARNING',
-            'class': 'logging.StreamHandler',
-            'formatter': 'db',
-        },
-        'apps': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'general',
+            'filters': ['no_healthchecks'],
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['django'],
-            'level': LOG_LEVEL,
-            'propagate': True
-        },
-        'django.request': {
-            'handlers': ['request'],
-            'level': LOG_LEVEL,
-            'propagate': True
-        },
-        'django.db.backends': {
-            'handlers': ['db'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'apps': {
-            'handlers': ['apps'],
+            'handlers': ['console'],
             'level': LOG_LEVEL,
         },
     }
