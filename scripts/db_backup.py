@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 """
-Backup PostreSQL database using pg_dump util. Standard env variables are used
-to access the database: PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD.
-Dropbox token is required to upload backup. It can be obtained here:
+Backup PostreSQL database using pg_dump util. Env variables are used to access
+database. Dropbox token is required to upload backup. It can be obtained here:
 https://www.dropbox.com/developers/apps
 """
 import time
@@ -56,7 +55,7 @@ def backup():
     pg_dump = ['pg_dump', '-Fc', '-C', conn_str]
     dumpfile = os.path.join(
         tempfile.gettempdir(),
-        datetime.now().strftime('%Y%m%d')+'_test.dump'
+        datetime.now().strftime('%Y%m%d')+'.dump'
     )
 
     with open(dumpfile, 'w') as f:
