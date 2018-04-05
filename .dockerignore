@@ -3,4 +3,3 @@
 .gitignore
 *.pyc
 __pycache__
-/project/public/js/node_modules/
