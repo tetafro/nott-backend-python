@@ -1,65 +1,33 @@
-include config.env
+MANAGE = ./project/smart_manage.py
 
-ENV = prod
-ifeq ($(ENV),dev)
-compose_file = docker-compose-dev.yml
-else
-compose_file = docker-compose-prod.yml
-endif
-manage = /app/smart_manage.py
-
-.PHONY: build
-build:
-	./scripts/build.sh $(ENV)
-
-.PHONY: makemigrations
-makemigrations:
-	docker-compose -f $(compose_file) run --rm app $(manage) \
-		makemigrations users notes admin
-
-.PHONY: migrate
-migrate:
-	docker-compose -f $(compose_file) run --rm app $(manage) migrate
-
-.PHONY: fixtures
-fixtures:
-	docker-compose -f $(compose_file) run --rm app $(manage) loaddata \
-		/app/apps/users/fixtures/roles.json \
-		/app/apps/users/fixtures/admin.json \
-		/app/apps/admin/fixtures/settigs.json
+.PHONY: dep
+dep:
+	pip install -r requirements.txt
 
 .PHONE: lint
 lint:
-	./scripts/lint.sh
+	@ flake8 --exclude=migrations
 
 .PHONY: test
 test:
-	docker-compose -f $(compose_file) run \
-		--rm \
-		--entrypoint=python3 \
-		app \
-		$(manage) test
+	@ $(MANAGE) test
+
+.PHONY: migrations
+migrations:
+	@ $(MANAGE) makemigrations users notes
+
+.PHONY: migrate
+migrate:
+	@ $(MANAGE) migrate
+
+.PHONY: fixtures
+fixtures:
+	@ $(MANAGE) loaddata ./project/apps/users/fixtures/user.json
 
 .PHONY: run
 run:
-	docker-compose -f $(compose_file) up
+	@ $(MANAGE) runserver 127.0.0.1:8080
 
-.PHONY: stop
-stop:
-	docker-compose -f $(compose_file) stop
-
-.PHONY: clear
-clear:
-	docker-compose -f $(compose_file) down
-	docker volume rm -f nott_cert nott_db nott_project
-
-.PHONY: deploy
-deploy:
-	docker push tetafro/nott_web
-	docker push tetafro/nott_db
-	docker push tetafro/nott_app
-	cd deploy/ansible && \
-	ansible-playbook \
-		--inventory="$(SERVER_DNS):$(SERVER_SSH_PORT)," \
-		--extra-vars "domain=$(SERVER_DNS) user=$(REMOTE_USER)" \
-		server-update.yml
+.PHONY: docker
+docker:
+	@ docker build -t tetafro/nott_backend_python .
