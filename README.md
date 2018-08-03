@@ -4,86 +4,35 @@
 
 Online notes service with markdown formatting and syntax highlight.
 
-## Local installation
+This repository provides backend written in python.
 
-Build docker images and run the app locally
+## Build and run
+
+Define database creds
 ```sh
-make build
-make run
+export PGUSER=postgres
+export PGPASSWORD=postgres
+export PGDATABASE=nott
 ```
 
-Stop
+Run PostgreSQL
 ```sh
-make stop
+docker run -d \
+    --name postgres \
+    --publish 127.0.0.1:5432:5432 \
+    --env "POSTGRES_USER=${PGUSER}" \
+    --env "POSTGRES_PASSWORD=${PGPASSWORD}" \
+    --env "POSTGRES_DB=${PGDATABASE}" \
+    postgres:10
 ```
 
-Teardown
+Create and populate config
 ```sh
-make clear
+cp .env.example .env
+source .env
 ```
 
-## Deployment to the remote server
-
-Prerequirements:
-
-* Clean Ubuntu 16.04 or later
-* SSH access using key
-
-Build docker images and deploy new or update existing installation to the remote server
+Build and run the application
 ```sh
-make build
-make deploy
-```
-
-## Development (debug) version
-
-Build docker images and run the app locally in debug mode
-
-```sh
-make ENV=dev build
-make ENV=dev run
-```
-
-Stop
-```sh
-make ENV=dev stop
-```
-
-Teardown
-```sh
-make ENV=dev clear
-```
-
-## Working with the database
-
-### Backup
-
-```
-docker exec nott_db_1 \
-    pg_dump -U postgres -Fc -C db_nott > db_nott.dump
-```
-
-### Restore
-
-```sh
-docker exec -i nott_db_1 \
-    dropdb -U postgres db_nott
-docker exec -i nott_db_1 \
-    createdb -U postgres db_nott
-docker exec -i nott_db_1 \
-    psql -U postgres db_nott -c 'GRANT ALL PRIVILEGES ON DATABASE db_nott TO pguser;'
-docker exec -i nott_db_1 \
-    pg_restore -U postgres -d db_nott < ./db_nott.dump
-```
-
-### Migrations
-
-Make
-```sh
-make makemigrations
-```
-
-Migrate
-```sh
-make migrate
+make dep migrate run
 ```
