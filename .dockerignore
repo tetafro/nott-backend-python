@@ -1,5 +1,4 @@
-.dockerignore
 .git/
 .gitignore
 *.pyc
-__pycache__
+__pycache__/
