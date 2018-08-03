@@ -1,11 +1,10 @@
 import json
 
 from django.db import IntegrityError
-from django.http import JsonResponse
 from django.views.generic import View
 
-from core.api import ApiView
-
+from core.api import ApiView, JsonResponse, JsonErrorResponse, \
+    JsonResponse404, JsonResponse500
 from .models import Folder, Notepad, Note, BadInput
 
 
@@ -26,8 +25,7 @@ class FolderView(ApiView):
         try:
             folder.full_save()
         except BadInput as e:
-            response = {'error': str(e)}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse(str(e), status=400)
 
         response = folder.to_dict()
         return JsonResponse(response, status=201)
@@ -38,14 +36,14 @@ class FolderView(ApiView):
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
             response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonErrorResponse(response, status=404)
 
         response = folder.to_dict()
         return JsonResponse(response, status=200)
 
     def list(self, request, *args, **kwargs):
         folders = Folder.objects.filter(user=request.user)
-        response = {'folders': [f.to_dict() for f in folders]}
+        response = [f.to_dict() for f in folders]
         return JsonResponse(response)
 
     def put(self, request, *args, **kwargs):
@@ -53,8 +51,7 @@ class FolderView(ApiView):
         try:
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
-            response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonResponse404
 
         data = json.loads(request.body.decode('utf-8'))
 
@@ -65,8 +62,7 @@ class FolderView(ApiView):
         try:
             folder.full_save()
         except BadInput as e:
-            response = {'error': str(e)}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse(str(e), status=400)
 
         response = folder.to_dict()
         return JsonResponse(response, status=200)
@@ -76,14 +72,12 @@ class FolderView(ApiView):
         try:
             folder = Folder.objects.get(id=folder_id, user=request.user)
         except Folder.DoesNotExist:
-            response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonResponse404
 
         try:
             folder.delete()
         except IntegrityError:
-            response = {'error': 'failed to delete the object'}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse('failed to delete the object', status=400)
 
         return JsonResponse({}, status=204)
 
@@ -106,15 +100,14 @@ class NotepadView(ApiView):
         elif not data.get('title'):
             error = 'notepad must have title'
         if error:
-            return JsonResponse({'error': error}, status=400)
+            return JsonErrorResponse(error, status=400)
 
         notepad = Notepad(user=request.user, **data)
 
         try:
             notepad.full_save()
         except BadInput as e:
-            response = {'error': str(e)}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse(str(e), status=400)
 
         response = notepad.to_dict()
         return JsonResponse(response, status=201)
@@ -124,8 +117,7 @@ class NotepadView(ApiView):
         try:
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
-            response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonResponse404
 
         response = notepad.to_dict()
         return JsonResponse(response, status=200)
@@ -137,7 +129,7 @@ class NotepadView(ApiView):
         if folder_id:
             notepads = notepads.filter(folder_id=folder_id)
 
-        response = {'notepads': [n.to_dict() for n in notepads]}
+        response = [n.to_dict() for n in notepads]
         return JsonResponse(response)
 
     def put(self, request, *args, **kwargs):
@@ -145,8 +137,7 @@ class NotepadView(ApiView):
         try:
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
-            response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonResponse404
 
         data = json.loads(request.body.decode('utf-8'))
 
@@ -157,8 +148,7 @@ class NotepadView(ApiView):
         try:
             notepad.full_save()
         except BadInput as e:
-            response = {'error': str(e)}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse(str(e), status=400)
 
         response = notepad.to_dict()
         return JsonResponse(response, status=200)
@@ -168,14 +158,12 @@ class NotepadView(ApiView):
         try:
             notepad = Notepad.objects.get(id=notepad_id, user=request.user)
         except Notepad.DoesNotExist:
-            response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonResponse404
 
         try:
             notepad.delete()
         except IntegrityError:
-            response = {'error': 'failed to delete the object'}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse('failed to delete the object', status=400)
 
         return JsonResponse({}, status=204)
 
@@ -198,15 +186,14 @@ class NoteView(ApiView):
         elif not data.get('title'):
             error = 'note must have title'
         if error:
-            return JsonResponse({'error': error}, status=400)
+            return JsonErrorResponse(error, status=400)
 
         note = Note(user=request.user, **data)
 
         try:
             note.full_save()
         except BadInput as e:
-            response = {'error': str(e)}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse(str(e), status=400)
 
         response = {'id': note.id}
         return JsonResponse(response, status=201)
@@ -216,8 +203,7 @@ class NoteView(ApiView):
         try:
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
-            response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonResponse404
         response = note.to_dict()
         return JsonResponse(response, status=200)
 
@@ -228,7 +214,7 @@ class NoteView(ApiView):
         if notepad_id:
             notes = notes.filter(notepad_id=notepad_id)
 
-        response = {'notes': [n.to_dict() for n in notes]}
+        response = [n.to_dict() for n in notes]
         return JsonResponse(response)
 
     def put(self, request, *args, **kwargs):
@@ -236,8 +222,7 @@ class NoteView(ApiView):
         try:
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
-            response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonResponse404
 
         data = json.loads(request.body.decode('utf-8'))
 
@@ -248,8 +233,7 @@ class NoteView(ApiView):
         try:
             note.full_save()
         except BadInput as e:
-            response = {'error': str(e)}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse(str(e), status=400)
 
         response = note.to_dict()
         return JsonResponse(response, status=200)
@@ -259,14 +243,12 @@ class NoteView(ApiView):
         try:
             note = Note.objects.get(id=note_id, user=request.user)
         except Note.DoesNotExist:
-            response = {'error': 'object not found'}
-            return JsonResponse(response, status=404)
+            return JsonResponse404
 
         try:
             note.delete()
         except IntegrityError:
-            response = {'error': 'failed to delete the object'}
-            return JsonResponse(response, status=400)
+            return JsonErrorResponse('failed to delete the object', status=400)
 
         return JsonResponse({}, status=204)
 

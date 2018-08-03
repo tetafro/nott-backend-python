@@ -1,21 +1,27 @@
 import json
 
+from django.http import JsonResponse as DefaultJsonResponse
 from django.views.generic import View
-from django.http import JsonResponse
 
 
-JsonResponse404 = JsonResponse(
-    {'error': 'object not found'},
+JsonResponse404 = DefaultJsonResponse(
+    {'error': 'Object not found'},
+    status=404
+)
+JsonResponse500 = DefaultJsonResponse(
+    {'error': 'Internal server error'},
     status=500
 )
-JsonResponse405 = JsonResponse(
-    {'error': 'method not allowed'},
-    status=405
-)
-JsonResponse500 = JsonResponse(
-    {'error': 'internal server error'},
-    status=500
-)
+
+
+class JsonResponse(DefaultJsonResponse):
+    def __init__(self, data, **kwargs):
+        super().__init__({'data': data}, **kwargs)
+
+
+class JsonErrorResponse(DefaultJsonResponse):
+    def __init__(self, data, **kwargs):
+        super().__init__({'error': data}, **kwargs)
 
 
 class ApiView(View):
@@ -69,28 +75,6 @@ def token_required(func):
     return wrap
 
 
-def admin_required(func):
-    """
-    Analog of the following code for API:
-    user_passes_test(lambda u: u.is_admin)
-    """
-
-    def wrap(request, *args, **kwargs):
-        error401 = JsonResponse({'error': 'unauthorized'}, status=401)
-        error403 = JsonResponse({'error': 'forbidden'}, status=403)
-        if 'HTTP_AUTHORIZATION' in request.META:
-            if (request.user is None or not request.user.is_active):
-                return error401
-            elif not request.user.is_admin:
-                return error403
-            else:
-                return func(request, *args, **kwargs)
-        else:
-            return error401
-
-    return wrap
-
-
 def get_token(request):
     """Get token from HTTP header"""
 
@@ -107,11 +91,11 @@ def get_token(request):
     return None
 
 
-def login_test(post, username, password):
+def login_test(post, email, password):
     """Sign in user for test cases and return formatted string
     with token for HTTP_AUTHORIZATION header"""
 
-    creds = {'username': username, 'password': password}
+    creds = {'email': email, 'password': password}
     response = post(
         '/api/v1/login',
         content_type='application/json',
