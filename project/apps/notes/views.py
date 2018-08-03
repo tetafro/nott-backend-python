@@ -1,10 +1,8 @@
 import json
 
 from django.db import IntegrityError
-from django.views.generic import View
 
-from core.api import ApiView, JsonResponse, JsonErrorResponse, \
-    JsonResponse404, JsonResponse500
+from core.api import ApiView, JsonResponse, JsonErrorResponse, JsonResponse404
 from .models import Folder, Notepad, Note, BadInput
 
 
@@ -251,21 +249,3 @@ class NoteView(ApiView):
             return JsonErrorResponse('failed to delete the object', status=400)
 
         return JsonResponse({}, status=204)
-
-
-class SearchView(View):
-    """Search notes with given text"""
-
-    def get(self, request, *args, **kwargs):
-        key = request.GET.get('key')
-        if key:
-            notes = list(Note.objects.
-                              filter(text__contains=key).
-                              values('id', 'title'))
-            response = {'notes': notes}
-            status = 200
-        else:
-            response = {'error': 'no key provided'}
-            status = 400
-
-        return JsonResponse(response, status=status)

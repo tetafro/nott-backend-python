@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from core.api import token_required
-from .views import FolderView, NotepadView, NoteView, SearchView
+from .views import FolderView, NotepadView, NoteView
 
 
 urlpatterns = [
@@ -11,5 +11,4 @@ urlpatterns = [
     url(r'^notepads/(?P<id>\d+)/?$', token_required(NotepadView.as_view())),
     url(r'^notes/?$', token_required(NoteView.as_view())),
     url(r'^notes/(?P<id>\d+)/?$', token_required(NoteView.as_view())),
-    url(r'^search/?$', token_required(SearchView.as_view())),
 ]
