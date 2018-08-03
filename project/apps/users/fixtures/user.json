@@ -2,8 +2,7 @@
     "model": "users.user",
     "pk": 1,
     "fields": {
-        "username": "admin",
-        "email": "admin@example.com",
+        "email": "bob@example.com",
         "role_id": 1,
         "password": "pbkdf2_sha256$20000$p1Hvk4NSMfcp$4oEo148QBcinN+h9lKTTcf4ezlCYLOwxMKeAWIC6/Ys="
     }

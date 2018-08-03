@@ -9,34 +9,20 @@ from django.utils import timezone
 from core.api import Serializer
 
 
-ADMIN_ROLE_ID = 1
-USER_ROLE_ID = 2
-
-
 class BadInput(Exception):
     """Used when model is saving to indicate problems with it's fields"""
     pass
 
 
-class Role(models.Model, Serializer):
-    """User roles"""
-
-    name = models.CharField(max_length=40, unique=True)
-
-    # Fields to be given to clients
-    dict_fields = ['name']
-
-
 class UserManager(BaseUserManager):
     """Helper class for managing User objects"""
 
-    def create_user(self, username, email, password):
+    def create_user(self, email, password):
         if not email:
             raise ValueError('users must have an email address')
 
         user = self.model(
             email=self.normalize_email(email),
-            username=username,
             is_active=True)
         user.set_password(password)
         user.save(using=self._db)
@@ -47,43 +33,28 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, Serializer):
     """Custom user model"""
 
-    username = models.CharField(max_length=40, unique=True)
     email = models.CharField(max_length=40, unique=True)
-    role = models.ForeignKey(
-        Role,
-        default=USER_ROLE_ID,
-        on_delete=models.CASCADE
-    )
-    created = models.DateTimeField(default=timezone.now)
-    updated = models.DateTimeField(auto_now=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
-    avatar = models.CharField(
-        max_length=200,
-        default=settings.STATIC_URL+'images/no-avatar.png'
-    )
 
     # Fields to be given to clients
-    dict_fields = ['id', 'username', 'email', 'avatar',
-                   'role', 'created', 'updated']
+    dict_fields = ['id', 'email', 'created_at', 'updated_at']
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
 
     # This is only for createsuperuser command
-    # Username and password should not be here,
+    # Username and password fields should not be here,
     # they are always required
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = []
 
     objects = UserManager()
 
     def get_full_name(self):
-        return self.username
+        return self.email
 
     def get_short_name(self):
-        return self.username
-
-    @property
-    def is_admin(self):
-        return self.role_id == ADMIN_ROLE_ID
+        return self.email
 
     def full_save(self):
         """Validate before saving"""
@@ -100,7 +71,7 @@ class User(AbstractBaseUser, Serializer):
         return 'User ID%d Profile' % self.id
 
 
-class Token(models.Model):
+class Token(models.Model, Serializer):
     """Authentication token for user model"""
 
     # Secret string
@@ -112,10 +83,13 @@ class Token(models.Model):
         related_name='tokens',
         on_delete=models.CASCADE
     )
-    created = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    # Fields to be given to clients
+    dict_fields = ['string', 'ttl']
 
     @property
     def is_expired(self):
-        elapsed = datetime.datetime.now() - self.created
+        elapsed = datetime.datetime.now() - self.created_at
         if elapsed > datetime.timedelta(seconds=self.ttl):
             return True

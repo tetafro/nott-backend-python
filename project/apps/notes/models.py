@@ -28,11 +28,11 @@ class Folder(models.Model, Serializer):
         blank=True,
         on_delete=models.CASCADE
     )
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     # Fields to be given to clients
-    dict_fields = ['id', 'title', 'parent_id', 'created', 'updated']
+    dict_fields = ['id', 'title', 'parent_id', 'created_at', 'updated_at']
 
     def clean(self):
         if self.title == '':
@@ -69,11 +69,11 @@ class Notepad(models.Model, Serializer):
         null=True,
         on_delete=models.CASCADE
     )
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     # Fields to be given to clients
-    dict_fields = ['id', 'title', 'folder_id', 'created', 'updated']
+    dict_fields = ['id', 'title', 'folder_id', 'created_at', 'updated_at']
 
     def clean(self):
         if self.title == '':
@@ -104,18 +104,18 @@ class Note(models.Model, Serializer):
         related_name='notes',
         on_delete=models.CASCADE
     )
-    text = models.TextField(blank=True)  # source text in markdown
+    text = models.TextField(blank=True, null=True)  # source text in markdown
     notepad = models.ForeignKey(
         Notepad,
         related_name='notes',
         on_delete=models.CASCADE
     )
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     # Fields to be given to clients
     dict_fields = ['id', 'title', 'text', 'html', 'notepad_id',
-                   'created', 'updated']
+                   'created_at', 'updated_at']
 
     def clean(self):
         if self.title == '':
@@ -139,6 +139,8 @@ class Note(models.Model, Serializer):
     @property
     def html(self):
         """Convert text in mardown to HTML"""
+        if not self.text:
+            return ''
         return markdown(
             self.text,
             extras=['fenced-code-blocks', 'tables', 'header-ids'],
