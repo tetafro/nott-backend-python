@@ -6,13 +6,12 @@ import string
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count
 from django.utils.html import escape
 from django.views.generic import View
 
-from core.api import ApiView, get_token, \
+from core.api import get_token, \
     JsonResponse, JsonErrorResponse, JsonResponse500
-from .models import BadInput, User, Token
+from .models import User, Token
 
 
 def generate_token():
@@ -32,11 +31,12 @@ class RegisterView(View):
         email = data.get('email')
         password = data.get('password')
 
+        if not email or not password:
+            return JsonErrorResponse('email and password cannot be empty',
+                                     status=400)
         if email != escape(email):
-            return JsonErrorResponse('invalid characters in email', status=400)
-
-        if not password:
-            return JsonErrorResponse('password cannot be empty', status=400)
+            return JsonErrorResponse('invalid characters in email',
+                                     status=400)
 
         # Create user
         # TODO: validate email format

@@ -102,4 +102,4 @@ def login_test(post, email, password):
         data=json.dumps(creds)
     )
     data = json.loads(response.content.decode('utf-8'))
-    return 'Token token="%s"' % data['token']
+    return 'Token token="%s"' % data['data']['string']

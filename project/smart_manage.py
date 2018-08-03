@@ -27,7 +27,7 @@ def pgtest(host, name, user, passwd):
         )
         conn.close()
         return True
-    except:
+    except psycopg2.OperationalError:
         return False
 
 

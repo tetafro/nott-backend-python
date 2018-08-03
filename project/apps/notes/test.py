@@ -5,7 +5,7 @@ from datetime import datetime
 from django.test import TestCase
 
 from core.api import login_test
-from apps.users.models import USER_ROLE_ID, User
+from apps.users.models import User
 from .models import Folder, Notepad, Note
 
 
@@ -13,32 +13,17 @@ logging.disable(logging.CRITICAL)
 
 
 class PermissionsTestCase(TestCase):
-    fixtures = ['settings.json', 'roles.json', 'admin.json']
-
-    def test_views_permissions_admin(self):
-        header = login_test(self.client.post, 'admin', '123')
-        urls = [
-            '/api/v1/folders',
-            '/api/v1/notepads',
-            '/api/v1/notes'
-        ]
-        for url in urls:
-            response = self.client.get(url, HTTP_AUTHORIZATION=header)
-            self.assertEqual(response.status_code, 200)
-
-    def test_views_permissions_user(self):
-        # Create user for test
+    def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=USER_ROLE_ID,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
 
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+    def test_views_permissions_user(self):
+        header = login_test(self.client.post, 'bob@example.com', '123')
         urls = [
             '/api/v1/folders',
             '/api/v1/notepads',
@@ -60,17 +45,13 @@ class PermissionsTestCase(TestCase):
 
 
 class FoldersCRUDTestCase(TestCase):
-    fixtures = ['roles.json']
-
     def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=2,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
         folder1 = Folder.objects.create(
             id=100,
@@ -92,23 +73,23 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(d.get('id'), 101)
         self.assertEqual(d.get('title'), 'Folder 2')
         self.assertEqual(d.get('parent_id'), 100)
-        self.assertEqual(type(d.get('created')), datetime)
-        self.assertEqual(type(d.get('updated')), datetime)
+        self.assertEqual(type(d.get('created_at')), datetime)
+        self.assertEqual(type(d.get('updated_at')), datetime)
 
     def test_get_success(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
         response = self.client.get(
             '/api/v1/folders/101',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
-        folder = json.loads(response.content.decode('utf-8'))
+        folder = json.loads(response.content.decode('utf-8')).get('data')
         self.assertEqual(folder.get('id'), 101)
         self.assertEqual(folder.get('title'), 'Folder 2')
         self.assertEqual(folder.get('parent_id'), 100)
 
     def test_get_non_existing_id(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
         response = self.client.get(
             '/api/v1/folders/501',
             HTTP_AUTHORIZATION=header
@@ -120,16 +101,13 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_list(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
-
+        header = login_test(self.client.post, 'bob@example.com', '123')
         response = self.client.get(
             '/api/v1/folders',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
-        resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertIn('folders', resp_content)
-        folders = resp_content['folders']
+        folders = json.loads(response.content.decode('utf-8')).get('data')
         self.assertEqual(len(folders), 2)
 
         # Folder 1
@@ -142,7 +120,7 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(folders[1].get('parent_id'), 100)
 
     def test_create_success(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Create
         body = {'title': 'My Folder'}
@@ -151,10 +129,10 @@ class FoldersCRUDTestCase(TestCase):
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 201)
-        resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue('id' in resp_content)
-        self.assertTrue(resp_content is not None)
-        id = resp_content['id']
+        folder = json.loads(response.content.decode('utf-8')).get('data')
+        self.assertTrue('id' in folder)
+        self.assertTrue(folder is not None)
+        id = folder['id']
 
         # Check
         folder = Folder.objects.get(id=id)
@@ -162,27 +140,26 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(folder.parent_id, None)
 
     def test_create_with_readonly_fields(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {
             'id': 999999,  # will be skipped
             'title': 'New Name',
-            'created': '2010-10-10T10:10:10.000Z',  # will be skipped
-            'updated': '2010-10-10T10:10:10.000Z'  # will be skipped
+            'created_at': '2010-10-10T10:10:10.000Z',  # will be skipped
+            'updated_at': '2010-10-10T10:10:10.000Z'  # will be skipped
         }
         response = self.client.post(
             '/api/v1/folders', json.dumps(body), 'application/json',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 201)
-        resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue(resp_content is not None)
-        self.assertNotEqual(resp_content.get('id'), body['id'])
-        self.assertNotEqual(resp_content.get('created'), body['created'])
-        self.assertNotEqual(resp_content.get('updated'), body['updated'])
+        folder = json.loads(response.content.decode('utf-8')).get('data')
+        self.assertNotEqual(folder.get('id'), body['id'])
+        self.assertNotEqual(folder.get('created_at'), body['created_at'])
+        self.assertNotEqual(folder.get('updated_at'), body['updated_at'])
 
     def test_create_empty_body(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {}
         response = self.client.post(
@@ -192,7 +169,7 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_modify_success(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Modify
         body = {
@@ -211,7 +188,7 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(folder.parent_id, None)
 
     def test_modify_empty_body(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Modify
         body = {}
@@ -227,7 +204,7 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(folder.parent_id, 100)
 
     def test_modify_non_existing_id(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {'title': 'New Name'}
         response = self.client.put(
@@ -237,7 +214,7 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_modify_malformed_id(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {'title': 'New Name'}
         response = self.client.put(
@@ -247,7 +224,7 @@ class FoldersCRUDTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_delete(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Delete
         response = self.client.delete(
@@ -263,21 +240,17 @@ class FoldersCRUDTestCase(TestCase):
 
 
 class FoldersValidationTestCase(TestCase):
-    fixtures = ['roles.json']
-
     def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=2,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
 
     def test_empty_title(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {'title': ''}
         response = self.client.post(
@@ -287,7 +260,7 @@ class FoldersValidationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_long_title(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {'title': 'a' * 81}
         response = self.client.post(
@@ -297,7 +270,7 @@ class FoldersValidationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_non_existing_parent(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Create
         body = {
@@ -312,17 +285,13 @@ class FoldersValidationTestCase(TestCase):
 
 
 class NotepadsTestCase(TestCase):
-    fixtures = ['roles.json']
-
     def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=2,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
         folder = Folder.objects.create(
             id=100,
@@ -350,24 +319,24 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(n.get('id'), 200)
         self.assertEqual(n.get('title'), 'Notepad 1')
         self.assertEqual(n.get('folder_id'), 100)
-        self.assertEqual(type(n.get('created')), datetime)
-        self.assertEqual(type(n.get('updated')), datetime)
+        self.assertEqual(type(n.get('created_at')), datetime)
+        self.assertEqual(type(n.get('updated_at')), datetime)
 
     def test_get_success(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         response = self.client.get(
             '/api/v1/notepads/200',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
-        notepad = json.loads(response.content.decode('utf-8'))
+        notepad = json.loads(response.content.decode('utf-8')).get('data')
         self.assertEqual(notepad.get('id'), 200)
         self.assertEqual(notepad.get('title'), 'Notepad 1')
         self.assertEqual(notepad.get('folder_id'), 100)
 
     def test_get_non_existing_id(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         response = self.client.get(
             '/api/v1/notepads/501',
@@ -376,7 +345,7 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_get_malformed_id(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         response = self.client.get(
             '/api/v1/notepads/abc',
@@ -385,16 +354,14 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_list(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         response = self.client.get(
             '/api/v1/notepads',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
-        resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue('notepads' in resp_content)
-        notepads = resp_content['notepads']
+        notepads = json.loads(response.content.decode('utf-8')).get('data')
         self.assertEqual(len(notepads), 2)
 
         # Notepad 1
@@ -407,7 +374,7 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(notepads[1].get('folder_id'), 100)
 
     def test_create(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Create
         body = {
@@ -419,10 +386,10 @@ class NotepadsTestCase(TestCase):
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 201)
-        resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue(resp_content is not None)
-        self.assertTrue('id' in resp_content)
-        id = resp_content['id']
+        notepad = json.loads(response.content.decode('utf-8')).get('data')
+        self.assertTrue(notepad is not None)
+        self.assertTrue('id' in notepad)
+        id = notepad['id']
 
         # Check
         notepad = Notepad.objects.get(id=id)
@@ -430,7 +397,7 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(notepad.folder_id, 100)
 
     def test_modify(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Modify
         body = {
@@ -448,7 +415,7 @@ class NotepadsTestCase(TestCase):
         self.assertEqual(notepad.folder_id, 100)
 
     def test_delete(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Delete
         response = self.client.delete(
@@ -464,17 +431,13 @@ class NotepadsTestCase(TestCase):
 
 
 class NotepadsValidationTestCase(TestCase):
-    fixtures = ['roles.json']
-
     def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=2,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
         Folder.objects.create(
             id=100,
@@ -484,7 +447,7 @@ class NotepadsValidationTestCase(TestCase):
         )
 
     def test_empty_title(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {
             'title': '',
@@ -497,7 +460,7 @@ class NotepadsValidationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_long_title(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {
             'title': 'a' * 81,
@@ -510,7 +473,7 @@ class NotepadsValidationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_empty_folder(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {'title': 'New Notepad'}
         response = self.client.post(
@@ -520,7 +483,7 @@ class NotepadsValidationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_non_existing_folder(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Create
         body = {
@@ -535,17 +498,13 @@ class NotepadsValidationTestCase(TestCase):
 
 
 class NotesTestCase(TestCase):
-    fixtures = ['roles.json']
-
     def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=2,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
         folder = Folder.objects.create(
             id=100,
@@ -582,24 +541,24 @@ class NotesTestCase(TestCase):
         self.assertEqual(n.get('title'), 'Note 1')
         self.assertEqual(n.get('text'), 'Hello, world!')
         self.assertEqual(n.get('notepad_id'), 200)
-        self.assertEqual(type(n.get('created')), datetime)
-        self.assertEqual(type(n.get('updated')), datetime)
+        self.assertEqual(type(n.get('created_at')), datetime)
+        self.assertEqual(type(n.get('updated_at')), datetime)
 
     def test_get_success(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         response = self.client.get(
             '/api/v1/notes/300',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
-        note = json.loads(response.content.decode('utf-8'))
+        note = json.loads(response.content.decode('utf-8')).get('data')
         self.assertEqual(note.get('id'), 300)
         self.assertEqual(note.get('title'), 'Note 1')
         self.assertEqual(note.get('notepad_id'), 200)
 
     def test_get_non_existing_id(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         response = self.client.get(
             '/api/v1/notepads/501',
@@ -608,7 +567,7 @@ class NotesTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_get_malformed_id(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         response = self.client.get(
             '/api/v1/notepads/abc',
@@ -617,16 +576,14 @@ class NotesTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_list(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         response = self.client.get(
             '/api/v1/notes',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
-        resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue('notes' in resp_content)
-        notes = resp_content['notes']
+        notes = json.loads(response.content.decode('utf-8')).get('data')
         self.assertEqual(len(notes), 2)
 
         # Note 1
@@ -639,7 +596,7 @@ class NotesTestCase(TestCase):
         self.assertEqual(notes[1].get('notepad_id'), 200)
 
     def test_create(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Create
         body = {
@@ -652,10 +609,8 @@ class NotesTestCase(TestCase):
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 201)
-        resp_content = json.loads(response.content.decode('utf-8'))
-        self.assertTrue(resp_content is not None)
-        self.assertTrue('id' in resp_content)
-        id = resp_content['id']
+        note = json.loads(response.content.decode('utf-8')).get('data')
+        id = note['id']
 
         # Check
         note = Note.objects.get(id=id)
@@ -664,7 +619,7 @@ class NotesTestCase(TestCase):
         self.assertEqual(note.text, 'Hello, world')
 
     def test_modify(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Modify
         body = {
@@ -681,7 +636,7 @@ class NotesTestCase(TestCase):
         self.assertEqual(note.title, 'New Name')
 
     def test_delete(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Delete
         response = self.client.delete(
@@ -697,17 +652,13 @@ class NotesTestCase(TestCase):
 
 
 class NotesValidationTestCase(TestCase):
-    fixtures = ['roles.json']
-
     def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=2,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
         folder = Folder.objects.create(
             id=100,
@@ -723,7 +674,7 @@ class NotesValidationTestCase(TestCase):
         )
 
     def test_empty_title(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {
             'title': '',
@@ -736,7 +687,7 @@ class NotesValidationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_long_title(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {
             'title': 'a' * 81,
@@ -749,7 +700,7 @@ class NotesValidationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_empty_notepad(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         body = {'title': 'New Note'}
         response = self.client.post(
@@ -759,7 +710,7 @@ class NotesValidationTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_non_existing_notepad(self):
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
 
         # Create
         body = {

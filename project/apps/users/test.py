@@ -4,116 +4,69 @@ import logging
 from django.test import TestCase
 
 from core.api import login_test
-from .models import USER_ROLE_ID, User, Token
+from .models import User, Token
 
 
 logging.disable(logging.CRITICAL)
 
 
 class PermissionsTestCase(TestCase):
-    fixtures = ['roles.json', 'admin.json']
-
-    def test_views_permissions_admin(self):
-        header = login_test(self.client.post, 'admin', '123')
-        urls = [
-            '/api/v1/users',
-            '/api/v1/users/1',
-            '/api/v1/users/me'
-        ]
-        for url in urls:
-            response = self.client.get(url, HTTP_AUTHORIZATION=header)
-            self.assertEqual(response.status_code, 200)
-
-    def test_views_permissions_user(self):
-        # Create user for test
+    def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=USER_ROLE_ID,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
 
-        header = login_test(self.client.post, 'bob', 'bobs-password')
-
-        urls = [
-            '/api/v1/users',
-            '/api/v1/users/1'
-        ]
-        for url in urls:
-            response = self.client.get(url, HTTP_AUTHORIZATION=header)
-            self.assertEqual(response.status_code, 403)
-
+    def test_views_permissions_user(self):
+        header = login_test(self.client.post, 'bob@example.com', '123')
         response = self.client.get(
-            '/api/v1/users/me',
+            '/api/v1/profile',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
 
     def test_views_permissions_anon(self):
-        urls = [
-            '/api/v1/users',
-            '/api/v1/users/1',
-            '/api/v1/users/me'
-        ]
-        for url in urls:
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 401)
+        response = self.client.get('/api/v1/profile')
+        self.assertEqual(response.status_code, 401)
 
 
 class UserTestCase(TestCase):
-    fixtures = ['roles.json', 'admin.json']
-
-    def test_fixtures(self):
-        admin = User.objects.get(username='admin')
-        self.assertEqual(admin.is_admin, True)
-        self.assertEqual(admin.get_full_name(), 'admin')
-        self.assertEqual(admin.get_short_name(), 'admin')
-
-    def test_profile(self):
-        # Create user for test
+    def setUp(self):
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=USER_ROLE_ID,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
 
+    def test_profile(self):
         # Check user in database
-        bob = User.objects.get(username='bob')
-        self.assertEqual(bob.is_admin, False)
-        self.assertEqual(bob.get_full_name(), 'bob')
-        self.assertEqual(bob.get_short_name(), 'bob')
+        bob = User.objects.get(email='bob@example.com')
+        self.assertEqual(bob.get_full_name(), 'bob@example.com')
+        self.assertEqual(bob.get_short_name(), 'bob@example.com')
 
         # Get profile using API
-        header = login_test(self.client.post, 'bob', 'bobs-password')
+        header = login_test(self.client.post, 'bob@example.com', '123')
         response = self.client.get(
-            '/api/v1/users/me',
+            '/api/v1/profile',
             HTTP_AUTHORIZATION=header
         )
         self.assertEqual(response.status_code, 200)
 
-        profile = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(profile.get('username'), 'bob')
+        profile = json.loads(response.content.decode('utf-8')).get('data')
         self.assertEqual(profile.get('email'), 'bob@example.com')
-        self.assertEqual(profile.get('role'), {'name': 'user'})
 
 
 class AuthTestCase(TestCase):
-    fixtures = ['roles.json']
-
     def test_register(self):
         # Success
         form = {
-            'username': 'bob',
             'email': 'bob@example.com',
-            'password1': 'bobs-password',
-            'password2': 'bobs-password'
+            'password': '123',
         }
         response = self.client.post(
             '/api/v1/register',
@@ -121,70 +74,29 @@ class AuthTestCase(TestCase):
             data=json.dumps(form)
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertIn('token', data)
+        data = json.loads(response.content.decode('utf-8')).get('data')
+        self.assertIn('string', data)
 
         # Validation fails
         forms = [
-            # Wrong password confirmation
+            # No password
             {
-                'username': 'bob',
-                'email': 'bob@example.com',
-                'password1': 'bobs-password',
-                'password2': 'not-bobs-password'
-            },
-            # No username
-            {
-                'email': 'bob@example.com',
-                'password1': 'bobs-password',
-                'password2': 'bobs-password'
+                'email': 'bob@example.com'
             },
             # No email
             {
-                'username': 'bob',
-                'password1': 'bobs-password',
-                'password2': 'bobs-password'
-            },
-            # No password
-            {
-                'username': 'bob',
-                'email': 'bob@example.com',
-                'password2': 'bobs-password',
-            },
-            # No password confirmation
-            {
-                'username': 'bob',
-                'email': 'bob@example.com',
-                'password1': 'bobs-password',
-            },
-            # Empty username
-            {
-                'username': 'bob',
-                'email': 'bob@example.com',
-                'password1': 'bobs-password',
-                'password2': 'not-bobs-password'
+                'password': '123'
             },
             # Empty email
             {
-                'username': 'bob',
-                'email': 'bob@example.com',
-                'password1': 'bobs-password',
-                'password2': 'not-bobs-password'
+                'email': '',
+                'password': '123'
             },
             # Empty password
             {
-                'username': 'bob',
                 'email': 'bob@example.com',
-                'password1': 'bobs-password',
-                'password2': 'not-bobs-password'
-            },
-            # Empty password confirmation
-            {
-                'username': 'bob',
-                'email': 'bob@example.com',
-                'password1': 'bobs-password',
-                'password2': 'not-bobs-password'
-            },
+                'password': ''
+            }
         ]
         for form in forms:
             response = self.client.post(
@@ -198,18 +110,16 @@ class AuthTestCase(TestCase):
         # Create user for test
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=USER_ROLE_ID,
             is_active=True
         )
-        bob.set_password('bobs-password')
+        bob.set_password('123')
         bob.save()
 
         # Success
         creds = {
-            'username': 'bob',
-            'password': 'bobs-password'
+            'email': 'bob@example.com',
+            'password': '123'
         }
         response = self.client.post(
             '/api/v1/login',
@@ -217,12 +127,12 @@ class AuthTestCase(TestCase):
             data=json.dumps(creds)
         )
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertIn('token', data)
+        data = json.loads(response.content.decode('utf-8')).get('data')
+        self.assertIn('string', data)
 
         # Fail
         creds = {
-            'username': 'bob',
+            'email': 'bob@example.com',
             'password': 'wrong-password'
         }
         response = self.client.post(
@@ -236,9 +146,7 @@ class AuthTestCase(TestCase):
         # Create user with auth token
         bob = User.objects.create(
             id=100,
-            username='bob',
             email='bob@example.com',
-            role_id=USER_ROLE_ID,
             is_active=True
         )
         token = Token.objects.create(string='123', user=bob)
