@@ -1,9 +1,0 @@
-[{
-    "model": "users.user",
-    "pk": 1,
-    "fields": {
-        "email": "bob@example.com",
-        "role_id": 1,
-        "password": "pbkdf2_sha256$20000$p1Hvk4NSMfcp$4oEo148QBcinN+h9lKTTcf4ezlCYLOwxMKeAWIC6/Ys="
-    }
-}]
