@@ -6,11 +6,11 @@ dep:
 
 .PHONE: lint
 lint:
-	@ flake8 --exclude=migrations
+	@ flake8 ./project
 
 .PHONY: test
 test:
-	@ $(MANAGE) test
+	@ $(MANAGE) test ./project
 
 .PHONY: migrations
 migrations:
@@ -20,14 +20,10 @@ migrations:
 migrate:
 	@ $(MANAGE) migrate
 
-.PHONY: fixtures
-fixtures:
-	@ $(MANAGE) loaddata ./project/apps/users/fixtures/user.json
-
 .PHONY: run
 run:
 	@ $(MANAGE) runserver 127.0.0.1:8080
 
 .PHONY: docker
 docker:
-	@ docker build -t tetafro/nott_backend_python .
+	@ docker build -t tetafro/nott-backend-python .
