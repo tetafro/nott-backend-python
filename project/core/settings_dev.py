@@ -1,3 +1,0 @@
-DEBUG = True
-LOG_LEVEL = 'DEBUG'
-ALLOWED_HOSTS = ['*']
