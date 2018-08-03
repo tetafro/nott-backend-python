@@ -44,7 +44,7 @@ def run_command():
     )
 
     tries = 0
-    db_ready = False
+    db_ready = pgtest(*db_settings)
     while not db_ready and tries < RETRIES:
         print('Waiting for the database...')
         time.sleep(WAIT_TIME)
