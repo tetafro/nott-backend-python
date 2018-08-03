@@ -1,0 +1,572 @@
+swagger: "2.0"
+consumes:
+  - application/json
+produces:
+  - application/json
+info:
+  version: v1
+  title: nott
+  description: Markdown notes service with code syntax highlighting.
+basePath: /api/v1
+
+paths:
+  /register:
+    post:
+      description: Register new user.
+      parameters:
+        - name: payload
+          description: Register request.
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                description: Email address.
+                type: string
+                example: bob@example.com
+              password:
+                description: Password.
+                type: string
+                example: qwerty
+      responses:
+        "201":
+          description: Authentication token to proceed.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Token"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
+  /login:
+    post:
+      description: Sign in using existing user.
+      parameters:
+        - name: payload
+          description: Login request.
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                description: Email address.
+                type: string
+                example: bob@example.com
+              password:
+                description: Password.
+                type: string
+                example: qwerty
+      responses:
+        "201":
+          description: Authentication token to proceed.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Token"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
+  /folders:
+    get:
+      description: Get list of folders for currently logged in user.
+      responses:
+        "200":
+          description: List of folders.
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Folder"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    post:
+      description: Create new folder.
+      parameters:
+        - name: payload
+          description: Create folder request.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Folder"
+      responses:
+        "201":
+          description: Created folder.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Folder"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
+  /folders/{id}:
+    get:
+      description: Get folder info.
+      responses:
+        "200":
+          description: Folder found by ID.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Folder"
+            required:
+              - data
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    put:
+      description: Update folder info.
+      parameters:
+        - name: payload
+          description: Update folder request.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Folder"
+      responses:
+        "200":
+          description: Updated folder.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Folder"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    delete:
+      description: Delete folder.
+      responses:
+        "204":
+          $ref: "#/responses/NoContent"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    parameters:
+      - name: id
+        in: path
+        description: ID of the folder.
+        required: true
+        type: integer
+        format: int64
+  /notepads:
+    get:
+      description: Get list of notepads for currently logged in user.
+      responses:
+        "200":
+          description: List of notepads.
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Notepad"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    post:
+      description: Create new notepad.
+      parameters:
+        - name: payload
+          description: Create notepad request.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Notepad"
+      responses:
+        "201":
+          description: Created notepad.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Notepad"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
+  /notepads/{id}:
+    get:
+      description: Get notepad info.
+      responses:
+        "200":
+          description: Notepad found by ID.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Notepad"
+            required:
+              - data
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    put:
+      description: Update notepad info.
+      parameters:
+        - name: payload
+          description: Update notepad request.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Notepad"
+      responses:
+        "200":
+          description: Updated notepad.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Notepad"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    delete:
+      description: Delete notepad.
+      responses:
+        "204":
+          $ref: "#/responses/NoContent"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    parameters:
+      - name: id
+        in: path
+        description: ID of the notepad.
+        required: true
+        type: integer
+        format: int64
+  /notes:
+    get:
+      description: Get list of notes for currently logged in user.
+      parameters:
+        - name: notepad_id
+          description: Notepad ID.
+          in: query
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        "200":
+          description: List of notes.
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Note"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    post:
+      description: Create new note.
+      parameters:
+        - name: payload
+          description: Create note request.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Note"
+      responses:
+        "201":
+          description: Created note.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Note"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "500":
+          $ref: "#/responses/InternalServerError"
+  /notes/{id}:
+    get:
+      description: Get note info.
+      responses:
+        "200":
+          description: Note found by ID.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Note"
+            required:
+              - data
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    put:
+      description: Update note info.
+      parameters:
+        - name: payload
+          description: Update note request.
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Note"
+      responses:
+        "200":
+          description: Updated note.
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/Note"
+            required:
+              - data
+        "400":
+          $ref: "#/responses/BadRequest"
+        "404":
+          $ref: "#/responses/NotFound"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    delete:
+      description: Delete note.
+      responses:
+        "204":
+          $ref: "#/responses/NoContent"
+        "500":
+          $ref: "#/responses/InternalServerError"
+    parameters:
+      - name: id
+        in: path
+        description: ID of the note.
+        required: true
+        type: integer
+        format: int64
+
+definitions:
+  Token:
+    description: Authentication token.
+    type: object
+    properties:
+      string:
+        description: Token string itself.
+        type: string
+        example: oieXkxI6LwpbhPvrFAPcGfLjPD71SwGQjrbmq8lLtgPxXiKB82LfrB1lhc5GK2MO
+      ttl:
+        description: Token time to live in seconds.
+        type: integer
+        format: int64
+        readOnly: true
+        minimum: 1
+        example: 3600
+  Folder:
+    description: Folder. Contains notepads and other folders.
+    type: object
+    properties:
+      id:
+        description: Unique folder ID.
+        type: integer
+        format: int64
+        readOnly: true
+        minimum: 1
+        example: 123
+      user_id:
+        description: Folder's user ID.
+        type: integer
+        format: int64
+        readOnly: true
+        minimum: 1
+        example: 123
+      parent_id:
+        description: Parent folder ID (empty for root folders).
+        type: integer
+        format: int64
+        minimum: 1
+        example: 123
+      title:
+        description: Title.
+        type: string
+        example: My folder
+      created_at:
+        description: Date and time of the folder creation.
+        type: string
+        format: date-time
+        readOnly: true
+        example: "2006-01-02T15:04:05Z"
+      updated_at:
+        description: Date and time of the last folder update.
+        type: string
+        format: date-time
+        readOnly: true
+        example: "2006-01-02T15:04:05Z"
+    required:
+      - parent_id
+      - title
+  Notepad:
+    description: Notepad. Contains text notes.
+    type: object
+    properties:
+      id:
+        description: Unique notepad ID.
+        type: integer
+        format: int64
+        readOnly: true
+        minimum: 1
+        example: 123
+      user_id:
+        description: Notepad's user ID.
+        type: integer
+        format: int64
+        readOnly: true
+        minimum: 1
+        example: 123
+      folder_id:
+        description: Notepad's folder ID.
+        type: integer
+        format: int64
+        minimum: 1
+        example: 123
+      title:
+        description: Title.
+        type: string
+        example: My notepad
+      created_at:
+        description: Date and time of the notepad creation.
+        type: string
+        format: date-time
+        readOnly: true
+        example: "2006-01-02T15:04:05Z"
+      updated_at:
+        description: Date and time of the last notepad update.
+        type: string
+        format: date-time
+        readOnly: true
+        example: "2006-01-02T15:04:05Z"
+    required:
+      - folder_id
+      - title
+  Note:
+    description: Note. Contains text.
+    type: object
+    properties:
+      id:
+        description: Unique note ID.
+        type: integer
+        format: int64
+        readOnly: true
+        minimum: 1
+        example: 123
+      user_id:
+        description: Note's user ID.
+        type: integer
+        format: int64
+        readOnly: true
+        minimum: 1
+        example: 123
+      notepad_id:
+        description: Note's notepad ID.
+        type: integer
+        format: int64
+        minimum: 1
+        example: 123
+      title:
+        description: Title.
+        type: string
+        example: My note
+      text:
+        description: Editable markdown text content.
+        type: string
+        example: "**Hello, world**"
+      html:
+        description: Rendered HTML.
+        type: string
+        readOnly: true
+        example: "<strong>Hello, world</strong>"
+      created_at:
+        description: Date and time of the note creation.
+        type: string
+        format: date-time
+        readOnly: true
+        example: "2006-01-02T15:04:05Z"
+      updated_at:
+        description: Date and time of the last note update.
+        type: string
+        format: date-time
+        readOnly: true
+        example: "2006-01-02T15:04:05Z"
+    required:
+      - notepad_id
+      - title
+      - text
+
+responses:
+  NoContent:
+    description: No content.
+  BadRequest:
+    description: Bad request.
+    schema:
+      type: object
+      properties:
+        error:
+          description: Error message.
+          type: string
+          example: Something's wrong.
+      required:
+        - error
+  NotFound:
+    description: Object not found.
+    schema:
+      type: object
+      properties:
+        error:
+          description: Error message.
+          type: string
+          example: Something's wrong.
+      required:
+        - error
+  InternalServerError:
+    description: Internal Server Error.
+    schema:
+      type: object
+      properties:
+        error:
+          description: Error message.
+          type: string
+          example: Something's wrong.
+      required:
+        - error
