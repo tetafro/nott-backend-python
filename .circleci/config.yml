@@ -1,43 +1,53 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
-      - image: docker:17.10.0-ce-git
+      - image: circleci/python:3.6
+      - image: circleci/postgres:9.6
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nott
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 17.10.0-ce
       - run:
-          name: Build application Docker image
-          command: docker build -t tetafro/nott-backend-python .
+          name: Get project dependencies
+          command: |
+            sudo apt update -y
+            sudo apt install -y gcc libpq-dev musl-dev
+            sudo pip install -r requirements.txt
       - run:
           name: Run tests
           command: |
-            docker network create nott
-            # Run database
-            docker run -d \
-              --network nott \
-              --env "POSTGRES_USER=postgres" \
-              --env "POSTGRES_PASSWORD=postgres" \
-              --env "POSTGRES_DB=nott" \
-              --name postgres \
-              postgres:10
-            # Run test in app container
-            docker run \
-              --network nott \
-              --env ALLOWED_HOSTS='*' \
-              --env DEBUG=true \
-              --env DJANGO_SECRET_KEY=qwerty \
-              --env POSTGRES_DB=nott \
-              --env POSTGRES_HOST=postgres \
-              --env POSTGRES_PASSWORD=postgres \
-              --env POSTGRES_PORT=5432 \
-              --env POSTGRES_USER=postgres \
-              --name nott-backend \
-              tetafro/nott-backend-python:latest \
-              /app/smart_manage.py test
+            . .env.example
+            ./project/smart_manage.py test
+      - run:
+          name: Install linters
+          command: sudo pip install flake8
+      - run:
+          name: Run linters
+          command: flake8 ./project
+  publish:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build Docker image
+          command: docker build -t tetafro/nott-backend-python .
       - run:
           name: Push Docker image to Docker Hub
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push tetafro/nott-backend-python:latest
+workflows:
+  version: 2
+  main:
+    jobs:
+      - test
+      - publish:
+          requires:
+            - test
+          context: dockerhub
