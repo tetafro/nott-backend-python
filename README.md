@@ -1,6 +1,6 @@
 # Nott
 
-[![CircleCI](https://circleci.com/gh/tetafro/nott.svg?style=shield)](https://circleci.com/gh/tetafro/nott)
+[![CircleCI](https://circleci.com/gh/tetafro/nott-backend-python.svg?style=shield)](https://circleci.com/gh/tetafro/nott-backend-python)
 
 Online notes service with markdown formatting and syntax highlight.
 
